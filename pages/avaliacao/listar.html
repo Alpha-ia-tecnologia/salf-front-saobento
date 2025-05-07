@@ -1,0 +1,526 @@
+!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avaliações - SALF</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="flex h-screen bg-gray-100">
+        <!-- Sidebar -->
+        <div id="sidebar-container"></div>
+        
+        <!-- Conteúdo principal -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <!-- Header -->
+            <div id="header-container"></div>
+            
+            <!-- Conteúdo da página -->
+            <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-4">
+                <div class="container mx-auto">
+                    <!-- Abas -->
+                    <div class="border-b border-gray-200 mb-6">
+                        <nav class="-mb-px flex space-x-8" aria-label="Tabs">
+                            <button id="tab-avaliacao" class="border-blue-500 text-blue-600 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+                                Avaliações
+                            </button>
+                            <button id="tab-eventos" class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+                                Eventos de Avaliação
+                            </button>
+                        </nav>
+                    </div>
+                    
+                    <!-- Seção de Avaliações -->
+                    <div id="secao-avaliacoes">
+                        <!-- Título da página e botão de adicionar -->
+                        <div class="flex justify-between items-center mb-4">
+                            <h1 class="text-2xl font-bold text-gray-800">Listagem de Avaliações</h1>
+                            <div class="flex space-x-2">
+                                <button id="btn-nova-avaliacao" class="bg-blue-600 text-white rounded-md px-4 py-2 flex items-center hover:bg-blue-700 transition">
+                                    <i class="fas fa-plus mr-2"></i> Nova Avaliação
+                                </button>
+                                <button id="btn-envio-simples" class="bg-green-600 text-white rounded-md px-4 py-2 flex items-center hover:bg-green-700 transition">
+                                    <i class="fas fa-paper-plane mr-2"></i> Envio Simples
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Tabela de avaliações -->
+                        <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                            <div class="p-4 border-b">
+                                <h2 class="text-lg font-semibold text-gray-800">Lista de Avaliações</h2>
+                            </div>
+                            
+                            <!-- Filtro e pesquisa -->
+                            <div class="p-4 bg-gray-50 border-b">
+                                <div class="flex flex-col sm:flex-row gap-3">
+                                    <div class="relative flex-1">
+                                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                                            <i class="fas fa-search"></i>
+                                        </span>
+                                        <input type="text" id="pesquisa-avaliacao" placeholder="Pesquisar avaliações..." 
+                                            class="pl-10 w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Tabela -->
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                ID
+                                            </th>
+                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Nome da Avaliação
+                                            </th>
+                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Total de Palavras
+                                            </th>
+                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Total de Pseudopalavras
+                                            </th>
+                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Questões
+                                            </th>
+                                            <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Ações
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="bg-white divide-y divide-gray-200" id="tabela-de-leituras">
+                                        <!-- Aqui serão inseridos os dados dos testes de leitura dinamicamente -->
+                                        <tr>
+                                            <td colspan="7" class="px-6 py-4 text-center text-gray-500">
+                                                Carregando...
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <!-- Paginação -->
+                            <div class="bg-white px-4 py-3 flex items-center justify-between border-t sm:px-6">
+                                <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+                                    <div>
+                                        <p class="text-sm text-gray-700">
+                                            Mostrando <span class="font-medium">1</span> a <span class="font-medium">2</span> de <span class="font-medium">2</span> resultados
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                                            <a href="#" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                                <span class="sr-only">Anterior</span>
+                                                <i class="fas fa-chevron-left h-5 w-5"></i>
+                                            </a>
+                                            <a href="#" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-blue-50 text-sm font-medium text-blue-600 hover:bg-blue-100">
+                                                1
+                                            </a>
+                                            <a href="#" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                                <span class="sr-only">Próximo</span>
+                                                <i class="fas fa-chevron-right h-5 w-5"></i>
+                                            </a>
+                                        </nav>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Seção de Eventos de Avaliação -->
+                    <div id="secao-eventos" class="hidden">
+                        <!-- Título da página e botão de adicionar -->
+                        <div class="bg-white rounded-lg shadow-md p-6 mb-6 flex justify-between items-center">
+                            <div>
+                                <h1 class="text-2xl font-bold text-gray-800 mb-1">Eventos de Avaliação</h1>
+                                <p class="text-gray-600">Gerencie os eventos de aplicação de avaliações</p>
+                            </div>
+                            <button id="btn-novo-evento" class="bg-blue-600 text-white rounded-md px-4 py-2 flex items-center hover:bg-blue-700 transition">
+                                <i class="fas fa-plus mr-2"></i> Novo Evento
+                            </button>
+                        </div>
+                        
+                        <!-- Tabela de eventos -->
+                        <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                            <div class="p-4 border-b">
+                                <h2 class="text-lg font-semibold text-gray-800">Lista de Eventos</h2>
+                            </div>
+                            
+                            <!-- Filtro e pesquisa -->
+                            <div class="p-4 bg-gray-50 border-b">
+                                <div class="flex flex-col sm:flex-row gap-3">
+                                    <div class="relative flex-1">
+                                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                                            <i class="fas fa-search"></i>
+                                        </span>
+                                        <input type="text" id="pesquisa-evento" placeholder="Pesquisar eventos..." 
+                                            class="pl-10 w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Tabela -->
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                ID
+                                            </th>
+                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Nome do Evento
+                                            </th>
+                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Avaliação
+                                            </th>
+                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Status
+                                            </th>
+                                            <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Ações
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="bg-white divide-y divide-gray-200" id="tabela-eventos">
+                                        <!-- Dados de exemplo -->
+                                        <!-- Mais itens serão adicionados via JavaScript -->
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <!-- Paginação -->
+                            <div class="bg-white px-4 py-3 flex items-center justify-between border-t sm:px-6">
+                                <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+                                    <div>
+                                        <p class="text-sm text-gray-700">
+                                            Mostrando <span class="font-medium">1</span> a <span class="font-medium">2</span> de <span class="font-medium">2</span> resultados
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                                            <a href="#" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                                <span class="sr-only">Anterior</span>
+                                                <i class="fas fa-chevron-left h-5 w-5"></i>
+                                            </a>
+                                            <a href="#" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-blue-50 text-sm font-medium text-blue-600 hover:bg-blue-100">
+                                                1
+                                            </a>
+                                            <a href="#" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                                <span class="sr-only">Próximo</span>
+                                                <i class="fas fa-chevron-right h-5 w-5"></i>
+                                            </a>
+                                        </nav>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    
+    
+    <!-- Modal de adicionar/editar avaliação -->
+    <div id="modal-avaliacao" class="hidden fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center p-4 z-50 overflow-y-auto">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-4xl mx-auto my-8">
+            <div class="px-6 py-4 border-b">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-lg font-semibold text-gray-900">Nova Avaliação</h3>
+                    <button id="fechar-modal-avaliacao" class="text-gray-400 hover:text-gray-500">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            <form id="form-avaliacao">
+                <div class="p-6 space-y-6 max-h-[calc(100vh-200px)] overflow-y-auto">
+                    <div>
+                        <label for="nome-avaliacao" class="block text-sm font-medium text-gray-700 mb-1">Nome da Avaliação</label>
+                        <input type="text" id="nome-avaliacao" name="nome-avaliacao" required
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    
+                    <div class="border-t pt-4">
+                        <h4 class="text-md font-medium text-gray-800 mb-2">Palavras</h4>
+                        <p class="text-sm text-gray-600 mb-2">Adicione até 200 palavras para a avaliação</p>
+                        
+                        <div class="flex mb-2">
+                            <input type="text" id="nova-palavra" placeholder="Digite palavras separadas por vírgula ou pressione Enter" 
+                                class="flex-1 px-3 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <button type="button" id="adicionar-palavra" class="bg-blue-600 text-white px-4 py-2 rounded-r-md hover:bg-blue-700 transition">
+                                Adicionar
+                            </button>
+                        </div>
+                        
+                        <div class="bg-gray-50 p-4 rounded-md h-32 overflow-y-auto">
+                            <div id="lista-palavras" class="flex flex-wrap gap-2">
+                                <!-- Lista de palavras será gerada via JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="border-t pt-4">
+                        <h4 class="text-md font-medium text-gray-800 mb-2">Pseudopalavras</h4>
+                        <p class="text-sm text-gray-600 mb-2">Adicione até 60 pseudopalavras para a avaliação</p>
+                        
+                        <div class="flex mb-2">
+                            <input type="text" id="nova-pseudopalavra" placeholder="Digite pseudopalavras separadas por vírgula ou pressione Enter" 
+                                class="flex-1 px-3 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <button type="button" id="adicionar-pseudopalavra" class="bg-blue-600 text-white px-4 py-2 rounded-r-md hover:bg-blue-700 transition">
+                                Adicionar
+                            </button>
+                        </div>
+                        
+                        <div class="bg-gray-50 p-4 rounded-md h-32 overflow-y-auto">
+                            <div id="lista-pseudopalavras" class="flex flex-wrap gap-2">
+                                <!-- Lista de pseudopalavras será gerada via JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Nova seção para frases -->
+                    <div class="border-t pt-4">
+                        <h4 class="text-md font-medium text-gray-800 mb-2">Frases</h4>
+                        <p class="text-sm text-gray-600 mb-2">Adicione frases para leitura na avaliação</p>
+                        
+                        <div class="flex mb-2">
+                            <input type="text" id="nova-frase" placeholder="Digite frases separadas por ponto ou pressione Enter" 
+                                class="flex-1 px-3 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <button type="button" id="adicionar-frase" class="bg-blue-600 text-white px-4 py-2 rounded-r-md hover:bg-blue-700 transition">
+                                Adicionar
+                            </button>
+                        </div>
+                        
+                        <div class="bg-gray-50 p-4 rounded-md h-32 overflow-y-auto">
+                            <div id="lista-frases" class="flex flex-col gap-2">
+                                <!-- Lista de frases será gerada via JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="border-t pt-4">
+                        <h4 class="text-md font-medium text-gray-800 mb-2">Texto</h4>
+                        <p class="text-sm text-gray-600 mb-2">Adicione um texto entre 150 e 180 palavras</p>
+                        
+                        <textarea id="texto-avaliacao" rows="6" 
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="Digite o texto para avaliação"></textarea>
+                        
+                        <div class="text-sm text-gray-500 mt-1">
+                            Contagem de palavras: <span id="contagem-palavras">0</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Nova seção para questões de múltipla escolha -->
+                    <div class="border-t pt-4">
+                        <div class="flex justify-between items-center mb-2">
+                            <div>
+                                <h4 class="text-md font-medium text-gray-800">Questões de Múltipla Escolha</h4>
+                                <p class="text-sm text-gray-600">Adicione questões relacionadas ao texto</p>
+                            </div>
+                            <button type="button" id="adicionar-questao" class="bg-blue-600 text-white px-3 py-1 rounded-md hover:bg-blue-700 transition text-sm">
+                                <i class="fas fa-plus mr-1"></i> Nova Questão
+                            </button>
+                        </div>
+                        
+                        <div id="container-questoes" class="space-y-4">
+                            <!-- Template de questão que será clonado via JavaScript -->
+                            <div class="questao-template hidden border rounded-md p-4 bg-gray-50 relative" id="template-questao">
+                                <button type="button" class="btn-remover-questao absolute top-2 right-2 text-red-500 hover:text-red-700">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                                
+                                <div class="mb-3">
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Enunciado da Questão</label>
+                                    <textarea class="enunciado-questao w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                                        rows="2" placeholder="Digite o enunciado da questão"></textarea>
+                                </div>
+                                
+                                <div class="space-y-2 mb-3">
+                                    <label class="block text-sm font-medium text-gray-700">Alternativas</label>
+                                    
+                                    <div class="opcao-container flex items-center">
+                                        <input type="radio" name="resposta-correta-0" class="resposta-correta mr-2 h-4 w-4">
+                                        <input type="text" class="texto-opcao flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                                            placeholder="Alternativa A">
+                                        <button type="button" class="btn-remover-opcao ml-2 text-red-500 hover:text-red-700">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                    
+                                    <div class="opcao-container flex items-center">
+                                        <input type="radio" name="resposta-correta-0" class="resposta-correta mr-2 h-4 w-4">
+                                        <input type="text" class="texto-opcao flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                                            placeholder="Alternativa B">
+                                        <button type="button" class="btn-remover-opcao ml-2 text-red-500 hover:text-red-700">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                    
+                                    <div class="opcao-container flex items-center">
+                                        <input type="radio" name="resposta-correta-0" class="resposta-correta mr-2 h-4 w-4">
+                                        <input type="text" class="texto-opcao flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                                            placeholder="Alternativa C">
+                                        <button type="button" class="btn-remover-opcao ml-2 text-red-500 hover:text-red-700">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                    
+                                    <div class="opcao-container flex items-center">
+                                        <input type="radio" name="resposta-correta-0" class="resposta-correta mr-2 h-4 w-4">
+                                        <input type="text" class="texto-opcao flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                                            placeholder="Alternativa D">
+                                        <button type="button" class="btn-remover-opcao ml-2 text-red-500 hover:text-red-700">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <button type="button" class="btn-adicionar-opcao text-sm text-blue-600 hover:text-blue-800">
+                                    <i class="fas fa-plus mr-1"></i> Adicionar alternativa
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div id="sem-questoes" class="text-center py-6 text-gray-500 bg-gray-50 rounded-md mt-2">
+                            <p>Nenhuma questão adicionada</p>
+                            <p class="text-sm">Clique em "Nova Questão" para adicionar</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="px-6 py-4 bg-gray-50 border-t flex justify-end sticky bottom-0">
+                    <button type="button" id="cancelar-avaliacao" class="bg-white border border-gray-300 text-gray-700 rounded-md px-4 py-2 mr-2 hover:bg-gray-50 transition">
+                        Cancelar
+                    </button>
+                    <button id="btn-salvar-avaliacao" type="submit" class="bg-blue-600 text-white rounded-md px-4 py-2 hover:bg-blue-700 transition">
+                        Salvar Avaliação
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Modal de adicionar/editar evento -->
+    <div id="modal-evento" class="hidden fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-md mx-auto">
+            <div class="px-6 py-4 border-b">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-lg font-semibold text-gray-900">Novo Evento de Avaliação</h3>
+                    <button id="fechar-modal-evento" class="text-gray-400 hover:text-gray-500">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            <form id="form-evento">
+                <div class="p-6 space-y-4">
+                    <div>
+                        <label for="nome-evento" class="block text-sm font-medium text-gray-700 mb-1">Nome do Evento</label>
+                        <input type="text" id="nome-evento" name="nome-evento" required
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label for="avaliacao-evento" class="block text-sm font-medium text-gray-700 mb-1">Avaliação</label>
+                        <select id="avaliacao-evento" name="avaliacao-evento" required
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="">Selecione uma avaliação</option>
+                            <option value="1">Avaliação 1º Semestre 2023</option>
+                            <option value="2">Avaliação 2º Semestre 2023</option>
+                        </select>
+                    </div>
+                    <div class="flex items-center">
+                        <input type="checkbox" id="status-evento" name="status-evento" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                        <label for="status-evento" class="ml-2 block text-sm text-gray-900">Evento ativo</label>
+                    </div>
+                </div>
+                <div class="px-6 py-4 bg-gray-50 border-t flex justify-end">
+                    <button type="button" id="cancelar-evento" class="bg-white border border-gray-300 text-gray-700 rounded-md px-4 py-2 mr-2 hover:bg-gray-50 transition">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="bg-blue-600 text-white rounded-md px-4 py-2 hover:bg-blue-700 transition">
+                        Salvar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal de envio simples -->
+    <div id="modal-envio-simples" class="hidden fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-md mx-auto">
+            <div class="px-6 py-4 border-b">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-lg font-semibold text-gray-900">Nova Prova Simplificada</h3>
+                    <button id="fechar-modal-simples" class="text-gray-400 hover:text-gray-500">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            <form id="form-envio-simples">
+                <div class="p-6 space-y-4">
+                    <div>
+                        <label for="nome-prova" class="block text-sm font-medium text-gray-700 mb-1">Nome da Prova</label>
+                        <input type="text" id="nome-prova" name="nome-prova" required
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label for="descricao-prova" class="block text-sm font-medium text-gray-700 mb-1">Descrição</label>
+                        <textarea id="descricao-prova" name="descricao-prova" rows="4" 
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="Descreva a prova"></textarea>
+                    </div>
+                </div>
+                <div class="px-6 py-4 bg-gray-50 border-t flex justify-end">
+                    <button type="button" id="cancelar-envio-simples" class="bg-white border border-gray-300 text-gray-700 rounded-md px-4 py-2 mr-2 hover:bg-gray-50 transition">
+                        Cancelar
+                    </button>
+                    <button id="btn-enviar-prova" type="submit" class="bg-blue-600 text-white rounded-md px-4 py-2 hover:bg-blue-700 transition">
+                        Enviar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+        const btn = document.getElementById('btn-enviar-prova');
+        btn.addEventListener('click', async () => {
+            const nomeProva = document.getElementById('nome-prova').value;
+            const descricaoProva = document.getElementById('descricao-prova').value;
+
+            const path_base = `https://salf-salf-api.py5r5i.easypanel.host/api/reading-tests`;
+            const response = await fetch(path_base, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
+                method: 'POST',
+                body: JSON.stringify({
+                    name: nomeProva,
+                    description: descricaoProva
+                })
+            });
+            const data = await response.json();
+            console.log(data);
+        });
+    </script>
+
+    <script src="../../js/template.js"></script>
+    <script src="../../js/api/assessments.js"></script>
+    <script src="../../js/api/reading-tests.js"></script>
+    <script src="../../js/api/eventos-api.js"></script>
+    <script src="../../js/api/criar-teste-leitura.js"></script>
+    <script src="../../js/avaliacao.js"></script>
+    <script src="../../js/leituras.js"></script>
+    <script>
+        // Adicionar evento ao botão de nova leitura
+        document.getElementById('btn-nova-leitura').addEventListener('click', function() {
+            // Redirecionar para a página de realizar avaliação
+            window.location.href = 'realizar.html';
+        });
+    </script>
+
+    <!-- Scripts -->
+    <script src="../../js/pages/listar-leituras.js"></script>
+    <script src="../../js/edit-avaliacao.js"></script>
+    <script src="../../js/eventos-editar.js"></script>
+</body>
+</html> 
