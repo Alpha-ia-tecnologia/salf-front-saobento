@@ -82,7 +82,6 @@ document.addEventListener('DOMContentLoaded', function() {
             email: emailUsuario.value.trim(),
             password: senhaUsuario.value,
             role: tipoUsuario.value.toUpperCase(),
-            active: statusUsuario.checked
         };
 
         // Enviar para a API
