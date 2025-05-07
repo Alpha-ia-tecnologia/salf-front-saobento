@@ -18,6 +18,89 @@
         
         // Adicionar listeners aos botões de iniciar timer
         adicionarListenersAosBotoes();
+        
+        // Função para ativar todos os itens clicáveis
+        function ativarTodasOpcoes() {
+            console.log('Ativando todas as opções clicáveis...');
+            
+            // Seletores para todos os tipos de itens
+            const itens = document.querySelectorAll(
+                '.palavra-item, .pseudopalavra-item, .frase-item, .linha-texto-item'
+            );
+            
+            // Remover classes que impedem o clique e adicionar classes que permitem o clique
+            itens.forEach(item => {
+                // Remover classes que bloqueiam
+                item.classList.remove('bg-yellow-100', 'cursor-not-allowed', 'opacity-50', 'disabled');
+                
+                // Adicionar classes que permitem o clique
+                item.classList.add('bg-white', 'hover:bg-blue-100', 'cursor-pointer');
+                
+                // Garantir que o evento de clique funcione
+                item.style.pointerEvents = 'auto';
+                
+                // Adicionar/modificar o evento de clique
+                item.onclick = function() {
+                    // Alternar entre marcado e não marcado
+                    if (this.classList.contains('bg-green-200')) {
+                        this.classList.remove('bg-green-200');
+                        this.classList.add('bg-white', 'hover:bg-blue-100');
+                        
+                        // Atualizar contadores
+                        atualizarContadores();
+                    } else {
+                        this.classList.add('bg-green-200');
+                        this.classList.remove('bg-white', 'hover:bg-blue-100');
+                        
+                        // Atualizar contadores
+                        atualizarContadores();
+                    }
+                };
+            });
+            
+            console.log('Opções ativadas com sucesso!');
+        }
+        
+        // Função para atualizar todos os contadores
+        function atualizarContadores() {
+            // Palavras
+            const palavrasLidas = document.querySelectorAll('.palavra-item.bg-green-200').length;
+            const totalPalavrasLidas = document.getElementById('total-palavras-lidas');
+            if (totalPalavrasLidas) totalPalavrasLidas.textContent = palavrasLidas;
+            
+            // Pseudopalavras
+            const pseudopalavrasLidas = document.querySelectorAll('.pseudopalavra-item.bg-green-200').length;
+            const totalPseudopalavrasLidas = document.getElementById('total-pseudopalavras-lidas');
+            if (totalPseudopalavrasLidas) totalPseudopalavrasLidas.textContent = pseudopalavrasLidas;
+            
+            // Frases
+            const frasesLidas = document.querySelectorAll('.frase-item.bg-green-200').length;
+            const totalFrasesLidas = document.getElementById('total-frases-lidas');
+            if (totalFrasesLidas) totalFrasesLidas.textContent = frasesLidas;
+            
+            // Linhas de texto
+            const linhasLidas = document.querySelectorAll('.linha-texto-item.bg-green-200').length;
+            const totalLinhasLidas = document.getElementById('total-linhas-lidas');
+            if (totalLinhasLidas) totalLinhasLidas.textContent = linhasLidas;
+        }
+        
+        // Ativar todas as opções imediatamente
+        ativarTodasOpcoes();
+        
+        // Verificar regularmente para garantir que novas opções também sejam ativadas
+        setInterval(ativarTodasOpcoes, 2000);
+        
+        // Sobrescrever verificação de timer nas funções de leitura
+        if (window.iniciarTimer) {
+            const originalIniciarTimer = window.iniciarTimer;
+            window.iniciarTimer = function(etapa) {
+                // Chamar a função original
+                originalIniciarTimer(etapa);
+                
+                // Garantir que todos os itens estejam ativados
+                setTimeout(ativarTodasOpcoes, 100);
+            };
+        }
     });
     
     /**

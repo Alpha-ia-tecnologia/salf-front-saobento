@@ -9,49 +9,29 @@
     document.addEventListener('DOMContentLoaded', function() {
         console.log('🔄 DOM carregado - Iniciando correções de botões');
         
+        // Função para ativar todos os botões da interface
+        function ativarTodosBotoes() {
+            // Seletor para todos os botões da interface de avaliação
+            const botoes = document.querySelectorAll('.btn-next-step, button[id^="proximo-etapa"], button[id^="iniciar-timer"]');
+            
+            // Remover o atributo disabled de todos os botões
+            botoes.forEach(botao => {
+                botao.removeAttribute('disabled');
+            });
+            
+            console.log('Todos os botões foram ativados');
+        }
+        
         // Ativar botões imediatamente
-        ativarBotoesTimer();
+        ativarTodosBotoes();
         
-        // Repetir a ativação para garantir que botões fiquem disponíveis mesmo após
-        // possíveis manipulações por outros scripts
-        setInterval(ativarBotoesTimer, 2000);
+        // Ativar também o botão de iniciar avaliação
+        const btnIniciarAvaliacao = document.getElementById('iniciar-avaliacao');
+        if (btnIniciarAvaliacao) {
+            btnIniciarAvaliacao.removeAttribute('disabled');
+        }
+        
+        // Garantir que novos botões também sejam ativados (para elementos adicionados dinamicamente)
+        setInterval(ativarTodosBotoes, 2000);
     });
-    
-    /**
-     * Garante que os botões de iniciar timer estejam habilitados
-     */
-    function ativarBotoesTimer() {
-        const botoes = [
-            'iniciar-timer-palavras',
-            'iniciar-timer-pseudopalavras',
-            'iniciar-timer-frases',
-            'iniciar-timer-texto'
-        ];
-        
-        botoes.forEach(id => {
-            const botao = document.getElementById(id);
-            if (botao) {
-                if (botao.disabled) {
-                    console.log(`🔄 Habilitando botão de timer: ${id}`);
-                }
-                
-                // Remover atributo disabled
-                botao.disabled = false;
-                
-                // Remover classes de desativado
-                botao.classList.remove('opacity-50', 'cursor-not-allowed', 'bg-gray-400');
-                
-                // Adicionar classes de ativo
-                botao.classList.add('bg-blue-600', 'hover:bg-blue-700', 'cursor-pointer');
-                
-                // Garantir que o evento de clique está sendo propagado
-                botao.style.pointerEvents = 'auto';
-                
-                // Atualizar texto se necessário
-                if (botao.textContent === 'Cronômetro iniciado') {
-                    botao.textContent = 'Iniciar Cronômetro';
-                }
-            }
-        });
-    }
 })(); 
