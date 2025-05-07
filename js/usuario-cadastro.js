@@ -5,8 +5,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const emailUsuario = document.getElementById('email-usuario');
     const senhaUsuario = document.getElementById('senha-usuario');
     const confirmarSenha = document.getElementById('confirmar-senha');
-    const tipoUsuario = document.getElementById('tipo-usuario');
-    const statusUsuario = document.getElementById('status-usuario');
+    const tipo = document.getElementById('tipo-usuario');
+    console.log(tipo);
+    
 
     // Endpoint base da API
     const API_BASE_URL = 'https://salf-salf-api.py5r5i.easypanel.host/api';
@@ -58,11 +59,7 @@ document.addEventListener('DOMContentLoaded', function() {
             return false;
         }
 
-        if (!tipoUsuario.value) {
-            alert('Por favor, selecione o tipo de usuário.');
-            tipoUsuario.focus();
-            return false;
-        }
+      
 
         return true;
     }
@@ -81,7 +78,7 @@ document.addEventListener('DOMContentLoaded', function() {
             name: nomeUsuario.value.trim(),
             email: emailUsuario.value.trim(),
             password: senhaUsuario.value,
-            role: tipoUsuario.value.toUpperCase(),
+            role: tipo.value,
         };
 
         // Enviar para a API
