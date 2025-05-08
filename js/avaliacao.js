@@ -88,7 +88,6 @@ const containerQuestoes = document.getElementById('container-questoes');
 const semQuestoes = document.getElementById('sem-questoes');
 
 // Elementos para o modal de envio simples
-const btnEnvioSimples = document.getElementById('btn-envio-simples');
 const modalEnvioSimples = document.getElementById('modal-envio-simples');
 const fecharModalSimples = document.getElementById('fechar-modal-simples');
 const cancelarEnvioSimples = document.getElementById('cancelar-envio-simples');
@@ -987,11 +986,7 @@ function atualizarTabelaAvaliacoes() {
 }
 
 // Abrir e fechar modal simples
-if (btnEnvioSimples) {
-    btnEnvioSimples.addEventListener('click', function () {
-        modalEnvioSimples.classList.remove('hidden');
-    });
-}
+
 
 if (fecharModalSimples) {
     fecharModalSimples.addEventListener('click', function () {

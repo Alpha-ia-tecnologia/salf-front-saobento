@@ -41,9 +41,6 @@
                                 <button id="btn-nova-avaliacao" class="bg-blue-600 text-white rounded-md px-4 py-2 flex items-center hover:bg-blue-700 transition">
                                     <i class="fas fa-plus mr-2"></i> Nova Avaliação
                                 </button>
-                                <button id="btn-envio-simples" class="bg-green-600 text-white rounded-md px-4 py-2 flex items-center hover:bg-green-700 transition">
-                                    <i class="fas fa-paper-plane mr-2"></i> Envio Simples
-                                </button>
                             </div>
                         </div>
                         
@@ -274,26 +271,6 @@
                         <div class="bg-gray-50 p-4 rounded-md h-32 overflow-y-auto">
                             <div id="lista-pseudopalavras" class="flex flex-wrap gap-2">
                                 <!-- Lista de pseudopalavras será gerada via JavaScript -->
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Nova seção para sentenças -->
-                    <div class="border-t pt-4">
-                        <h4 class="text-md font-medium text-gray-800 mb-2">Sentenças</h4>
-                        <p class="text-sm text-gray-600 mb-2">Adicione sentenças individuais para a avaliação</p>
-                        
-                        <div class="flex mb-2">
-                            <input type="text" id="nova-sentenca" placeholder="Digite sentenças separadas por vírgula ou pressione Enter" 
-                                class="flex-1 px-3 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            <button type="button" id="adicionar-sentenca" class="bg-blue-600 text-white px-4 py-2 rounded-r-md hover:bg-blue-700 transition">
-                                Adicionar
-                            </button>
-                        </div>
-                        
-                        <div class="bg-gray-50 p-4 rounded-md h-32 overflow-y-auto">
-                            <div id="lista-sentencas" class="flex flex-wrap gap-2">
-                                <!-- Lista de sentenças será gerada via JavaScript -->
                             </div>
                         </div>
                     </div>
@@ -532,10 +509,13 @@
     <script src="../../js/leituras.js"></script>
     <script>
         // Adicionar evento ao botão de nova leitura
-        document.getElementById('btn-nova-leitura').addEventListener('click', function() {
-            // Redirecionar para a página de realizar avaliação
-            window.location.href = 'realizar.html';
-        });
+        const btnNovaLeitura = document.getElementById('btn-nova-leitura');
+        if (btnNovaLeitura) {
+            btnNovaLeitura.addEventListener('click', function() {
+                // Redirecionar para a página de realizar avaliação
+                window.location.href = 'realizar.html';
+            });
+        }
     </script>
 
     <!-- Scripts -->

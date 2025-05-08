@@ -136,19 +136,42 @@ function inicializarModuloLeituras() {
 
 // Configuração dos botões de navegação
 function configurarBotoesNavegacao() {
-    // Navegar entre etapas
-    etapasDOM.btnProximoPalavras.addEventListener('click', () => mudarEtapa('palavras', 'pseudopalavras'));
-    etapasDOM.btnProximoPseudopalavras.addEventListener('click', () => mudarEtapa('pseudopalavras', 'frases'));
-    etapasDOM.btnProximoFrases.addEventListener('click', () => mudarEtapa('frases', 'texto'));
-    etapasDOM.btnProximoTexto.addEventListener('click', () => mudarEtapa('texto', 'resultado'));
+    // Verificar se os elementos existem antes de adicionar os event listeners
+    if (etapasDOM.btnProximoPalavras) {
+        etapasDOM.btnProximoPalavras.addEventListener('click', () => mudarEtapa('palavras', 'pseudopalavras'));
+    }
+    
+    if (etapasDOM.btnProximoPseudopalavras) {
+        etapasDOM.btnProximoPseudopalavras.addEventListener('click', () => mudarEtapa('pseudopalavras', 'frases'));
+    }
+    
+    if (etapasDOM.btnProximoFrases) {
+        etapasDOM.btnProximoFrases.addEventListener('click', () => mudarEtapa('frases', 'texto'));
+    }
+    
+    if (etapasDOM.btnProximoTexto) {
+        etapasDOM.btnProximoTexto.addEventListener('click', () => mudarEtapa('texto', 'resultado'));
+    }
 }
 
 // Configuração dos botões de timer
 function configurarBotoesTimer() {
-    etapasDOM.btnTimerPalavras.addEventListener('click', () => iniciarTimer('palavras'));
-    etapasDOM.btnTimerPseudopalavras.addEventListener('click', () => iniciarTimer('pseudopalavras'));
-    etapasDOM.btnTimerFrases.addEventListener('click', () => iniciarTimer('frases'));
-    etapasDOM.btnTimerTexto.addEventListener('click', () => iniciarTimer('texto'));
+    // Verificar se os elementos existem antes de adicionar os event listeners
+    if (etapasDOM.btnTimerPalavras) {
+        etapasDOM.btnTimerPalavras.addEventListener('click', () => iniciarTimer('palavras'));
+    }
+    
+    if (etapasDOM.btnTimerPseudopalavras) {
+        etapasDOM.btnTimerPseudopalavras.addEventListener('click', () => iniciarTimer('pseudopalavras'));
+    }
+    
+    if (etapasDOM.btnTimerFrases) {
+        etapasDOM.btnTimerFrases.addEventListener('click', () => iniciarTimer('frases'));
+    }
+    
+    if (etapasDOM.btnTimerTexto) {
+        etapasDOM.btnTimerTexto.addEventListener('click', () => iniciarTimer('texto'));
+    }
 }
 
 // Carregar detalhes da avaliação

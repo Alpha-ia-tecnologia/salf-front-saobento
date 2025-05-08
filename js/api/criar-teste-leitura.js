@@ -13,8 +13,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const novaPalavra = document.getElementById('nova-palavra');
     const novaPseudopalavra = document.getElementById('nova-pseudopalavra');
     const novaFrase = document.getElementById('nova-frase');
-    const novaSentenca = document.getElementById('nova-sentenca');
-    const adicionarSentenca = document.getElementById('adicionar-sentenca');
     const adicionarFrase = document.getElementById('adicionar-frase');
 
     const listas = {
@@ -29,12 +27,6 @@ document.addEventListener('DOMContentLoaded', function () {
             inputDom: novaPseudopalavra,
             classeItem: 'pseudopalavra-item',
             propriedade: 'pseudowords'
-        },
-        sentencas: {
-            listaDom: document.getElementById('lista-sentencas'),
-            inputDom: novaSentenca,
-            classeItem: 'sentenca-item',
-            propriedade: 'sentences'
         },
         frases: {
             listaDom: document.getElementById('lista-frases'),
@@ -51,7 +43,6 @@ document.addEventListener('DOMContentLoaded', function () {
         gradeRange: null,
         totalWords: 0,
         totalPseudowords: 0,
-        sentences: [],
         phrases: [],
         text: null,
         questions: [],
@@ -65,6 +56,13 @@ document.addEventListener('DOMContentLoaded', function () {
     const definirTexto = () => {
         const texto = textoAvaliacao.value.trim();
         dadosAvaliacao.text = texto;
+    }
+
+    const definirFaixaSerie = () => {
+        const gradeRangeSelector = document.getElementById('grade-range');
+        if (gradeRangeSelector) {
+            dadosAvaliacao.gradeRange = gradeRangeSelector.value;
+        }
     }
 
     const adicionarPalavras = () => {
@@ -100,24 +98,6 @@ document.addEventListener('DOMContentLoaded', function () {
             
             novaPseudopalavra.value = '';
             novaPseudopalavra.focus();
-        }
-    }
-
-    const adicionarSentencas = () => {
-        const entrada = novaSentenca.value.trim();
-        if (entrada !== '') {
-            // Dividir a entrada por vírgulas para permitir adição múltipla
-            const sentencas = entrada.split(',').map(s => s.trim()).filter(s => s !== '');
-            
-            // Adicionar cada sentença individualmente
-            sentencas.forEach(sentenca => {
-                if (!dadosAvaliacao.sentences.includes(sentenca)) {
-                    adicionarItem('sentencas', sentenca);
-                }
-            });
-            
-            novaSentenca.value = '';
-            novaSentenca.focus();
         }
     }
 
@@ -164,42 +144,14 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         
         const item = document.createElement('div');
-        item.className = `${config.classeItem} bg-white border border-gray-300 px-3 py-1 rounded-full text-sm flex items-center hover:bg-blue-100 cursor-pointer transition-colors select-none`;
+        item.className = `${config.classeItem} bg-white border border-gray-300 px-3 py-1 rounded-full text-sm flex items-center hover:bg-gray-100 transition-colors select-none`;
         item.dataset.valor = texto;
-        item.dataset.selecionado = "false";
-        
-        const checkbox = document.createElement('span');
-        checkbox.className = 'inline-block w-4 h-4 border border-gray-400 rounded mr-2 flex-shrink-0 transition-colors';
-        checkbox.innerHTML = '<i class="fas fa-check text-white text-xs hidden"></i>';
         
         const textoSpan = document.createElement('span');
         textoSpan.textContent = texto;
         textoSpan.className = 'flex-grow';
         
-        item.appendChild(checkbox);
         item.appendChild(textoSpan);
-        
-        item.addEventListener('click', function(e) {
-            if (e.target.closest('button.btn-remover')) return;
-            
-            if (item.dataset.selecionado === "false") {
-                item.dataset.selecionado = "true";
-                item.classList.remove('bg-white', 'hover:bg-blue-100');
-                item.classList.add('bg-green-100');
-                checkbox.classList.add('bg-green-500');
-                checkbox.classList.remove('border-gray-400');
-                checkbox.querySelector('i').classList.remove('hidden');
-            } else {
-                item.dataset.selecionado = "false";
-                item.classList.remove('bg-green-100');
-                item.classList.add('bg-white', 'hover:bg-blue-100');
-                checkbox.classList.remove('bg-green-500');
-                checkbox.classList.add('border-gray-400');
-                checkbox.querySelector('i').classList.add('hidden');
-            }
-            
-            atualizarContagemSelecionados(tipoLista);
-        });
         
         const botaoRemover = document.createElement('button');
         botaoRemover.className = 'ml-2 text-gray-500 hover:text-red-600 btn-remover flex-shrink-0';
@@ -211,8 +163,6 @@ document.addEventListener('DOMContentLoaded', function () {
         
         item.appendChild(botaoRemover);
         config.listaDom.appendChild(item);
-        
-        atualizarContagemSelecionados(tipoLista);
         
         return item;
     }
@@ -246,9 +196,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         
         console.log(`Item "${valor}" removido da lista ${tipoLista}`);
-        
-        // Atualizar contagem de itens selecionados
-        atualizarContagemSelecionados(tipoLista);
     }
     
     const limparLista = (tipoLista) => {
@@ -303,9 +250,6 @@ document.addEventListener('DOMContentLoaded', function () {
             } else if (document.activeElement === novaPseudopalavra) {
                 adicionarPseudopalavras();
                 e.preventDefault();
-            } else if (document.activeElement === novaSentenca) {
-                adicionarSentencas();
-                e.preventDefault();
             } else if (document.activeElement === novaFrase) {
                 adicionarFrases();
                 e.preventDefault();
@@ -316,7 +260,6 @@ document.addEventListener('DOMContentLoaded', function () {
     
     if (palavras) palavras.addEventListener('click', adicionarPalavras);
     if (pseudopalavras) pseudopalavras.addEventListener('click', adicionarPseudopalavras);
-    if (adicionarSentenca) adicionarSentenca.addEventListener('click', adicionarSentencas);
     if (adicionarFrase) adicionarFrase.addEventListener('click', adicionarFrases);
 
     const popularListasDeDados = () => {
@@ -332,10 +275,6 @@ document.addEventListener('DOMContentLoaded', function () {
             adicionarItem('pseudopalavras', pseudopalavra);
         });
         
-        dadosAvaliacao.sentences.forEach(sentenca => {
-            adicionarItem('sentencas', sentenca);
-        });
-        
         dadosAvaliacao.phrases.forEach(frase => {
             if (typeof frase === 'object' && frase.text) {
                 adicionarItem('frases', frase.text);
@@ -346,37 +285,42 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     if (btnSalvarAvaliacao) {
-        btnSalvarAvaliacao.addEventListener('click', (e) => {
+        btnSalvarAvaliacao.addEventListener('click', async(e) => {
             e.preventDefault();
             dadosAvaliacao.totalWords = dadosAvaliacao.words.length;
             dadosAvaliacao.totalPseudowords = dadosAvaliacao.pseudowords.length;
             adicionarSeletorFaixaSerie();
             definirTexto();
             definirNomeDaAvaliacao();
+            definirFaixaSerie();
             
-            // Atualizar arrays com apenas os itens selecionados
-            const palavrasSelecionadas = obterItensSelecionados('palavras');
-            const pseudopalavrasSelecionadas = obterItensSelecionados('pseudopalavras');
-            const sentencasSelecionadas = obterItensSelecionados('sentencas');
-            const frasesSelecionadas = obterItensSelecionados('frases');
-            
-            // Se existirem itens selecionados, usar esses em vez de todos os itens
-            if (palavrasSelecionadas.length > 0) {
-                dadosAvaliacao.words = palavrasSelecionadas;
-                dadosAvaliacao.totalWords = palavrasSelecionadas.length;
+            const token = localStorage.getItem('token');
+            const request = await fetch('https://salf-salf-api.py5r5i.easypanel.host/api/assessments', {
+                method: 'POST',
+                body: JSON.stringify(dadosAvaliacao),
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if(request.ok) {
+                alert('Avaliação criada com sucesso');
+                this.location.reload();
+            } else {
+                alert('Erro ao criar avaliação');
             }
             
-            if (pseudopalavrasSelecionadas.length > 0) {
-                dadosAvaliacao.pseudowords = pseudopalavrasSelecionadas;
-                dadosAvaliacao.totalPseudowords = pseudopalavrasSelecionadas.length;
-            }
-            
-            if (sentencasSelecionadas.length > 0) {
-                dadosAvaliacao.sentences = sentencasSelecionadas;
-            }
-            
-            if (frasesSelecionadas.length > 0) {
-                dadosAvaliacao.phrases = frasesSelecionadas.map(frase => ({ text: frase }));
+    
+            // Atualizar as frases para o formato esperado pela API
+            if (dadosAvaliacao.phrases.length > 0) {
+                // Garantir que todas as frases estão no formato de objeto
+                dadosAvaliacao.phrases = dadosAvaliacao.phrases.map(frase => {
+                    if (typeof frase === 'string') {
+                        return { text: frase };
+                    }
+                    return frase;
+                });
             }
             
             // Adicionar questões ao objeto dadosAvaliacao
@@ -613,99 +557,4 @@ document.addEventListener('DOMContentLoaded', function () {
         
         return itensSelecionados;
     }
-    
-    /**
-     * Seleciona todos os itens de uma lista
-     */
-    const selecionarTodos = (tipoLista) => {
-        const config = listas[tipoLista];
-        if (!config || !config.listaDom) return;
-        
-        // Selecionar todos os itens
-        config.listaDom.querySelectorAll(`.${config.classeItem}`).forEach(item => {
-            item.dataset.selecionado = "true";
-            item.classList.remove('bg-white', 'hover:bg-blue-100');
-            item.classList.add('bg-green-100');
-            
-            const checkbox = item.querySelector('span:first-child');
-            if (checkbox) {
-                checkbox.classList.add('bg-green-500');
-                checkbox.classList.remove('border-gray-400');
-                checkbox.querySelector('i')?.classList.remove('hidden');
-            }
-        });
-        
-        // Atualizar contagem
-        atualizarContagemSelecionados(tipoLista);
-    }
-    
-    /**
-     * Desmarca todos os itens de uma lista
-     */
-    const desmarcarTodos = (tipoLista) => {
-        const config = listas[tipoLista];
-        if (!config || !config.listaDom) return;
-        
-        // Desmarcar todos os itens
-        config.listaDom.querySelectorAll(`.${config.classeItem}`).forEach(item => {
-            item.dataset.selecionado = "false";
-            item.classList.remove('bg-green-100');
-            item.classList.add('bg-white', 'hover:bg-blue-100');
-            
-            const checkbox = item.querySelector('span:first-child');
-            if (checkbox) {
-                checkbox.classList.remove('bg-green-500');
-                checkbox.classList.add('border-gray-400');
-                checkbox.querySelector('i')?.classList.add('hidden');
-            }
-        });
-        
-        // Atualizar contagem
-        atualizarContagemSelecionados(tipoLista);
-    }
-
-    /**
-     * Adicionar botões de ação para as listas (Selecionar Todos/Desmarcar Todos)
-     */
-    function adicionarBotoesAcaoLista(tipoLista) {
-        const config = listas[tipoLista];
-        if (!config || !config.listaDom) return;
-        
-        // Encontrar o container da lista
-        const container = config.listaDom.parentElement;
-        if (!container) return;
-        
-        // Verificar se já existem os botões
-        if (container.querySelector('.botoes-acao-lista')) return;
-        
-        // Criar container de botões
-        const botoesContainer = document.createElement('div');
-        botoesContainer.className = 'botoes-acao-lista flex space-x-2 mt-2';
-        
-        // Botão Selecionar Todos
-        const btnSelecionarTodos = document.createElement('button');
-        btnSelecionarTodos.type = 'button';
-        btnSelecionarTodos.className = 'text-xs text-blue-600 hover:text-blue-800 flex items-center';
-        btnSelecionarTodos.innerHTML = '<i class="fas fa-check-square mr-1"></i> Selecionar Todos';
-        btnSelecionarTodos.onclick = () => selecionarTodos(tipoLista);
-        
-        // Botão Desmarcar Todos
-        const btnDesmarcarTodos = document.createElement('button');
-        btnDesmarcarTodos.type = 'button';
-        btnDesmarcarTodos.className = 'text-xs text-gray-600 hover:text-gray-800 flex items-center';
-        btnDesmarcarTodos.innerHTML = '<i class="fas fa-square mr-1"></i> Desmarcar Todos';
-        btnDesmarcarTodos.onclick = () => desmarcarTodos(tipoLista);
-        
-        // Adicionar botões ao container
-        botoesContainer.appendChild(btnSelecionarTodos);
-        botoesContainer.appendChild(btnDesmarcarTodos);
-        
-        // Adicionar container após a lista
-        container.appendChild(botoesContainer);
-    }
-    
-    // Adicionar botões de ação para todas as listas
-    Object.keys(listas).forEach(tipoLista => {
-        adicionarBotoesAcaoLista(tipoLista);
-    });
 }); 

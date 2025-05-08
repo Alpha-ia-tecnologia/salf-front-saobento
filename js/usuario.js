@@ -231,8 +231,8 @@ document.addEventListener('DOMContentLoaded', function() {
         dadosParaMostrar.forEach(usuario => {
             // Determinar classes e textos para exibição
             const roleInfo = roleMap[usuario.role] || { text: usuario.role, class: 'bg-gray-100 text-gray-800' };
-            const statusClass = usuario.active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800';
-            const statusText = usuario.active ? 'Ativo' : 'Inativo';
+            const statusClass = 'bg-green-100 text-green-800';
+            const statusText = 'Ativo' ;
             
             const tr = document.createElement('tr');
             tr.innerHTML = `
