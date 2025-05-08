@@ -1,205 +1,429 @@
 /**
- * Arquivo responsável por manipular a criação de testes de leitura através da API
+ * Arquivo responsável por manipular a interface de criação de testes de leitura
  */
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     console.log('Script de criação de testes de leitura carregado');
-    
-    // Adicionar seletor de faixa de série ao modal
-    adicionarSeletorFaixaSerie();
-    
-    // Referência ao botão de salvar avaliação
+
     const btnSalvarAvaliacao = document.getElementById('btn-salvar-avaliacao');
-    const formAvaliacao = document.getElementById('form-avaliacao');
-    
-    // Adicionar botão para criar teste pré-definido
-    adicionarBotaoCriarTestePredefinido();
-    
-    // Adicionar botão para enviar teste diretamente
-    adicionarBotaoEnviarTesteDireto();
-    
-    // Configurar funcionalidade de adicionar questões
-    configurarAdicionarQuestoes();
-    
-    if (formAvaliacao && btnSalvarAvaliacao) {
-        console.log('Form e botão de salvar encontrados, adicionando listeners');
-        
-        // Adicionar evento de clique direto ao botão
-        btnSalvarAvaliacao.addEventListener('click', async function(event) {
-            event.preventDefault();
-            console.log('Botão de salvar clicado');
-            
-            try {
-                await enviarTesteParaAPI();
-            } catch (error) {
-                console.error('Erro ao enviar teste:', error);
-                alert(`Erro ao salvar o teste de leitura: ${error.message}`);
+    const nomeAvaliacao = document.getElementById('nome-avaliacao');
+    const textoAvaliacao = document.getElementById('texto-avaliacao');
+    const palavras = document.getElementById('adicionar-palavra');
+    const pseudopalavras = document.getElementById('adicionar-pseudopalavra');
+    const novaPalavra = document.getElementById('nova-palavra');
+    const novaPseudopalavra = document.getElementById('nova-pseudopalavra');
+    const novaFrase = document.getElementById('nova-frase');
+    const novaSentenca = document.getElementById('nova-sentenca');
+    const adicionarSentenca = document.getElementById('adicionar-sentenca');
+    const adicionarFrase = document.getElementById('adicionar-frase');
+
+    const listas = {
+        palavras: {
+            listaDom: document.getElementById('lista-palavras'),
+            inputDom: novaPalavra,
+            classeItem: 'palavra-item',
+            propriedade: 'words'
+        },
+        pseudopalavras: {
+            listaDom: document.getElementById('lista-pseudopalavras'),
+            inputDom: novaPseudopalavra,
+            classeItem: 'pseudopalavra-item',
+            propriedade: 'pseudowords'
+        },
+        sentencas: {
+            listaDom: document.getElementById('lista-sentencas'),
+            inputDom: novaSentenca,
+            classeItem: 'sentenca-item',
+            propriedade: 'sentences'
+        },
+        frases: {
+            listaDom: document.getElementById('lista-frases'),
+            inputDom: novaFrase,
+            classeItem: 'frase-item',
+            propriedade: 'phrases'
+        }
+    };
+
+    const dadosAvaliacao = {
+        name: null,
+        words: [],
+        pseudowords: [],
+        gradeRange: null,
+        totalWords: 0,
+        totalPseudowords: 0,
+        sentences: [],
+        phrases: [],
+        text: null,
+        questions: [],
+    }
+
+    const definirNomeDaAvaliacao = () => {
+        const avaliacao = nomeAvaliacao.value;
+        dadosAvaliacao.name = avaliacao;
+    }
+
+    const definirTexto = () => {
+        const texto = textoAvaliacao.value.trim();
+        dadosAvaliacao.text = texto;
+    }
+
+    const definirGradeRange = () => {
+        const gradeRangeElement = document.getElementById('grade-range');
+        if (gradeRangeElement) {
+            dadosAvaliacao.gradeRange = gradeRangeElement.value;
+            console.log(`Grade Range definido como: ${dadosAvaliacao.gradeRange}`);
+            return dadosAvaliacao.gradeRange;
+        } else {
+            dadosAvaliacao.gradeRange = "RANGE_1_2"; // Valor padrão
+            console.warn('Elemento grade-range não encontrado, usando valor padrão');
+            return dadosAvaliacao.gradeRange;
+        }
+    }
+
+    // Função para obter o valor atual do gradeRange
+    const obterGradeRange = () => {
+        return dadosAvaliacao.gradeRange || definirGradeRange();
+    }
+
+    const adicionarPalavras = () => {
+        const palavra = novaPalavra.value.trim();
+        if (palavra !== '') {
+            adicionarItem('palavras', palavra);
+            novaPalavra.value = '';
+        }
+    }
+
+    const adicionarPseudopalavras = () => {
+        const pseudopalavra = novaPseudopalavra.value.trim();
+        if (pseudopalavra !== '') {
+            adicionarItem('pseudopalavras', pseudopalavra);
+            novaPseudopalavra.value = '';
+        }
+    }
+
+    const salvarAvaliacao = () => {
+        console.log('Salvando avaliação');
+        const token = localStorage.getItem('token');
+        const request = fetch('https://salf-salf-api.py5r5i.easypanel.host/api/assessments', {
+            method: 'POST',
+            body: JSON.stringify(dadosAvaliacao),
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
             }
         });
+    }
+
+    const adicionarSentencas = () => {
+        const sentenca = novaSentenca.value.trim();
+        if (sentenca !== '') {
+            adicionarItem('sentencas', sentenca);
+            novaSentenca.value = '';
+        }
+    }
+
+    const adicionarFrases = () => {
+        const frase = novaFrase.value.trim();
+        if (frase !== '') {
+            adicionarItem('frases', frase);
+            novaFrase.value = '';
+        }
+    }
+
+    const adicionarItem = (tipoLista, texto) => {
+        const config = listas[tipoLista];
         
-        // Adicionar evento de submit ao formulário
-        formAvaliacao.addEventListener('submit', async function(event) {
-            event.preventDefault();
-            console.log('Formulário submetido');
-            
-            try {
-                await enviarTesteParaAPI();
-            } catch (error) {
-                console.error('Erro ao enviar teste:', error);
-                alert(`Erro ao salvar o teste de leitura: ${error.message}`);
-            }
-        });
-    } else {
-        console.warn('Form ou botão de salvar não encontrados');
+        if (!config || !config.listaDom) {
+            console.warn(`Lista ${tipoLista} não encontrada`);
+            return;
+        }
+        
+        if (tipoLista === 'frases') {
+            dadosAvaliacao[config.propriedade].push({ text: texto });
+        } else {
+            dadosAvaliacao[config.propriedade].push(texto);
+        }
+        
+        const item = document.createElement('div');
+        item.className = `${config.classeItem} bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm flex items-center`;
+        item.dataset.valor = texto;
+        
+        const textoSpan = document.createElement('span');
+        textoSpan.textContent = texto;
+        item.appendChild(textoSpan);
+        
+        const botaoRemover = document.createElement('button');
+        botaoRemover.className = 'ml-2 text-blue-600 hover:text-blue-800';
+        botaoRemover.innerHTML = '<i class="fas fa-times-circle"></i>';
+        botaoRemover.onclick = function () {
+            removerItem(tipoLista, item);
+        };
+        
+        item.appendChild(botaoRemover);
+        config.listaDom.appendChild(item);
     }
     
-    /**
-     * Configura a funcionalidade para adicionar múltiplas questões
-     */
+    const removerItem = (tipoLista, itemElement) => {
+        const config = listas[tipoLista];
+        const valor = itemElement.dataset.valor;
+        
+        itemElement.remove();
+        
+        if (tipoLista === 'frases') {
+            dadosAvaliacao[config.propriedade] = dadosAvaliacao[config.propriedade].filter(f => f.text !== valor);
+        } else {
+            dadosAvaliacao[config.propriedade] = dadosAvaliacao[config.propriedade].filter(p => p !== valor);
+        }
+        
+        console.log(`Item "${valor}" removido da lista ${tipoLista}`);
+    }
+    
+    const limparLista = (tipoLista) => {
+        const config = listas[tipoLista];
+        if (!config || !config.listaDom) return;
+        
+        while (config.listaDom.firstChild) {
+            config.listaDom.removeChild(config.listaDom.firstChild);
+        }
+        
+        if (tipoLista === 'frases') {
+            dadosAvaliacao[config.propriedade] = [];
+        } else {
+            dadosAvaliacao[config.propriedade] = [];
+        }
+        
+        console.log(`Lista ${tipoLista} limpa`);
+    }
+
+    const criarBotaoLimparLista = (tipoLista) => {
+        const config = listas[tipoLista];
+        if (!config || !config.listaDom) return;
+        
+        const container = config.listaDom.parentElement;
+        if (!container) return;
+        
+        if (container.querySelector('.btn-limpar-lista')) return;
+        
+        const botaoLimpar = document.createElement('button');
+        botaoLimpar.className = 'btn-limpar-lista text-sm text-red-600 hover:text-red-800 absolute top-2 right-2';
+        botaoLimpar.innerHTML = '<i class="fas fa-trash-alt mr-1"></i>Limpar tudo';
+        botaoLimpar.onclick = function() {
+            if (confirm(`Tem certeza que deseja remover todos os itens da lista?`)) {
+                limparLista(tipoLista);
+            }
+        };
+        
+        container.style.position = 'relative';
+        
+        container.appendChild(botaoLimpar);
+    }
+
+    Object.keys(listas).forEach(tipoLista => {
+        criarBotaoLimparLista(tipoLista);
+    });
+
+    window.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+            if (document.activeElement === novaPalavra) {
+                adicionarPalavras();
+                e.preventDefault();
+            } else if (document.activeElement === novaPseudopalavra) {
+                adicionarPseudopalavras();
+                e.preventDefault();
+            } else if (document.activeElement === novaSentenca) {
+                adicionarSentencas();
+                e.preventDefault();
+            } else if (document.activeElement === novaFrase) {
+                adicionarFrases();
+                e.preventDefault();
+            }
+        }
+    });
+
+    
+    if (palavras) palavras.addEventListener('click', adicionarPalavras);
+    if (pseudopalavras) pseudopalavras.addEventListener('click', adicionarPseudopalavras);
+    if (adicionarSentenca) adicionarSentenca.addEventListener('click', adicionarSentencas);
+    if (adicionarFrase) adicionarFrase.addEventListener('click', adicionarFrases);
+
+    const popularListasDeDados = () => {
+        Object.keys(listas).forEach(tipoLista => {
+            limparLista(tipoLista);
+        });
+        
+        dadosAvaliacao.words.forEach(palavra => {
+            adicionarItem('palavras', palavra);
+        });
+        
+        dadosAvaliacao.pseudowords.forEach(pseudopalavra => {
+            adicionarItem('pseudopalavras', pseudopalavra);
+        });
+        
+        dadosAvaliacao.sentences.forEach(sentenca => {
+            adicionarItem('sentencas', sentenca);
+        });
+        
+        dadosAvaliacao.phrases.forEach(frase => {
+            if (typeof frase === 'object' && frase.text) {
+                adicionarItem('frases', frase.text);
+            } else if (typeof frase === 'string') {
+                adicionarItem('frases', frase);
+            }
+        });
+    }
+
+    if (btnSalvarAvaliacao) {
+        btnSalvarAvaliacao.addEventListener('click', (e) => {
+            e.preventDefault();
+            dadosAvaliacao.totalWords = dadosAvaliacao.words.length;
+            dadosAvaliacao.totalPseudowords = dadosAvaliacao.pseudowords.length;
+            definirTexto();
+            definirNomeDaAvaliacao();
+            definirGradeRange();
+
+            salvarAvaliacao();
+            
+            const questoesElements = document.querySelectorAll('#container-questoes .questao:not(.questao-template)');
+            dadosAvaliacao.questions = Array.from(questoesElements).map(questaoEl => {
+                const enunciado = questaoEl.querySelector('.enunciado-questao').value;
+                const opcoes = Array.from(questaoEl.querySelectorAll('.opcao-container')).map(opt => 
+                    opt.querySelector('.texto-opcao').value
+                );
+                
+                return {
+                    text: enunciado,
+                    options: opcoes,
+                };
+            });
+            
+            console.log('Dados da avaliação:', dadosAvaliacao);
+        });
+    }
+
+
+    configurarAdicionarQuestoes();
+
     function configurarAdicionarQuestoes() {
-        // Referências aos elementos
         const btnAdicionarQuestao = document.getElementById('adicionar-questao');
         const templateQuestao = document.getElementById('template-questao');
         const containerQuestoes = document.getElementById('container-questoes');
-        
-        // Variáveis para controle
+
         let contadorQuestoes = 0;
-        
-        // Verificar se os elementos necessários existem
+
         if (!btnAdicionarQuestao || !templateQuestao || !containerQuestoes) {
             console.warn('Elementos para adicionar questões não encontrados');
             return;
         }
-        
+
         console.log('Configurando funcionalidade de adicionar questões');
-        
-        // Adicionar evento de clique ao botão
+
         btnAdicionarQuestao.addEventListener('click', () => {
             adicionarNovaQuestao();
         });
-        
-        /**
-         * Adiciona uma nova questão ao formulário
-         * @param {Object} questaoData - Dados da questão (opcional para pré-preenchimento)
-         */
+
         function adicionarNovaQuestao(questaoData = null) {
             contadorQuestoes++;
-            
-            // Clonar o template
+
             const novaQuestao = templateQuestao.cloneNode(true);
             novaQuestao.classList.remove('questao-template', 'hidden');
             novaQuestao.classList.add('questao');
             novaQuestao.id = `questao-${contadorQuestoes}`;
-            
-            // Configurar os inputs da questão
+
             const enunciadoQuestao = novaQuestao.querySelector('.enunciado-questao');
             const opcoesContainer = novaQuestao.querySelectorAll('.opcao-container');
             const textosOpcoes = novaQuestao.querySelectorAll('.texto-opcao');
             const respostasCorretas = novaQuestao.querySelectorAll('.resposta-correta');
-            
-            // Atualizar nome dos radio buttons para o grupo específico da questão
+
             respostasCorretas.forEach(radio => {
                 radio.name = `resposta-correta-${contadorQuestoes}`;
             });
-            
-            // Preencher dados se existirem
+
             if (questaoData) {
                 enunciadoQuestao.value = questaoData.enunciado || '';
-                
-                // Preencher opções existentes
+
                 textosOpcoes.forEach((input, index) => {
                     if (questaoData.opcoes && questaoData.opcoes[index]) {
                         input.value = questaoData.opcoes[index];
                     }
                 });
-                
-                // Marcar a resposta correta
-                if (questaoData.respostaCorreta !== undefined && 
+
+                if (questaoData.respostaCorreta !== undefined &&
                     respostasCorretas[questaoData.respostaCorreta]) {
                     respostasCorretas[questaoData.respostaCorreta].checked = true;
                 }
             }
-            
-            // Adicionar eventos para remoção da questão
+
             const btnRemoverQuestao = novaQuestao.querySelector('.btn-remover-questao');
             if (btnRemoverQuestao) {
-                btnRemoverQuestao.addEventListener('click', function() {
+                btnRemoverQuestao.addEventListener('click', function () {
                     novaQuestao.remove();
+                    
+                    const questoes = document.querySelectorAll('#container-questoes .questao:not(.questao-template)');
+                    if (questoes.length === 0) {
+                        const semQuestoes = document.getElementById('sem-questoes');
+                        if (semQuestoes) {
+                            semQuestoes.classList.remove('hidden');
+                        }
+                    }
                 });
             }
-            
-            // Adicionar eventos para remoção de opções
+
             const botoesRemoverOpcao = novaQuestao.querySelectorAll('.btn-remover-opcao');
             botoesRemoverOpcao.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    // Não remover se tiver apenas 2 opções
+                btn.addEventListener('click', function () {
                     const opcoes = novaQuestao.querySelectorAll('.opcao-container');
                     if (opcoes.length <= 2) {
                         alert('É necessário ter pelo menos 2 alternativas.');
                         return;
                     }
-                    
-                    // Remover a opção
+
                     this.closest('.opcao-container').remove();
                 });
             });
-            
-            // Adicionar evento para adicionar novas opções
+
             const btnAdicionarOpcao = novaQuestao.querySelector('.btn-adicionar-opcao');
             if (btnAdicionarOpcao) {
-                btnAdicionarOpcao.addEventListener('click', function() {
+                btnAdicionarOpcao.addEventListener('click', function () {
                     adicionarNovaOpcao(novaQuestao, contadorQuestoes);
                 });
             }
-            
-            // Adicionar a questão ao container
+
             containerQuestoes.appendChild(novaQuestao);
-            
-            // Remover aviso de "sem questões" se existir
+
             const semQuestoes = document.getElementById('sem-questoes');
             if (semQuestoes) {
                 semQuestoes.classList.add('hidden');
             }
-            
+
             console.log(`Questão ${contadorQuestoes} adicionada`);
             return novaQuestao;
         }
-        
-        /**
-         * Adiciona uma nova opção a uma questão existente
-         * @param {HTMLElement} questaoEl - Elemento da questão
-         * @param {number} questaoId - ID da questão
-         */
+
         function adicionarNovaOpcao(questaoEl, questaoId) {
-            // Pegar última opção para clonar
             const opcoesContainer = questaoEl.querySelectorAll('.opcao-container');
             if (opcoesContainer.length === 0) {
                 console.error('Nenhuma opção encontrada para clonar');
                 return;
             }
-            
-            // Clonar a última opção
+
             const ultimaOpcao = opcoesContainer[opcoesContainer.length - 1];
             const novaOpcao = ultimaOpcao.cloneNode(true);
-            
-            // Limpar o texto
+
             const inputTexto = novaOpcao.querySelector('.texto-opcao');
             if (inputTexto) {
                 inputTexto.value = '';
                 inputTexto.placeholder = `Alternativa ${String.fromCharCode(65 + opcoesContainer.length)}`;
             }
-            
-            // Configurar radio button
+
             const radioButton = novaOpcao.querySelector('.resposta-correta');
             if (radioButton) {
                 radioButton.checked = false;
                 radioButton.name = `resposta-correta-${questaoId}`;
             }
-            
-            // Adicionar evento para remover a opção
+
             const btnRemover = novaOpcao.querySelector('.btn-remover-opcao');
             if (btnRemover) {
-                btnRemover.addEventListener('click', function() {
+                btnRemover.addEventListener('click', function () {
                     const opcoes = questaoEl.querySelectorAll('.opcao-container');
                     if (opcoes.length <= 2) {
                         alert('É necessário ter pelo menos 2 alternativas.');
@@ -208,37 +432,31 @@ document.addEventListener('DOMContentLoaded', function() {
                     novaOpcao.remove();
                 });
             }
-            
-            // Adicionar a nova opção antes do botão de adicionar
+
             const btnAdicionarOpcao = questaoEl.querySelector('.btn-adicionar-opcao');
             if (btnAdicionarOpcao) {
                 btnAdicionarOpcao.parentNode.insertBefore(novaOpcao, btnAdicionarOpcao);
             } else {
-                // Adicionar ao final do container de opções
                 const container = questaoEl.querySelector('.space-y-2');
                 if (container) {
                     container.appendChild(novaOpcao);
                 }
             }
-            
+
             console.log(`Nova opção adicionada à questão ${questaoId}`);
         }
     }
-    
-    /**
-     * Adiciona um campo de seleção para a faixa de série
-     */
+
     function adicionarSeletorFaixaSerie() {
         const nomeAvaliacaoField = document.getElementById('nome-avaliacao');
         if (!nomeAvaliacaoField) {
             console.warn('Campo nome-avaliacao não encontrado');
             return;
         }
-        
-        // Criar o elemento de seleção após o campo de nome
+
         const gradeRangeDiv = document.createElement('div');
         gradeRangeDiv.classList.add('mt-4');
-        
+
         gradeRangeDiv.innerHTML = `
             <label for="grade-range" class="block text-sm font-medium text-gray-700 mb-1">Faixa de Série</label>
             <select id="grade-range" name="grade-range" required
@@ -249,477 +467,46 @@ document.addEventListener('DOMContentLoaded', function() {
             </select>
             <p class="text-xs text-gray-500 mt-1">Selecione a faixa de série para a qual este teste é destinado</p>
         `;
-        
-        // Inserir após o campo de nome
+
         nomeAvaliacaoField.parentNode.after(gradeRangeDiv);
         console.log('Seletor de faixa de série adicionado');
+        
+        setTimeout(() => {
+            const gradeRangeSelect = document.getElementById('grade-range');
+            if (gradeRangeSelect) {
+                dadosAvaliacao.gradeRange = gradeRangeSelect.value;
+                
+                gradeRangeSelect.addEventListener('change', function() {
+                    dadosAvaliacao.gradeRange = this.value;
+                    console.log(`Grade Range atualizado para: ${dadosAvaliacao.gradeRange}`);
+                });
+            }
+        }, 100);
     }
     
-    /**
-     * Adiciona um botão para criar um teste pré-definido
-     */
-    function adicionarBotaoCriarTestePredefinido() {
-        const botoesContainer = document.querySelector('.modal-footer');
-        if (!botoesContainer) {
-            console.warn('Container de botões do modal não encontrado');
-            return;
-        }
-        
-        // Criar o botão de teste pré-definido
-        const btnTestePredefinido = document.createElement('button');
-        btnTestePredefinido.type = 'button';
-        btnTestePredefinido.id = 'btn-teste-predefinido';
-        btnTestePredefinido.classList.add('px-4', 'py-2', 'bg-green-600', 'text-white', 'rounded', 'hover:bg-green-700', 'transition', 'mr-2');
-        btnTestePredefinido.textContent = 'Criar Teste Pré-definido';
-        
-        // Adicionar evento de clique
-        btnTestePredefinido.addEventListener('click', async function() {
-            try {
-                await criarTestePredefinido();
-            } catch (error) {
-                console.error('Erro ao criar teste pré-definido:', error);
-                alert(`Erro ao criar teste pré-definido: ${error.message}`);
-            }
-        });
-        
-        // Inserir no início do container
-        botoesContainer.prepend(btnTestePredefinido);
-        console.log('Botão de teste pré-definido adicionado');
-    }
+    // Popular listas com os dados iniciais, se houver
+    popularListasDeDados();
     
-    /**
-     * Adiciona um botão para enviar teste diretamente com o body fornecido
-     */
-    function adicionarBotaoEnviarTesteDireto() {
-        const botoesContainer = document.querySelector('.modal-footer');
-        if (!botoesContainer) {
-            console.warn('Container de botões do modal não encontrado');
-            return;
-        }
-        
-        // Criar o botão de envio direto
-        const btnEnviarDireto = document.createElement('button');
-        btnEnviarDireto.type = 'button';
-        btnEnviarDireto.id = 'btn-enviar-direto';
-        btnEnviarDireto.classList.add('px-4', 'py-2', 'bg-purple-600', 'text-white', 'rounded', 'hover:bg-purple-700', 'transition', 'mr-2');
-        btnEnviarDireto.textContent = 'Enviar Teste Direto';
-        
-        // Adicionar evento de clique
-        btnEnviarDireto.addEventListener('click', async function() {
-            try {
-                await enviarTesteDireto();
-            } catch (error) {
-                console.error('Erro ao enviar teste direto:', error);
-                alert(`Erro ao enviar teste direto: ${error.message}`);
-            }
-        });
-        
-        // Inserir no início do container
-        botoesContainer.prepend(btnEnviarDireto);
-        console.log('Botão de envio direto adicionado');
-    }
+    // Adicionar seletor de faixa de série ao modal
+    adicionarSeletorFaixaSerie();
     
-    /**
-     * Envia um teste diretamente para a API com o body fornecido
-     * @returns {Promise<Object>} Os dados da resposta da API
-     */
-    async function enviarTesteDireto() {
-        console.log('Enviando teste diretamente para API');
-        
-        // Body fornecido para a requisição
-        const bodyDireto = {
-            name: "Teste de Leitura - 1º ao 3º Ano",
-            gradeRange: "RANGE_3_5",
-            words: [
-                "casa",
-                "bola",
-                "gato"
-            ],
-            pseudowords: [
-                "tasi",
-                "mupa",
-                "dala"
-            ],
-            sentences: [
-                "O menino joga bola.",
-                "A casa é grande."
-            ],
-            text: "Era uma vez um menino que gostava muito de ler...",
-            interpretationQuestions: [
-                {
-                    question: "Quem é o personagem principal da história?",
-                    correctAnswer: "O menino",
-                    options: [
-                        "O menino",
-                        "A menina",
-                        "O cachorro",
-                        "O professor"
-                    ]
-                }
-            ]
-        };
-        
-        // Obter token de autenticação
-        const token = localStorage.getItem('token');
-        
-        // Configurar cabeçalhos para requisições
-        const headers = {
-            'Content-Type': 'application/json',
-            'Authorization': token ? `Bearer ${token}` : ''
-        };
-        
-        // Enviar dados para a API
-        const url = 'https://salf-salf-api.py5r5i.easypanel.host/api/reading-tests';
-        console.log(`Enviando POST direto para ${url}`);
-        
-        try {
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: headers,
-                body: JSON.stringify(bodyDireto)
-            });
-            
-            console.log('Resposta recebida:', response);
-            
-            // Verificar se a requisição foi bem-sucedida
-            if (!response.ok) {
-                const errorData = await response.json().catch(() => ({}));
-                throw new Error(errorData.message || `Erro ${response.status}: ${response.statusText}`);
-            }
-            
-            alert('Teste enviado diretamente com sucesso!');
-            
-            // Fechar o modal após o envio bem-sucedido
-            const modalAvaliacao = document.getElementById('modal-avaliacao');
-            if (modalAvaliacao) {
-                modalAvaliacao.classList.add('hidden');
-            }
-            
-            // Recarregar a página para exibir o novo teste
-            window.location.reload();
-            
-            // Retornar os dados da resposta
-            return await response.json();
-        } catch (error) {
-            console.error('Erro na requisição direta:', error);
-            throw error;
-        }
-    }
+    // Configurar funcionalidade de adicionar questões
+    configurarAdicionarQuestoes();
     
-    /**
-     * Cria um teste de leitura com dados pré-definidos
-     * @returns {Promise<Object>} Os dados da resposta da API
-     */
-    async function criarTestePredefinido() {
-        console.log('Criando teste pré-definido');
+    // Inicialização do objeto dadosAvaliacao
+    const inicializarDados = () => {
+        // Definir valores iniciais
+        definirNomeDaAvaliacao();
+        definirTexto();
+        definirGradeRange();
         
-        // Dados pré-definidos do teste
-        const testePredefinido = {
-            name: "Teste de Leitura - 1º ao 3º Ano",
-            gradeRange: "RANGE_3_5",
-            words: [
-                "casa",
-                "bola",
-                "gato"
-            ],
-            pseudowords: [
-                "tasi",
-                "mupa",
-                "dala"
-            ],
-            sentences: [
-                "O menino joga bola.",
-                "A casa é grande."
-            ],
-            text: "Era uma vez um menino que gostava muito de ler...",
-            interpretationQuestions: [
-                {
-                    question: "Quem é o personagem principal da história?",
-                    correctAnswer: "O menino",
-                    options: [
-                        "O menino",
-                        "A menina",
-                        "O cachorro",
-                        "O professor"
-                    ]
-                }
-            ]
-        };
+        // Atualizar contadores
+        dadosAvaliacao.totalWords = dadosAvaliacao.words.length;
+        dadosAvaliacao.totalPseudowords = dadosAvaliacao.pseudowords.length;
         
-        // Obter token de autenticação
-        const token = localStorage.getItem('token');
-        
-        // Configurar cabeçalhos para requisições
-        const headers = {
-            'Content-Type': 'application/json',
-            'Authorization': token ? `Bearer ${token}` : ''
-        };
-        
-        // Enviar dados para a API
-        const url = 'https://salf-salf-api.py5r5i.easypanel.host/api/reading-tests';
-        console.log(`Enviando POST para ${url} com dados pré-definidos:`, testePredefinido);
-        
-        try {
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: headers,
-                body: JSON.stringify(testePredefinido)
-            });
-            
-            console.log('Resposta recebida:', response);
-            
-            // Verificar se a requisição foi bem-sucedida
-            if (!response.ok) {
-                const errorData = await response.json().catch(() => ({}));
-                throw new Error(errorData.message || `Erro ${response.status}: ${response.statusText}`);
-            }
-            
-            alert('Teste de leitura pré-definido criado com sucesso!');
-            
-            // Recarregar a página para exibir o novo teste
-            // window.location.reload();
-            
-            // Retornar os dados da resposta
-            return await response.json();
-        } catch (error) {
-            console.error('Erro na requisição:', error);
-            throw error;
-        }
-    }
+        console.log('Dados da avaliação inicializados:', dadosAvaliacao);
+    };
     
-    /**
-     * Envia os dados do teste para a API
-     * @returns {Promise<Object>} Os dados da resposta da API
-     */
-    async function enviarTesteParaAPI() {
-        console.log('Iniciando envio do teste para API');
-        
-        // Obter valores dos campos
-        const nome = document.getElementById('nome-avaliacao').value;
-        if (!nome) {
-            throw new Error('O nome da avaliação é obrigatório');
-        }
-        
-        // Obter a faixa de série selecionada
-        const gradeRangeElement = document.getElementById('grade-range');
-        const gradeRange = gradeRangeElement ? gradeRangeElement.value : "RANGE_1_2";
-        
-        // Obter palavras diretamente dos elementos do DOM
-        let palavras = [];
-        const palavrasContainer = document.getElementById('container-palavras');
-        if (palavrasContainer) {
-            const palavrasElements = palavrasContainer.querySelectorAll('.palavra-item');
-            palavras = Array.from(palavrasElements).map(el => el.textContent.trim());
-        } else {
-            // Tentar acessar as variáveis globais como fallback
-            palavras = window.palavrasAdicionadas || [];
-        }
-        
-        // Obter pseudopalavras diretamente dos elementos do DOM
-        let pseudopalavras = [];
-        const pseudopalavrasContainer = document.getElementById('container-pseudopalavras');
-        if (pseudopalavrasContainer) {
-            const pseudopalavrasElements = pseudopalavrasContainer.querySelectorAll('.pseudopalavra-item');
-            pseudopalavras = Array.from(pseudopalavrasElements).map(el => el.textContent.trim());
-        } else {
-            // Tentar acessar as variáveis globais como fallback
-            pseudopalavras = window.pseudopalavrasAdicionadas || [];
-        }
-        
-        // Obter frases diretamente dos elementos do DOM
-        let frases = [];
-        const frasesContainer = document.getElementById('container-frases');
-        if (frasesContainer) {
-            const frasesElements = frasesContainer.querySelectorAll('.frase-item');
-            frases = Array.from(frasesElements).map(el => el.textContent.trim());
-        } else {
-            // Tentar acessar as variáveis globais como fallback
-            frases = window.frasesAdicionadas || [];
-        }
-        
-        // Verificar se os dados estão vazios e tentar capturar de outro lugar
-        if (palavras.length === 0) {
-            const palavrasInput = document.getElementById('input-palavras');
-            if (palavrasInput && palavrasInput.value) {
-                palavras = palavrasInput.value.split('\n').filter(p => p.trim() !== '');
-            }
-        }
-        
-        if (pseudopalavras.length === 0) {
-            const pseudopalavrasInput = document.getElementById('input-pseudopalavras');
-            if (pseudopalavrasInput && pseudopalavrasInput.value) {
-                pseudopalavras = pseudopalavrasInput.value.split('\n').filter(p => p.trim() !== '');
-            }
-        }
-        
-        if (frases.length === 0) {
-            const frasesInput = document.getElementById('input-frases');
-            if (frasesInput && frasesInput.value) {
-                frases = frasesInput.value.split('\n').filter(f => f.trim() !== '');
-            }
-        }
-        
-        // Se ainda estiver vazio, usar dados padrão de exemplo
-        if (palavras.length === 0) {
-            palavras = ["casa", "bola", "gato"];
-            console.warn('Usando palavras padrão pois não foi possível encontrar palavras adicionadas');
-        }
-        
-        if (pseudopalavras.length === 0) {
-            pseudopalavras = ["tasi", "mupa", "dala"];
-            console.warn('Usando pseudopalavras padrão pois não foi possível encontrar pseudopalavras adicionadas');
-        }
-        
-        if (frases.length === 0) {
-            frases = ["O menino joga bola.", "A casa é grande."];
-            console.warn('Usando frases padrão pois não foi possível encontrar frases adicionadas');
-        }
-        
-        console.log('Palavras adicionadas:', palavras);
-        console.log('Pseudopalavras adicionadas:', pseudopalavras);
-        console.log('Frases adicionadas:', frases);
-        
-        // Obter texto
-        const textoElement = document.getElementById('texto-avaliacao');
-        const texto = textoElement ? textoElement.value : '';
-        
-        // Se o texto estiver vazio, usar texto padrão
-        const textoFinal = texto && texto.trim() !== '' ? 
-            texto : 
-            "Era uma vez um menino que gostava muito de ler...";
-            
-        if (texto === '') {
-            console.warn('Usando texto padrão pois o campo está vazio');
-        }
-        
-        // Obter questões de interpretação
-        const questoesElements = document.querySelectorAll('#container-questoes .questao:not(.questao-template)');
-        const questoes = Array.from(questoesElements).map(questaoEl => {
-            // Obter enunciado
-            const enunciado = questaoEl.querySelector('.enunciado-questao').value;
-            
-            // Obter as opções
-            const opcoesElements = questaoEl.querySelectorAll('.opcao-container');
-            const opcoes = Array.from(opcoesElements).map(opt => opt.querySelector('.texto-opcao').value);
-            
-            // Obter a resposta correta
-            const respostaCorretaIndex = Array.from(opcoesElements).findIndex(
-                opt => opt.querySelector('.resposta-correta').checked
-            );
-            const respostaCorreta = respostaCorretaIndex >= 0 ? opcoes[respostaCorretaIndex] : '';
-            
-            return {
-                text: enunciado,
-                options: opcoes
-            };
-        });
-        console.log(`${questoes.length} questões encontradas:`, questoes);
-        
-        // Se não houver questões, adicionar uma questão padrão
-        if (questoes.length === 0) {
-            questoes.push({
-                text: "Quem é o personagem principal da história?",
-                options: ["O menino", "A menina", "O cachorro", "O professor"]
-            });
-            console.warn('Usando questão padrão pois nenhuma questão foi adicionada');
-        }
-        
-        // Validar dados antes de enviar (mínimo necessário)
-        if (palavras.length === 0) {
-            throw new Error('Adicione pelo menos uma palavra ao teste');
-        }
-        
-        if (pseudopalavras.length === 0) {
-            throw new Error('Adicione pelo menos uma pseudopalavra ao teste');
-        }
-        
-        if (frases.length === 0) {
-            throw new Error('Adicione pelo menos uma frase ao teste');
-        }
-        
-        if (!textoFinal || textoFinal.trim() === '') {
-            throw new Error('Adicione um texto ao teste');
-        }
-        
-        // Validar questões
-        questoes.forEach((questao, index) => {
-            if (!questao.text) {
-                throw new Error(`A questão ${index + 1} não possui enunciado`);
-            }
-            
-            if (questao.options.length < 2) {
-                throw new Error(`A questão ${index + 1} deve ter pelo menos 2 alternativas`);
-            }
-            
-     
-        });
-        
-        // Montar o corpo da requisição
-        const dadosEnvio = {
-            name: nome,
-            text: textoFinal,
-            totalWords: palavras.length,
-            totalPseudowords: pseudopalavras.length,
-            gradeRange: gradeRange,
-            words: palavras,
-            pseudowords: pseudopalavras,
-            sentences: frases,
-            assessmentEventId: 1,
-            phrases: frases.map(frase => ({ text: frase })),
-            questions: questoes.map(questao => ({
-                text: questao.text || questao.enunciado,
-                options: questao.options || questao.opcoes
-            }))
-        };
-
-        console.log(dadosEnvio)
-        
-        console.log('Dados a serem enviados:', dadosEnvio);
-        
-        // Obter token de autenticação
-        const token = localStorage.getItem('token');
-        
-        // Configurar cabeçalhos para requisições
-        const headers = {
-            'Content-Type': 'application/json',
-            'Authorization': token ? `Bearer ${token}` : ''
-        };
-        
-        // Enviar dados para a API
-        const url = 'https://salf-salf-api.py5r5i.easypanel.host/api/assessments';
-        console.log(`Enviando POST para ${url}`);
-        
-        try {
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: headers,
-                body: JSON.stringify(dadosEnvio)
-            });
-            
-            console.log('Resposta recebida:', response);
-            
-            // Verificar se a requisição foi bem-sucedida
-            if (!response.ok) {
-                const errorData = await response.json().catch(() => ({}));
-                throw new Error(errorData.message || `Erro ${response.status}: ${response.statusText}`);
-            }
-            
-            alert('Teste de leitura salvo com sucesso!');
-            
-            // Fechar o modal após o envio bem-sucedido
-            const modalAvaliacao = document.getElementById('modal-avaliacao');
-            if (modalAvaliacao) {
-                modalAvaliacao.classList.add('hidden');
-            }
-            
-            // Recarregar a página para exibir o novo teste
-            window.location.reload();
-            
-            // Retornar os dados da resposta
-            return await response.json();
-        } catch (error) {
-            console.error('Erro na requisição:', error);
-            throw error;
-        }
-    }
+    // Executar inicialização após um breve delay para garantir que todos os elementos estejam carregados
+    setTimeout(inicializarDados, 500);
 }); 
