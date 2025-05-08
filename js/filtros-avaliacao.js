@@ -32,8 +32,7 @@ const eventoSelect = document.getElementById("evento-avaliacao");
         }).then(res => res.json());
         
         evento.assessments.forEach(teste => {
-            console.log(teste);
-                const option = document.createElement('option');
+            const option = document.createElement('option');
             option.value = teste.id;
             option.textContent = teste.name || `Teste ${teste.id}`;
             testeSelect.appendChild(option);

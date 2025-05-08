@@ -187,7 +187,6 @@
      * Testes: extraídos da resposta de eventos (assessments)
      */
     async function carregarEventosETestesAPI() {
-  
         if (!selectEvento || !selectTeste) return;
 
         // Limpar opções existentes
@@ -202,53 +201,104 @@
             const eventos = await ApiService.eventosAvaliacao.getAll();
             dadosCache.eventos = eventos;
 
-
             console.log('Eventos carregados da API:', eventos.length);
 
-
-
+            // Limpar e preencher o select de eventos
+            selectEvento.innerHTML = '<option value="">Selecione um evento</option>';
             dadosCache.eventos.forEach(evento => {
-                const opt = new Option(evento.name, evento.id)
+                const opt = new Option(evento.name || `Evento ${evento.id}`, evento.id);
                 selectEvento.appendChild(opt);
-            })
+            });
 
-            
-            selectEvento.addEventListener('focusout', async function () {
-                const selectedId = Number(selectEvento.value); // converte o valor selecionado para número
-                const { assessments } = dadosCache.eventos.find(({ id }) => id === selectedId);
-                carregarAssement(assessments);
-            })
-
-
-            // console.log('Testes extraídos dos eventos:', testes.length);
-
-            // Carregar eventos no select
-            // carregarEventosAvaliacao(eventos);
+            // Configurar evento de change no select de eventos
+            selectEvento.addEventListener('change', function() {
+                const eventoId = Number(this.value);
+                
+                // Se não selecionou nenhum evento, limpar e desabilitar o select de testes
+                if (!eventoId) {
+                    selectTeste.innerHTML = '<option value="">Selecione um evento primeiro</option>';
+                    selectTeste.disabled = true;
+                    return;
+                }
+                
+                try {
+                    // Encontrar o evento selecionado
+                    const eventoSelecionado = dadosCache.eventos.find(e => e.id === eventoId);
+                    if (!eventoSelecionado) {
+                        throw new Error(`Evento ID ${eventoId} não encontrado no cache`);
+                    }
+                    
+                    // Verificar se o evento tem assessments
+                    if (!eventoSelecionado.assessments || !eventoSelecionado.assessments.length) {
+                        selectTeste.innerHTML = '<option value="">Nenhum teste disponível para este evento</option>';
+                        selectTeste.disabled = true;
+                        return;
+                    }
+                    
+                    // Carregar os testes associados a este evento
+                    carregarTestes(eventoSelecionado.assessments);
+                } catch (error) {
+                    console.error('Erro ao carregar testes para o evento:', error);
+                    selectTeste.innerHTML = '<option value="">Erro ao carregar testes</option>';
+                    selectTeste.disabled = true;
+                }
+            });
 
             // Inicialmente desabilitar o select de testes até que um evento seja selecionado
             selectTeste.innerHTML = '<option value="">Selecione um evento primeiro</option>';
             selectTeste.disabled = true;
+            
+            // Habilitar o select de eventos
+            selectEvento.disabled = false;
         } catch (error) {
             console.error(`Erro ao carregar eventos e testes:`, error);
 
             // Em caso de erro, limpar selects
-            selectEvento.innerHTML = '<option value="">Selecione um evento</option>';
-            selectTeste.innerHTML = '<option value="">Selecione um teste</option>';
+            selectEvento.innerHTML = '<option value="">Erro ao carregar eventos</option>';
+            selectTeste.innerHTML = '<option value="">Selecione um evento primeiro</option>';
 
             // Adicionar alerta de erro
             selectEvento.innerHTML += '<option value="" disabled style="color: red">⚠️ Erro ao carregar dados</option>';
-        } finally {
-            // Habilitar o select de eventos
-            selectEvento.disabled = false;
         }
     }
-
-    const carregarAssement = (assessment) => {
-        assessment.forEach((teste) => {
-            const opt = new Option(teste.name, teste.id)
-            selectTeste.appendChild(opt);
-        })
+    
+    /**
+     * Carrega os testes associados a um evento de avaliação
+     * @param {Array} testes - Lista de testes (assessments) do evento
+     */
+    function carregarTestes(testes) {
+        if (!selectTeste) return;
+        
+        // Limpar opções existentes
+        selectTeste.innerHTML = '<option value="">Selecione um teste</option>';
+        
+        // Verificar se há testes disponíveis
+        if (!testes || !testes.length) {
+            selectTeste.innerHTML = '<option value="">Nenhum teste disponível</option>';
+            selectTeste.disabled = true;
+            return;
+        }
+        
+        // Adicionar opção para cada teste
+        testes.forEach(teste => {
+            const option = document.createElement('option');
+            option.value = teste.id;
+            option.textContent = teste.name || `Teste ${teste.id}`;
+            
+            // Adicionar metadados úteis como data attributes
+            if (teste.gradeRange) option.dataset.gradeRange = teste.gradeRange;
+            if (teste.totalWords) option.dataset.totalWords = teste.totalWords;
+            if (teste.totalPseudowords) option.dataset.totalPseudowords = teste.totalPseudowords;
+            
+            selectTeste.appendChild(option);
+        });
+        
+        // Habilitar o select de testes
+        selectTeste.disabled = false;
+        
+        console.log(`${testes.length} testes carregados para o evento selecionado`);
     }
+
     /**
      * Carrega as turmas filtradas por escola no select
      * @param {number} escolaId - ID da escola selecionada
@@ -356,7 +406,6 @@
      * @param {Array} eventos - Lista de eventos
      */
     function carregarEventosAvaliacao(eventos) {
-        const selectEvento = document.getElementById('evento-avaliacao');
         if (!selectEvento) return;
 
         // Limpar opções existentes
@@ -381,7 +430,11 @@
             // Armazenar dados adicionais como atributos de dados
             if (evento.date) option.dataset.date = evento.date;
             if (evento.assessmentIds) option.dataset.assessmentIds = JSON.stringify(evento.assessmentIds);
-
+            
+            // Armazenar a quantidade de testes associados
+            const numTestes = evento.assessments ? evento.assessments.length : 0;
+            option.dataset.numTestes = numTestes;
+            
             selectEvento.appendChild(option);
         });
 
@@ -389,44 +442,57 @@
         selectEvento.disabled = false;
 
         console.log('Eventos carregados:', eventos.length);
+        
+        // Configurar evento de mudança para atualizar o select de testes
+        selectEvento.addEventListener('change', function() {
+            const eventoId = Number(this.value);
+            carregarTestesLeitura(eventoId);
+        });
     }
 
     /**
      * Carrega os testes de leitura baseados no evento selecionado
-     * @param {string} eventoId - ID do evento selecionado
+     * @param {string|number} eventoId - ID do evento selecionado
      */
     function carregarTestesLeitura(eventoId) {
-        const selectTeste = document.getElementById('teste-leitura');
         if (!selectTeste) return;
 
         // Limpar opções existentes
         selectTeste.innerHTML = '<option value="">Selecione um teste</option>';
 
-        // Se não tiver evento selecionado ou testes em cache
-        if (!eventoId || !dadosCache.testes || !dadosCache.testes.length) {
+        // Se não tiver evento selecionado
+        if (!eventoId) {
+            selectTeste.innerHTML = '<option value="">Selecione um evento primeiro</option>';
             selectTeste.disabled = true;
             return;
         }
-
-        // Adicionar testes disponíveis
-        dadosCache.testes.forEach(teste => {
-            const option = document.createElement('option');
-            option.value = teste.id;
-
-            // Nome do teste com compatibilidade para diferentes formatos
-            const nomeTeste = teste.name || teste.title || `Teste ${teste.id}`;
-            option.textContent = nomeTeste;
-
-            // Armazenar metadados úteis
-            if (teste.gradeRange) option.dataset.gradeRange = teste.gradeRange;
-
-            selectTeste.appendChild(option);
-        });
-
-        // Habilitar o select
-        selectTeste.disabled = false;
-
-        console.log('Testes carregados para evento:', dadosCache.testes.length);
+        
+        // Converter para número para garantir comparação correta
+        const eventoIdNum = Number(eventoId);
+        
+        try {
+            // Encontrar o evento selecionado nos dados em cache
+            const eventoSelecionado = dadosCache.eventos.find(e => e.id === eventoIdNum);
+            
+            if (!eventoSelecionado) {
+                throw new Error(`Evento ID ${eventoIdNum} não encontrado no cache`);
+            }
+            
+            // Verificar se o evento tem assessments/testes
+            if (!eventoSelecionado.assessments || !eventoSelecionado.assessments.length) {
+                selectTeste.innerHTML = '<option value="">Nenhum teste disponível para este evento</option>';
+                selectTeste.disabled = true;
+                return;
+            }
+            
+            // Usar a função auxiliar para carregar os testes
+            carregarTestes(eventoSelecionado.assessments);
+            
+        } catch (error) {
+            console.error('Erro ao carregar testes para o evento:', error);
+            selectTeste.innerHTML = '<option value="">Erro ao carregar testes</option>';
+            selectTeste.disabled = true;
+        }
     }
 
     /**

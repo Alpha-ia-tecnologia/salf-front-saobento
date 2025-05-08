@@ -67,66 +67,85 @@ document.addEventListener('DOMContentLoaded', function () {
         dadosAvaliacao.text = texto;
     }
 
-    const definirGradeRange = () => {
-        const gradeRangeElement = document.getElementById('grade-range');
-        if (gradeRangeElement) {
-            dadosAvaliacao.gradeRange = gradeRangeElement.value;
-            console.log(`Grade Range definido como: ${dadosAvaliacao.gradeRange}`);
-            return dadosAvaliacao.gradeRange;
-        } else {
-            dadosAvaliacao.gradeRange = "RANGE_1_2"; // Valor padrão
-            console.warn('Elemento grade-range não encontrado, usando valor padrão');
-            return dadosAvaliacao.gradeRange;
-        }
-    }
-
-    // Função para obter o valor atual do gradeRange
-    const obterGradeRange = () => {
-        return dadosAvaliacao.gradeRange || definirGradeRange();
-    }
-
     const adicionarPalavras = () => {
-        const palavra = novaPalavra.value.trim();
-        if (palavra !== '') {
-            adicionarItem('palavras', palavra);
+        const entrada = novaPalavra.value.trim();
+        if (entrada !== '') {
+            // Dividir a entrada por vírgulas para permitir adição múltipla
+            const palavras = entrada.split(',').map(p => p.trim()).filter(p => p !== '');
+            
+            // Adicionar cada palavra individualmente
+            palavras.forEach(palavra => {
+                if (!dadosAvaliacao.words.includes(palavra)) {
+                    adicionarItem('palavras', palavra);
+                }
+            });
+            
             novaPalavra.value = '';
+            novaPalavra.focus();
         }
     }
 
     const adicionarPseudopalavras = () => {
-        const pseudopalavra = novaPseudopalavra.value.trim();
-        if (pseudopalavra !== '') {
-            adicionarItem('pseudopalavras', pseudopalavra);
+        const entrada = novaPseudopalavra.value.trim();
+        if (entrada !== '') {
+            // Dividir a entrada por vírgulas para permitir adição múltipla
+            const pseudopalavras = entrada.split(',').map(p => p.trim()).filter(p => p !== '');
+            
+            // Adicionar cada pseudopalavra individualmente
+            pseudopalavras.forEach(pseudopalavra => {
+                if (!dadosAvaliacao.pseudowords.includes(pseudopalavra)) {
+                    adicionarItem('pseudopalavras', pseudopalavra);
+                }
+            });
+            
             novaPseudopalavra.value = '';
+            novaPseudopalavra.focus();
         }
     }
 
-    const salvarAvaliacao = () => {
-        console.log('Salvando avaliação');
-        const token = localStorage.getItem('token');
-        const request = fetch('https://salf-salf-api.py5r5i.easypanel.host/api/assessments', {
-            method: 'POST',
-            body: JSON.stringify(dadosAvaliacao),
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            }
-        });
-    }
-
     const adicionarSentencas = () => {
-        const sentenca = novaSentenca.value.trim();
-        if (sentenca !== '') {
-            adicionarItem('sentencas', sentenca);
+        const entrada = novaSentenca.value.trim();
+        if (entrada !== '') {
+            // Dividir a entrada por vírgulas para permitir adição múltipla
+            const sentencas = entrada.split(',').map(s => s.trim()).filter(s => s !== '');
+            
+            // Adicionar cada sentença individualmente
+            sentencas.forEach(sentenca => {
+                if (!dadosAvaliacao.sentences.includes(sentenca)) {
+                    adicionarItem('sentencas', sentenca);
+                }
+            });
+            
             novaSentenca.value = '';
+            novaSentenca.focus();
         }
     }
 
     const adicionarFrases = () => {
-        const frase = novaFrase.value.trim();
-        if (frase !== '') {
-            adicionarItem('frases', frase);
+        const entrada = novaFrase.value.trim();
+        if (entrada !== '') {
+            // Dividir a entrada por pontos para permitir adição múltipla
+            // Preservar os pontos no final das frases
+            const frases = entrada.split('.').map(f => f.trim()).filter(f => f !== '');
+            
+            // Adicionar cada frase individualmente (adicionando o ponto final se não existir)
+            frases.forEach(frase => {
+                // Adicionar ponto final se não tiver
+                if (!/[.!?]$/.test(frase)) {
+                    frase = frase + '.';
+                }
+                
+                const fraseExiste = dadosAvaliacao.phrases.some(f => 
+                    (typeof f === 'object' && f.text === frase) || f === frase
+                );
+                
+                if (!fraseExiste) {
+                    adicionarItem('frases', frase);
+                }
+            });
+            
             novaFrase.value = '';
+            novaFrase.focus();
         }
     }
 
@@ -145,37 +164,91 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         
         const item = document.createElement('div');
-        item.className = `${config.classeItem} bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm flex items-center`;
+        item.className = `${config.classeItem} bg-white border border-gray-300 px-3 py-1 rounded-full text-sm flex items-center hover:bg-blue-100 cursor-pointer transition-colors select-none`;
         item.dataset.valor = texto;
+        item.dataset.selecionado = "false";
+        
+        const checkbox = document.createElement('span');
+        checkbox.className = 'inline-block w-4 h-4 border border-gray-400 rounded mr-2 flex-shrink-0 transition-colors';
+        checkbox.innerHTML = '<i class="fas fa-check text-white text-xs hidden"></i>';
         
         const textoSpan = document.createElement('span');
         textoSpan.textContent = texto;
+        textoSpan.className = 'flex-grow';
+        
+        item.appendChild(checkbox);
         item.appendChild(textoSpan);
         
+        item.addEventListener('click', function(e) {
+            if (e.target.closest('button.btn-remover')) return;
+            
+            if (item.dataset.selecionado === "false") {
+                item.dataset.selecionado = "true";
+                item.classList.remove('bg-white', 'hover:bg-blue-100');
+                item.classList.add('bg-green-100');
+                checkbox.classList.add('bg-green-500');
+                checkbox.classList.remove('border-gray-400');
+                checkbox.querySelector('i').classList.remove('hidden');
+            } else {
+                item.dataset.selecionado = "false";
+                item.classList.remove('bg-green-100');
+                item.classList.add('bg-white', 'hover:bg-blue-100');
+                checkbox.classList.remove('bg-green-500');
+                checkbox.classList.add('border-gray-400');
+                checkbox.querySelector('i').classList.add('hidden');
+            }
+            
+            atualizarContagemSelecionados(tipoLista);
+        });
+        
         const botaoRemover = document.createElement('button');
-        botaoRemover.className = 'ml-2 text-blue-600 hover:text-blue-800';
+        botaoRemover.className = 'ml-2 text-gray-500 hover:text-red-600 btn-remover flex-shrink-0';
         botaoRemover.innerHTML = '<i class="fas fa-times-circle"></i>';
-        botaoRemover.onclick = function () {
+        botaoRemover.onclick = function (e) {
+            e.stopPropagation();
             removerItem(tipoLista, item);
         };
         
         item.appendChild(botaoRemover);
         config.listaDom.appendChild(item);
+        
+        atualizarContagemSelecionados(tipoLista);
+        
+        return item;
     }
     
     const removerItem = (tipoLista, itemElement) => {
         const config = listas[tipoLista];
         const valor = itemElement.dataset.valor;
         
+        // Remover do DOM
         itemElement.remove();
         
+        // Remover do modelo de dados com base no tipo de lista
         if (tipoLista === 'frases') {
-            dadosAvaliacao[config.propriedade] = dadosAvaliacao[config.propriedade].filter(f => f.text !== valor);
+            // Para frases, remove objetos com propriedade text igual ao valor
+            dadosAvaliacao[config.propriedade] = dadosAvaliacao[config.propriedade].filter(f => {
+                if (typeof f === 'object' && f.text === valor) {
+                    return false;
+                }
+                return f !== valor;
+            });
         } else {
+            // Para outros tipos, remove strings diretamente
             dadosAvaliacao[config.propriedade] = dadosAvaliacao[config.propriedade].filter(p => p !== valor);
         }
         
+        // Atualizar totalWords e totalPseudowords se necessário
+        if (tipoLista === 'palavras') {
+            dadosAvaliacao.totalWords = dadosAvaliacao.words.length;
+        } else if (tipoLista === 'pseudopalavras') {
+            dadosAvaliacao.totalPseudowords = dadosAvaliacao.pseudowords.length;
+        }
+        
         console.log(`Item "${valor}" removido da lista ${tipoLista}`);
+        
+        // Atualizar contagem de itens selecionados
+        atualizarContagemSelecionados(tipoLista);
     }
     
     const limparLista = (tipoLista) => {
@@ -277,12 +350,36 @@ document.addEventListener('DOMContentLoaded', function () {
             e.preventDefault();
             dadosAvaliacao.totalWords = dadosAvaliacao.words.length;
             dadosAvaliacao.totalPseudowords = dadosAvaliacao.pseudowords.length;
+            adicionarSeletorFaixaSerie();
             definirTexto();
             definirNomeDaAvaliacao();
-            definirGradeRange();
-
-            salvarAvaliacao();
             
+            // Atualizar arrays com apenas os itens selecionados
+            const palavrasSelecionadas = obterItensSelecionados('palavras');
+            const pseudopalavrasSelecionadas = obterItensSelecionados('pseudopalavras');
+            const sentencasSelecionadas = obterItensSelecionados('sentencas');
+            const frasesSelecionadas = obterItensSelecionados('frases');
+            
+            // Se existirem itens selecionados, usar esses em vez de todos os itens
+            if (palavrasSelecionadas.length > 0) {
+                dadosAvaliacao.words = palavrasSelecionadas;
+                dadosAvaliacao.totalWords = palavrasSelecionadas.length;
+            }
+            
+            if (pseudopalavrasSelecionadas.length > 0) {
+                dadosAvaliacao.pseudowords = pseudopalavrasSelecionadas;
+                dadosAvaliacao.totalPseudowords = pseudopalavrasSelecionadas.length;
+            }
+            
+            if (sentencasSelecionadas.length > 0) {
+                dadosAvaliacao.sentences = sentencasSelecionadas;
+            }
+            
+            if (frasesSelecionadas.length > 0) {
+                dadosAvaliacao.phrases = frasesSelecionadas.map(frase => ({ text: frase }));
+            }
+            
+            // Adicionar questões ao objeto dadosAvaliacao
             const questoesElements = document.querySelectorAll('#container-questoes .questao:not(.questao-template)');
             dadosAvaliacao.questions = Array.from(questoesElements).map(questaoEl => {
                 const enunciado = questaoEl.querySelector('.enunciado-questao').value;
@@ -470,43 +567,145 @@ document.addEventListener('DOMContentLoaded', function () {
 
         nomeAvaliacaoField.parentNode.after(gradeRangeDiv);
         console.log('Seletor de faixa de série adicionado');
+    }
+
+    popularListasDeDados();
+
+    /**
+     * Atualiza a contagem de itens selecionados para uma lista
+     */
+    const atualizarContagemSelecionados = (tipoLista) => {
+        const config = listas[tipoLista];
+        if (!config || !config.listaDom) return;
         
-        setTimeout(() => {
-            const gradeRangeSelect = document.getElementById('grade-range');
-            if (gradeRangeSelect) {
-                dadosAvaliacao.gradeRange = gradeRangeSelect.value;
-                
-                gradeRangeSelect.addEventListener('change', function() {
-                    dadosAvaliacao.gradeRange = this.value;
-                    console.log(`Grade Range atualizado para: ${dadosAvaliacao.gradeRange}`);
-                });
-            }
-        }, 100);
+        // Encontrar o container da lista
+        const container = config.listaDom.parentElement;
+        if (!container) return;
+        
+        // Verificar se já existe o contador
+        let contador = container.querySelector('.contador-selecionados');
+        if (!contador) {
+            // Criar o contador se não existir
+            contador = document.createElement('div');
+            contador.className = 'contador-selecionados text-xs text-gray-600 mt-2';
+            container.appendChild(contador);
+        }
+        
+        // Contar itens selecionados
+        const total = config.listaDom.querySelectorAll(`.${config.classeItem}`).length;
+        const selecionados = config.listaDom.querySelectorAll(`.${config.classeItem}[data-selecionado="true"]`).length;
+        
+        // Atualizar o texto
+        contador.textContent = `Selecionados: ${selecionados} de ${total}`;
     }
     
-    // Popular listas com os dados iniciais, se houver
-    popularListasDeDados();
-    
-    // Adicionar seletor de faixa de série ao modal
-    adicionarSeletorFaixaSerie();
-    
-    // Configurar funcionalidade de adicionar questões
-    configurarAdicionarQuestoes();
-    
-    // Inicialização do objeto dadosAvaliacao
-    const inicializarDados = () => {
-        // Definir valores iniciais
-        definirNomeDaAvaliacao();
-        definirTexto();
-        definirGradeRange();
+    /**
+     * Obtém os itens selecionados de uma lista
+     */
+    const obterItensSelecionados = (tipoLista) => {
+        const config = listas[tipoLista];
+        if (!config || !config.listaDom) return [];
         
-        // Atualizar contadores
-        dadosAvaliacao.totalWords = dadosAvaliacao.words.length;
-        dadosAvaliacao.totalPseudowords = dadosAvaliacao.pseudowords.length;
+        // Obter todos os itens selecionados
+        const itensSelecionados = Array.from(
+            config.listaDom.querySelectorAll(`.${config.classeItem}[data-selecionado="true"]`)
+        ).map(item => item.dataset.valor);
         
-        console.log('Dados da avaliação inicializados:', dadosAvaliacao);
-    };
+        return itensSelecionados;
+    }
     
-    // Executar inicialização após um breve delay para garantir que todos os elementos estejam carregados
-    setTimeout(inicializarDados, 500);
+    /**
+     * Seleciona todos os itens de uma lista
+     */
+    const selecionarTodos = (tipoLista) => {
+        const config = listas[tipoLista];
+        if (!config || !config.listaDom) return;
+        
+        // Selecionar todos os itens
+        config.listaDom.querySelectorAll(`.${config.classeItem}`).forEach(item => {
+            item.dataset.selecionado = "true";
+            item.classList.remove('bg-white', 'hover:bg-blue-100');
+            item.classList.add('bg-green-100');
+            
+            const checkbox = item.querySelector('span:first-child');
+            if (checkbox) {
+                checkbox.classList.add('bg-green-500');
+                checkbox.classList.remove('border-gray-400');
+                checkbox.querySelector('i')?.classList.remove('hidden');
+            }
+        });
+        
+        // Atualizar contagem
+        atualizarContagemSelecionados(tipoLista);
+    }
+    
+    /**
+     * Desmarca todos os itens de uma lista
+     */
+    const desmarcarTodos = (tipoLista) => {
+        const config = listas[tipoLista];
+        if (!config || !config.listaDom) return;
+        
+        // Desmarcar todos os itens
+        config.listaDom.querySelectorAll(`.${config.classeItem}`).forEach(item => {
+            item.dataset.selecionado = "false";
+            item.classList.remove('bg-green-100');
+            item.classList.add('bg-white', 'hover:bg-blue-100');
+            
+            const checkbox = item.querySelector('span:first-child');
+            if (checkbox) {
+                checkbox.classList.remove('bg-green-500');
+                checkbox.classList.add('border-gray-400');
+                checkbox.querySelector('i')?.classList.add('hidden');
+            }
+        });
+        
+        // Atualizar contagem
+        atualizarContagemSelecionados(tipoLista);
+    }
+
+    /**
+     * Adicionar botões de ação para as listas (Selecionar Todos/Desmarcar Todos)
+     */
+    function adicionarBotoesAcaoLista(tipoLista) {
+        const config = listas[tipoLista];
+        if (!config || !config.listaDom) return;
+        
+        // Encontrar o container da lista
+        const container = config.listaDom.parentElement;
+        if (!container) return;
+        
+        // Verificar se já existem os botões
+        if (container.querySelector('.botoes-acao-lista')) return;
+        
+        // Criar container de botões
+        const botoesContainer = document.createElement('div');
+        botoesContainer.className = 'botoes-acao-lista flex space-x-2 mt-2';
+        
+        // Botão Selecionar Todos
+        const btnSelecionarTodos = document.createElement('button');
+        btnSelecionarTodos.type = 'button';
+        btnSelecionarTodos.className = 'text-xs text-blue-600 hover:text-blue-800 flex items-center';
+        btnSelecionarTodos.innerHTML = '<i class="fas fa-check-square mr-1"></i> Selecionar Todos';
+        btnSelecionarTodos.onclick = () => selecionarTodos(tipoLista);
+        
+        // Botão Desmarcar Todos
+        const btnDesmarcarTodos = document.createElement('button');
+        btnDesmarcarTodos.type = 'button';
+        btnDesmarcarTodos.className = 'text-xs text-gray-600 hover:text-gray-800 flex items-center';
+        btnDesmarcarTodos.innerHTML = '<i class="fas fa-square mr-1"></i> Desmarcar Todos';
+        btnDesmarcarTodos.onclick = () => desmarcarTodos(tipoLista);
+        
+        // Adicionar botões ao container
+        botoesContainer.appendChild(btnSelecionarTodos);
+        botoesContainer.appendChild(btnDesmarcarTodos);
+        
+        // Adicionar container após a lista
+        container.appendChild(botoesContainer);
+    }
+    
+    // Adicionar botões de ação para todas as listas
+    Object.keys(listas).forEach(tipoLista => {
+        adicionarBotoesAcaoLista(tipoLista);
+    });
 }); 
