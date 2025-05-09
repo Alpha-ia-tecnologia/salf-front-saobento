@@ -143,7 +143,6 @@ btnSalvarAvaliacao.addEventListener('click', async () => {
         text: texto,
         words: palavrasAdicionadas,
         pseudowords: pseudopalavrasAdicionadas,
-        assessmentEventId: eventoIdEmEdicao,
         phrases: frasesAdicionadas,
         questions: questoesAdicionadas,
         gradeRange: document.getElementById('faixa-serie').value,
@@ -166,6 +165,7 @@ btnSalvarAvaliacao.addEventListener('click', async () => {
         alert('Avaliação criada com sucesso!');
         resetFormAvaliacao();
         modalAvaliacao.classList.add('hidden');
+        location.reload();
     } else {
         alert('Erro ao criar avaliação. Por favor, tente novamente.');
     }
