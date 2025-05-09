@@ -8,7 +8,7 @@ COPY ./404.html /var/www/html/salf/erro
 
 ARG CACHEBUST=1
 
-COPY .. /var/www/html/salf/
+COPY . /var/www/html/salf/
 
 EXPOSE 8080
 
