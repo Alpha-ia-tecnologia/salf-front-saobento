@@ -40,10 +40,10 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Obter valores dos campos simplificados
             const alunoId = document.getElementById('aluno').value || "1";
-            const eventoId = document.getElementById('evento-avaliacao').value || "1";
+            // const eventoId = document.getElementById('evento-avaliacao').value || "1";
             const testeId = document.getElementById('teste-leitura').value || "1";
             
-            if (!alunoId || !testeId || !eventoId) {
+            if (!alunoId || !testeId ) {
                 alert('Por favor, selecione aluno, evento e teste para iniciar a avaliação.');
                 return;
             }
@@ -69,15 +69,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 const url = `https://salf-salf-api.py5r5i.easypanel.host/api/reading-assessments`;
                 
-                console.log(`Enviando requisição com: studentId: ${alunoId}, readingTestId: ${testeId}, assessmentEventId: ${eventoId}`);
-                
+                const assementIdRequest = await fetch(`${API_BASE_URL}/assessments/${testeId}`, {
+                    headers: {
+                        'Accept': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+                const assementId = await assementIdRequest.json();
+                console.log(assementId);
                 const response = await fetch(url, { 
                     headers, 
                     method: 'POST',
                     body: JSON.stringify({
                         studentId: Number.parseInt(alunoId), 
                         assessmentId: Number.parseInt(testeId),
-                        assessmentEventId: Number.parseInt(eventoId)
+                        assessmentEventId: assementId.assessmentEventId
                     })
                 });
                 

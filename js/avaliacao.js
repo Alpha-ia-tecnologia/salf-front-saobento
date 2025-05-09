@@ -143,7 +143,7 @@ btnSalvarAvaliacao.addEventListener('click', async () => {
         text: texto,
         words: palavrasAdicionadas,
         pseudowords: pseudopalavrasAdicionadas,
-        assessmentEventId: 1,
+        assessmentEventId: eventoIdEmEdicao,
         phrases: frasesAdicionadas,
         questions: questoesAdicionadas,
         gradeRange: document.getElementById('faixa-serie').value,

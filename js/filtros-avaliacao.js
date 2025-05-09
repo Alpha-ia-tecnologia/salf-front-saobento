@@ -161,37 +161,37 @@ const eventoSelect = document.getElementById("evento-avaliacao");
     })
     .catch(error => console.warn("Não foi possível carregar eventos da API:", error));
     
-    // Testes
-    fetch(`${API_BASE_URL}/reading-tests`, {
-        headers: {
-            'Accept': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-    })
-    .then(response => response.ok ? response.json() : Promise.reject('Erro ao carregar testes'))
-    .then(testes => {
-        if (testes.length > 0 && testeSelect) {
-            // Manter a opção default como primeira
-            const defaultOption = testeSelect.options[0];
-            const staticOption = testeSelect.options[1];
+    // // Testes
+    // fetch(`${API_BASE_URL}/reading-tests`, {
+    //     headers: {
+    //         'Accept': 'application/json',
+    //         'Authorization': `Bearer ${localStorage.getItem('token')}`
+    //     }
+    // })
+    // .then(response => response.ok ? response.json() : Promise.reject('Erro ao carregar testes'))
+    // .then(testes => {
+    //     if (testes.length > 0 && testeSelect) {
+    //         // Manter a opção default como primeira
+    //         const defaultOption = testeSelect.options[0];
+    //         const staticOption = testeSelect.options[1];
             
-            testeSelect.innerHTML = '';
-            testeSelect.appendChild(defaultOption);
-            testeSelect.appendChild(staticOption); // Manter opção ID 1
+    //         testeSelect.innerHTML = '';
+    //         testeSelect.appendChild(defaultOption);
+    //         testeSelect.appendChild(staticOption); // Manter opção ID 1
             
-            // Adicionar opções da API
-            testes.forEach(teste => {
-                if (teste.id !== 1) { // Evitar duplicar a opção ID 1
-                    const option = document.createElement('option');
-                    option.value = teste.id;
-                    option.textContent = teste.name || `Teste ${teste.id}`;
-                    testeSelect.appendChild(option);
-                }
-            });
+    //         // Adicionar opções da API
+    //         testes.forEach(teste => {
+    //             if (teste.id !== 1) { // Evitar duplicar a opção ID 1
+    //                 const option = document.createElement('option');
+    //                 option.value = teste.id;
+    //                 option.textContent = teste.name || `Teste ${teste.id}`;
+    //                 testeSelect.appendChild(option);
+    //             }
+    //         });
             
-            // Selecionar valor padrão
-            testeSelect.value = "1";
-        }
-    })
-    .catch(error => console.warn("Não foi possível carregar testes da API:", error));
+    //         // Selecionar valor padrão
+    //         testeSelect.value = "1";
+    //     }
+    // })
+    // .catch(error => console.warn("Não foi possível carregar testes da API:", error));
 });

@@ -9,7 +9,7 @@
  * - Testes: obtidos da resposta de eventos (assessments)
  */
 (function () {
-    const selectEvento = document.getElementById('evento-avaliacao');
+    // const selectEvento = document.getElementById('evento-avaliacao');
     const selectTeste = document.getElementById('teste-leitura');
 
     // Cache de dados para evitar múltiplas requisições à API
@@ -170,6 +170,7 @@
             dadosCache.alunos = alunos;
 
             console.log('Alunos carregados da API:', alunos.length);
+
             return alunos;
         } catch (error) {
             console.error('Erro ao carregar alunos da API:', error);
@@ -211,38 +212,35 @@
             });
 
             // Configurar evento de change no select de eventos
-            selectEvento.addEventListener('change', function() {
-                const eventoId = Number(this.value);
+            // selectEvento.addEventListener('change', async function() {
                 
-                // Se não selecionou nenhum evento, limpar e desabilitar o select de testes
-                if (!eventoId) {
-                    selectTeste.innerHTML = '<option value="">Selecione um evento primeiro</option>';
-                    selectTeste.disabled = true;
-                    return;
-                }
+            //     // Se não selecionou nenhum evento, limpar e desabilitar o select de testes
+            //     if (!eventoId) {
+            //         selectTeste.innerHTML = '<option value="">Selecione um evento primeiro</option>';
+            //         selectTeste.disabled = true;
+            //         return;
+            //     }
                 
-                try {
-                    // Encontrar o evento selecionado
-                    const eventoSelecionado = dadosCache.eventos.find(e => e.id === eventoId);
-                    if (!eventoSelecionado) {
-                        throw new Error(`Evento ID ${eventoId} não encontrado no cache`);
-                    }
+            //     try {
+            //         // Encontrar o evento selecionado
+            //         const eventoSelecionado = dadosCache.eventos.find(e => e.id === eventoId);
+            //         if (!eventoSelecionado) {
+            //             throw new Error(`Evento ID ${eventoId} não encontrado no cache`);
+            //         }
                     
-                    // Verificar se o evento tem assessments
-                    if (!eventoSelecionado.assessments || !eventoSelecionado.assessments.length) {
-                        selectTeste.innerHTML = '<option value="">Nenhum teste disponível para este evento</option>';
-                        selectTeste.disabled = true;
-                        return;
-                    }
-                    
-                    // Carregar os testes associados a este evento
-                    carregarTestes(eventoSelecionado.assessments);
-                } catch (error) {
-                    console.error('Erro ao carregar testes para o evento:', error);
-                    selectTeste.innerHTML = '<option value="">Erro ao carregar testes</option>';
-                    selectTeste.disabled = true;
-                }
-            });
+            //         // Verificar se o evento tem assessments
+            //         if (!eventoSelecionado.assessments || !eventoSelecionado.assessments.length) {
+            //             selectTeste.innerHTML = '<option value="">Nenhum teste disponível para este evento</option>';
+            //             selectTeste.disabled = true;
+            //             return;
+            //         }
+                  
+            //     } catch (error) {
+            //         console.error('Erro ao carregar testes para o evento:', error);
+            //         selectTeste.innerHTML = '<option value="">Erro ao carregar testes</option>';
+            //         selectTeste.disabled = true;
+            //     }
+            // });
 
             // Inicialmente desabilitar o select de testes até que um evento seja selecionado
             selectTeste.innerHTML = '<option value="">Selecione um evento primeiro</option>';
@@ -508,7 +506,7 @@
 
                 // Limpar e desabilitar dependentes
                 const selectAluno = document.getElementById('aluno');
-                const selectEvento = document.getElementById('evento-avaliacao');
+                // const selectEvento = document.getElementById('evento-avaliacao');
                 const selectTeste = document.getElementById('teste-leitura');
 
                 if (selectAluno) {
@@ -516,10 +514,10 @@
                     selectAluno.disabled = true;
                 }
 
-                if (selectEvento) {
-                    selectEvento.innerHTML = '<option value="">Selecione um aluno primeiro</option>';
-                    selectEvento.disabled = true;
-                }
+                // if (selectEvento) {
+                //     // selectEvento.innerHTML = '<option value="">Selecione um aluno primeiro</option>';
+                //     selectEvento.disabled = true;
+                // }
 
                 if (selectTeste) {
                     selectTeste.innerHTML = '<option value="">Selecione um evento primeiro</option>';
@@ -531,23 +529,28 @@
         // Quando selecionar uma turma, carregar alunos correspondentes
         const selectTurma = document.getElementById('turma');
         if (selectTurma) {
-            selectTurma.addEventListener('change', function () {
+            selectTurma.addEventListener('change',async function () {
                 const turmaId = this.value;
                 carregarAlunosFiltrados(turmaId);
 
                 // Limpar selects dependentes
-                const selectEvento = document.getElementById('evento-avaliacao');
+                // const selectEvento = document.getElementById('evento-avaliacao');
                 const selectTeste = document.getElementById('teste-leitura');
 
-                if (selectEvento) {
-                    selectEvento.innerHTML = '<option value="">Selecione um aluno primeiro</option>';
-                    selectEvento.disabled = true;
-                }
+                // if (selectEvento) {
+                //     selectEvento.innerHTML = '<option value="">Selecione um aluno primeiro</option>';
+                //     selectEvento.disabled = true;
+                // }
 
-                if (selectTeste) {
-                    selectTeste.innerHTML = '<option value="">Selecione um evento primeiro</option>';
-                    selectTeste.disabled = true;
-                }
+                // if (selectTeste) {
+                //     selectTeste.innerHTML = '<option value="">Selecione um evento primeiro</option>';
+                //     selectTeste.disabled = true;
+                // }
+                selectTeste.disabled = false;
+                const getTestes = await ApiService.testes.getAll();
+                // Carregar os testes associados a este evento
+                carregarTestes(getTestes);
+
             });
         }
 
@@ -562,13 +565,13 @@
                     await carregarEventosETestesAPI();
                 } else {
                     // Limpar selects dependentes
-                    const selectEvento = document.getElementById('evento-avaliacao');
+                    // const selectEvento = document.getElementById('evento-avaliacao');
                     const selectTeste = document.getElementById('teste-leitura');
 
-                    if (selectEvento) {
-                        selectEvento.innerHTML = '<option value="">Selecione um aluno primeiro</option>';
-                        selectEvento.disabled = true;
-                    }
+                    // if (selectEvento) {
+                    //     selectEvento.innerHTML = '<option value="">Selecione um aluno primeiro</option>';
+                    //     selectEvento.disabled = true;
+                    // }
 
                     if (selectTeste) {
                         selectTeste.innerHTML = '<option value="">Selecione um evento primeiro</option>';
@@ -579,7 +582,7 @@
         }
 
         // Quando selecionar um evento, carregar testes associados
-        const selectEvento = document.getElementById('evento-avaliacao');
+        // const selectEvento = document.getElementById('evento-avaliacao');
         console.log(selectEvento);
         if (selectEvento) {
             selectEvento.addEventListener('change', function () {
@@ -591,7 +594,7 @@
         // Inicialmente, desabilitar os selects que dependem de seleção anterior
         const selectTurmaInicial = document.getElementById('turma');
         const selectAlunoInicial = document.getElementById('aluno');
-        const selectEventoInicial = document.getElementById('evento-avaliacao');
+        // const selectEventoInicial = document.getElementById('evento-avaliacao');
         const selectTesteInicial = document.getElementById('teste-leitura');
 
         if (selectTurmaInicial) selectTurmaInicial.disabled = true;
@@ -610,10 +613,10 @@
         btnIniciar.addEventListener('click', function (e) {
             // Verificar se todos os campos obrigatórios estão preenchidos
             const aluno = document.getElementById('aluno').value;
-            const evento = document.getElementById('evento-avaliacao').value;
+            // const evento = document.getElementById('evento-avaliacao').value;
             const teste = document.getElementById('teste-leitura').value;
 
-            if (!aluno || !evento || !teste) {
+            if (!aluno || !teste) {
                 e.preventDefault();
                 alert('Por favor, preencha todos os campos obrigatórios: Aluno, Evento de Avaliação e Teste de Leitura.');
                 return false;
@@ -623,7 +626,7 @@
             try {
                 // Obter texto selecionado para armazenar
                 const alunoNome = document.getElementById('aluno').options[document.getElementById('aluno').selectedIndex].text;
-                const eventoNome = document.getElementById('evento-avaliacao').options[document.getElementById('evento-avaliacao').selectedIndex].text;
+                // const eventoNome = document.getElementById('evento-avaliacao').options[document.getElementById('evento-avaliacao').selectedIndex].text;
                 const testeNome = document.getElementById('teste-leitura').options[document.getElementById('teste-leitura').selectedIndex].text;
 
                 localStorage.setItem('alunoSelecionado', JSON.stringify({
@@ -633,7 +636,7 @@
 
                 localStorage.setItem('avaliacaoIniciada', JSON.stringify({
                     aluno: { id: aluno, nome: alunoNome },
-                    evento: { id: evento, nome: eventoNome },
+                    // evento: { id: evento, nome: eventoNome },
                     teste: { id: teste, nome: testeNome },
                     dataInicio: new Date().toISOString()
                 }));
@@ -644,7 +647,7 @@
             }
 
             // Continuar com a execução normal
-            console.log('Avaliação iniciada com Aluno:', aluno, 'Evento:', evento, 'Teste:', teste);
+            console.log('Avaliação iniciada com Aluno:', aluno, 'Teste:', teste);
         });
     }
 

@@ -463,7 +463,7 @@ document.addEventListener('DOMContentLoaded', function() {
             turmas.forEach(turma => {
                 const option = document.createElement('option');
                 option.value = turma.id;
-                option.textContent = `${turma.name} (${turma.gradeLevel})`;
+                option.textContent = `${turma.name}`;
                 turmaFormSelect.appendChild(option);
             });
         })
@@ -648,7 +648,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     ${aluno.classGroup?.name || ''}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    ${aluno.classGroup?.school?.name || ''}
+                    ${aluno?.school?.name || ''}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <button class="text-yellow-600 hover:text-yellow-900 mr-3 btn-editar" data-id="${aluno.id}">
