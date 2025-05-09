@@ -1,16 +1,21 @@
 FROM nginx:stable
 
-RUN rm /etc/nginx/conf.d/default.conf
 
+
+RUN rm -rf /var/www/html/salf
+RUN rm /etc/nginx/conf.d/default.conf
 COPY ./default.conf /etc/nginx/conf.d/default.conf
 
 RUN mkdir -p /var/www/html/salf/erro
-
 COPY ./404.html /var/www/html/salf/erro
-COPY .. /var/www/html/salf
+
+ARG CACHEBUST=1
+
+
+
+COPY . /var/www/html/salf/
 
 EXPOSE 8080
-
 
     
 
