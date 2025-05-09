@@ -195,14 +195,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
         try {
             // Criar a avaliação na API
-            const response = await fetch(`${API_BASE_URL}/reading-assessments`, {
-                method: 'POST',
+            const response = await fetch(`${API_BASE_URL}/reading-assessments/${testeId}`, {
+                method: 'GET',
                 headers: headers,
-                body: JSON.stringify({
-                    assessmentId: parseInt(testeId),
-                    assessmentEventId: parseInt(eventoId),
-                    studentId: parseInt(alunoId)
-                })
+                // body: JSON.stringify({
+                //     assessmentId: parseInt(testeId),
+                //     assessmentEventId: parseInt(eventoId),
+                //     studentId: parseInt(alunoId)
+                // })
             });
 
             if (!response.ok) {
@@ -240,7 +240,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         const assessment = avaliacaoData.assessment;
-        console.log('🚀 phheheheheh:', assessment.phrases);
+    
 
         // Preparar e exibir a etapa de palavras
         prepararEtapaPalavras(assessment);
@@ -372,13 +372,17 @@ document.addEventListener('DOMContentLoaded', function () {
         let frases = [];
 
         // Verificar se frases vêm do campo 'phrases' ou 'sentences'
-        frases = assessment.phrases.map(phrase => phrase.text);
+        console.trace('🚀 assessment:', assessment.phrases);
+        // frases = assessment.phrases.map(phrase => phrase.text);
+        const reenderizarFrases = assessment.phrases.map(phrase => phrase.text);
+        renderizarEtapas(reenderizarFrases);ini
 
         console.log('🚀 frases MMMMMMM:', frases);
 
         console.log('🚀 frases:', frases);
         // Criar elementos para cada frase
         frases.forEach((frase, index) => {
+            console.log('🚀 frase:', frase);
             const divFrase = document.createElement('div');
             divFrase.className = 'border rounded p-3 flex items-center frase-item bg-white hover:bg-blue-100 cursor-pointer transition-colors';
             divFrase.setAttribute('data-id', index);

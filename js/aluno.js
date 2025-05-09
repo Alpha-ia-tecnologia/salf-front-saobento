@@ -51,29 +51,29 @@ document.addEventListener('DOMContentLoaded', function() {
     formImportar.addEventListener('submit', importarAlunos);
     
     // Event listeners para filtros
-    // regiaoSelect.addEventListener('change', function() {
-    //     filtroRegiaoId = this.value;
-    //     carregarGruposParaFiltro(filtroRegiaoId);
-    //     // Limpar os filtros subsequentes
-    //     grupoSelect.value = '';
-    //     escolaSelect.value = '';
-    //     turmaSelect.value = '';
-    //     filtroGrupoId = '';
-    //     filtroEscolaId = '';
-    //     filtroTurmaId = '';
-    //     carregarAlunos();
-    // });
+    regiaoSelect.addEventListener('change', function() {
+        filtroRegiaoId = this.value;
+        carregarGruposParaFiltro(filtroRegiaoId);
+        // Limpar os filtros subsequentes
+        grupoSelect.value = '';
+        escolaSelect.value = '';
+        turmaSelect.value = '';
+        filtroGrupoId = '';
+        filtroEscolaId = '';
+        filtroTurmaId = '';
+        carregarAlunos();
+    });
 
-    // grupoSelect.addEventListener('change', function() {
-    //     filtroGrupoId = this.value;
-    //     carregarEscolasParaFiltro(filtroGrupoId);
-    //     // Limpar os filtros subsequentes
-    //     escolaSelect.value = '';
-    //     turmaSelect.value = '';
-    //     filtroEscolaId = '';
-    //     filtroTurmaId = '';
-    //     carregarAlunos();
-    // });
+    grupoSelect.addEventListener('change', function() {
+        filtroGrupoId = this.value;
+        carregarEscolasParaFiltro(filtroGrupoId);
+        // Limpar os filtros subsequentes
+        escolaSelect.value = '';
+        turmaSelect.value = '';
+        filtroEscolaId = '';
+        filtroTurmaId = '';
+        carregarAlunos();
+    });
 
     escolaSelect.addEventListener('change', function() {
         filtroEscolaId = this.value;

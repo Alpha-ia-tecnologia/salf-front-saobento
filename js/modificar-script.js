@@ -85,39 +85,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
                 const dataAvaliacao = await requestAvaliacao.json();
                 
-                // Mapear dados da avaliação para o formato usado pela aplicação
-                const avaliacaoMapeada = mapearAvaliacao(dataAvaliacao);
-                
-                // Armazenar no localStorage para uso pelas etapas
-                localStorage.setItem('avaliacaoAtual', JSON.stringify(avaliacaoMapeada));
-                
-                console.log('Avaliação mapeada:', avaliacaoMapeada);
-                
-                // Renderizar os dados da resposta no formato de etapas de avaliação
-                renderizarDadosAvaliacao(data);
-                
-                // Configurar dataset para cada etapa
-                configurarDatasetsEtapas();
-                
-                // Configurar os timers/cronômetros
-                configurarCronometros();
-                
-                // Preparar cada etapa explicitamente para garantir que conteúdo seja renderizado
-                prepararTodasEtapas(data);
-                
-                // Ocultar seleção de avaliação
-                document.getElementById('selecao-avaliacao').classList.add('hidden');
-                
-                // Mostrar primeira etapa (palavras)
-                document.getElementById('etapa-palavras').classList.remove('hidden');
-                
-                // Se já existir uma função global para preparar as etapas
-                if (typeof prepararEtapasPalavras === 'function') {
-                    prepararEtapasPalavras();
-                } else if (typeof prepararEtapaPalavras === 'function') {
-                    prepararEtapaPalavras(avaliacaoMapeada);
-                }
-                
+                // NOVA IMPLEMENTAÇÃO: Usar as funções modularizadas do renderizacao-avaliacao.js
+                // Inicializar avaliação usando o novo módulo de renderização
+                inicializarAvaliacao(dataAvaliacao, async () => {
+                    // Callback de finalização
+                    const avaliacaoAtual = JSON.parse(localStorage.getItem('avaliacaoAtual') || '{}');
+                    if (avaliacaoAtual.id) {
+                        await finalizarAvaliacaoAPI(avaliacaoAtual.id);
+                    }
+                });
             } catch (error) {
                 console.error('Erro ao iniciar avaliação:', error);
                 alert('Ocorreu um erro ao iniciar a avaliação. Por favor, tente novamente.');
@@ -275,10 +251,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     habilitarItensParaClicar(botao.etapa);
                     
                     // Configurar tempo inicial
-                    let segundosRestantes = 60; // ALTERADO: 3 segundos -> 60 segundos (1 minuto)
+                    let segundosRestantes = 2; // ALTERADO: 60 segundos -> 2 segundos
                     
                     // Atualizar timer na interface
-                    timerElement.textContent = '01:00'; // ALTERADO: mostrar 1 minuto
+                    timerElement.textContent = '00:02'; // ALTERADO: mostrar 2 segundos
                     
                     // Iniciar contagem regressiva
                     window.estadoTimers.timers[botao.etapa] = setInterval(() => {
@@ -851,7 +827,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 phrases = [], 
                 questions = [] 
             } = assessmentData;
-            console.log('🚀 assessmentData: ', phrases);
             
             // Converter arrays se necessário
             const pseudowordsArray = processarCampoArray(pseudowords, 'pseudowords');
