@@ -76,7 +76,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 });
                 const assementId = await assementIdRequest.json();
-                console.log(assementId);
                 const response = await fetch(url, { 
                     headers, 
                     method: 'POST',
