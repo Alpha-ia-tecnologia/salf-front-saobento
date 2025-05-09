@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const regiaoGrupo = document.getElementById('regiao-grupo');
     
     // API endpoints
-    const API_BASE_URL = 'https://salf-salf-api.py5r5i.easypanel.host/api';
+    const API_BASE_URL = 'https://api.salf.maximizaedu.com/api';
     
     // Token de autenticação
     const token = localStorage.getItem('token');

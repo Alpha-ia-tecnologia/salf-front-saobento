@@ -9,7 +9,7 @@ const headers = {
 };
 
 // URL base da API
-const API_BASE_URL = "https://salf-salf-api.py5r5i.easypanel.host/api";
+const API_BASE_URL = "https://api.salf.maximizaedu.com/api";
 
 // Elementos DOM relacionados às etapas de leitura
 const etapasDOM = {
@@ -714,7 +714,7 @@ function atualizarAvaliacao(dados) {
     const id = avaliacaoAtual.id;
     
     // Construir a URL
-    const url = `https://salf-salf-api.py5r5i.easypanel.host/api/reading-assessments/${id}/stage`;
+    const url = `https://api.salf.maximizaedu.com/api/reading-assessments/${id}/stage`;
         
     // Determinar a etapa atual e os valores de leitura com base nos dados fornecidos
     let stage, itemsRead, totalItems;

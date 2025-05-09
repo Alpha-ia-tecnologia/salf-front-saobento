@@ -130,7 +130,7 @@ function gerarTextoMock() {
 
 document.addEventListener('DOMContentLoaded', function() {
     // API Base URL
-    const API_BASE_URL = "https://salf-salf-api.py5r5i.easypanel.host/api";
+    const API_BASE_URL = "https://api.salf.maximizaedu.com/api";
     
     // Token de autenticação
     const token = localStorage.getItem('token');
@@ -185,6 +185,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const alunoId = alunoSelect.value;
         const eventoId = eventoSelect.value;
+        const testeId = avaliacaoAtual.value;
 
         if (!alunoId || !eventoId) {
             alert("Por favor, selecione um aluno e um evento de avaliação");
@@ -197,7 +198,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 method: 'POST',
                 headers: headers,
                 body: JSON.stringify({
-                    assessmentId: parseInt(avaliacaoAtual),
+                    assessmentId: parseInt(testeId),
                     assessmentEventId: parseInt(eventoId),
                     studentId: parseInt(alunoId)
                 })

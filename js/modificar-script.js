@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Obter valores dos campos simplificados
             const alunoId = document.getElementById('aluno').value || "1";
-            // const eventoId = document.getElementById('evento-avaliacao').value || "1";
+            const eventoId = document.getElementById('evento-avaliacao').value || "1";
             const testeId = document.getElementById('teste-leitura').value || "1";
             
             if (!alunoId || !testeId ) {
@@ -67,22 +67,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 const dataInicial = hoje.toISOString().split('T')[0];
                 const dataFinal = dataFutura.toISOString().split('T')[0];
                 
-                const url = `https://salf-salf-api.py5r5i.easypanel.host/api/reading-assessments`;
-                
-                const assementIdRequest = await fetch(`${API_BASE_URL}/assessments/${testeId}`, {
-                    headers: {
-                        'Accept': 'application/json',
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`
-                    }
-                });
-                const assementId = await assementIdRequest.json();
+                const url = `https://api.salf.maximizaedu.com/api/reading-assessments`;
+              
                 const response = await fetch(url, { 
                     headers, 
                     method: 'POST',
                     body: JSON.stringify({
                         studentId: Number.parseInt(alunoId), 
                         assessmentId: Number.parseInt(testeId),
-                        assessmentEventId: assementId.assessmentEventId
+                        assessmentEventId: Number.parseInt(eventoId)
                     })
                 });
                 
@@ -187,7 +180,7 @@ document.addEventListener('DOMContentLoaded', function() {
             };
             
             // Construir URL da rota
-            const url = `https://salf-salf-api.py5r5i.easypanel.host/api/reading-assessments/${avaliacaoId}/stage`;
+            const url = `https://api.salf.maximizaedu.com/api/reading-assessments/${avaliacaoId}/stage`;
             
             // Preparar dados a serem enviados
             const dados = {
@@ -693,7 +686,7 @@ document.addEventListener('DOMContentLoaded', function() {
             };
             
             // Construir URL da rota
-            const url = `https://salf-salf-api.py5r5i.easypanel.host/api/reading-assessments/${avaliacaoId}/finalize`;
+            const url = `https://api.salf.maximizaedu.com/api/reading-assessments/${avaliacaoId}/finalize`;
             
             console.log(`Finalizando avaliação ID ${avaliacaoId}`);
             

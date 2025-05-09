@@ -33,7 +33,7 @@
                 
 //                 const token = localStorage.getItem('token');
 //                 try {
-//                     const request = await fetch('https://salf-salf-api.py5r5i.easypanel.host/api/assessments', {
+//                     const request = await fetch('https://api.salf.maximizaedu.com/api/assessments', {
 //                         method: 'POST',
 //                         body: JSON.stringify(dadosAvaliacao),
 //                         headers: {

@@ -153,7 +153,7 @@ btnSalvarAvaliacao.addEventListener('click', async () => {
 
 
     
-    const response = await fetch('https://salf-salf-api.py5r5i.easypanel.host/api/assessments', {
+    const response = await fetch('https://api.salf.maximizaedu.com/api/assessments', {
         method: 'POST',
         headers: {
             "Content-Type": "application/json",
@@ -226,7 +226,7 @@ function carregarEventos() {
             });
     } else {
         // Fallback para o método antigo
-        fetch('https://salf-salf-api.py5r5i.easypanel.host/api/assessment-events', {
+        fetch('https://api.salf.maximizaedu.com/api/assessment-events', {
             headers: {
                 'Authorization': `Bearer ${getAuthToken()}`
             }
@@ -327,7 +327,7 @@ function adicionarEventListenersTabelaEventos() {
 // Função para excluir um assessment
 function excluirAssessment(id) {
     if (confirm('Tem certeza que deseja excluir esta avaliação?')) {
-        fetch(`https://salf-salf-api.py5r5i.easypanel.host/api/assessments/${id}`, {
+        fetch(`https://api.salf.maximizaedu.com/api/assessments/${id}`, {
             method: 'DELETE',
             headers: {
                 'Authorization': `Bearer ${getAuthToken()}`
@@ -848,7 +848,7 @@ function preencherFormEvento(evento) {
 
 // Função para carregar as avaliações da API
 function carregarAvaliacoes() {
-    fetch('https://salf-salf-api.py5r5i.easypanel.host/api/assessments', {
+    fetch('https://api.salf.maximizaedu.com/api/assessments', {
         headers: {
             'Authorization': `Bearer ${getAuthToken()}`
         }
@@ -954,7 +954,7 @@ function editarAvaliacao(id) {
     }
 
     // Implementação antiga como fallback
-    fetch(`https://salf-salf-api.py5r5i.easypanel.host/api/assessments/${id}`, {
+    fetch(`https://api.salf.maximizaedu.com/api/assessments/${id}`, {
         headers: {
             'Authorization': `Bearer ${getAuthToken()}`
         }
@@ -1062,7 +1062,7 @@ function editarAvaliacao(id) {
 // Função para excluir uma avaliação
 function excluirAvaliacao(id) {
     if (confirm('Tem certeza que deseja excluir esta avaliação?')) {
-        fetch(`https://salf-salf-api.py5r5i.easypanel.host/api/assessments/${id}`, {
+        fetch(`https://api.salf.maximizaedu.com/api/assessments/${id}`, {
             method: 'DELETE',
             headers: {
                 'Authorization': `Bearer ${getAuthToken()}`
@@ -1128,7 +1128,7 @@ if (formEnvioSimples) {
         };
 
         // Enviar para a API
-        fetch('https://salf-salf-api.py5r5i.easypanel.host/api/assessments', {
+        fetch('https://api.salf.maximizaedu.com/api/assessments', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -1160,7 +1160,7 @@ if (formEnvioSimples) {
 
 var associarEvento = async () => {
     try {
-        const response = await fetch(`https://salf-salf-api.py5r5i.easypanel.host/api/assessments/${1})}/associate-event`, {
+        const response = await fetch(`https://api.salf.maximizaedu.com/api/assessments/${1})}/associate-event`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -1183,12 +1183,10 @@ formEvento.addEventListener('submit', function (e) {
     e.preventDefault();
 
     const nomeEvento = document.getElementById('nome-evento').value;
-    const avaliacaoId = document.getElementById('avaliacao-evento').value;
-    const ativo = document.getElementById('status-evento').checked;
 
     // Data de hoje para data de início
     const dataHoje = new Date();
-    const dataInicio = dataHoje.toISOString().split('T')[0];
+    // const dataInicio = dataHoje.toISOString().split('T')[0];
 
     // Data 6 meses no futuro para data fim
     const dataFim = new Date();
@@ -1200,10 +1198,6 @@ formEvento.addEventListener('submit', function (e) {
         return;
     }
 
-    if (!avaliacaoId) {
-        alert('Por favor, selecione uma avaliação');
-        return;
-    }
 
     // Desabilitar o botão de submit para evitar múltiplos envios
     const btnSubmit = formEvento.querySelector('button[type="submit"]');
@@ -1213,17 +1207,14 @@ formEvento.addEventListener('submit', function (e) {
     // Criar objeto de dados conforme formato solicitado pela API
     const dadosEvento = {
         name: nomeEvento,
-        assessmentId: parseInt(avaliacaoId),
-        startDate: dataInicio,
-        endDate: dataFimFormatada,
-        status: ativo ? 'ACTIVE' : 'INACTIVE'
+        status: "ACTIVE"
     };
 
     console.log('Dados do evento a serem enviados:', dadosEvento);
 
     if (eventoIdEmEdicao === null) {
         // Adicionar novo evento
-        fetch('https://salf-salf-api.py5r5i.easypanel.host/api/assessment-events', {
+        fetch('https://api.salf.maximizaedu.com/api/assessment-events', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -1262,7 +1253,7 @@ formEvento.addEventListener('submit', function (e) {
 
     } else {
         // Atualizar evento existente
-        fetch(`https://salf-salf-api.py5r5i.easypanel.host/api/assessment-events/${eventoIdEmEdicao}`, {
+        fetch(`https://api.salf.maximizaedu.com/api/assessment-events/${eventoIdEmEdicao}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -1310,7 +1301,7 @@ function carregarAvaliacoesParaSelect() {
     // Mostrar indicador de carregamento
     avaliacaoSelect.innerHTML = '<option value="">Carregando avaliações...</option>';
 
-    return fetch('https://salf-salf-api.py5r5i.easypanel.host/api/assessments', {
+    return fetch('https://api.salf.maximizaedu.com/api/assessments', {
         headers: {
             'Authorization': `Bearer ${getAuthToken()}`
         }
@@ -1375,7 +1366,7 @@ function editarEvento(id) {
             });
     } else {
         // Fallback para o método antigo
-        fetch(`https://salf-salf-api.py5r5i.easypanel.host/api/assessment-events/${id}`, {
+        fetch(`https://api.salf.maximizaedu.com/api/assessment-events/${id}`, {
             headers: {
                 'Authorization': `Bearer ${getAuthToken()}`
             }
@@ -1429,7 +1420,7 @@ function excluirEvento(id) {
                 });
         } else {
             // Fallback para o método antigo
-            fetch(`https://salf-salf-api.py5r5i.easypanel.host/api/assessment-events/${id}`, {
+            fetch(`https://api.salf.maximizaedu.com/api/assessment-events/${id}`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${getAuthToken()}`
@@ -1474,7 +1465,7 @@ function exportarProva(id) {
     document.body.appendChild(loadingOverlay);
 
     // Buscar link de download da API
-    fetch(`https://salf-salf-api.py5r5i.easypanel.host/api/assessments/${id}/document`, {
+    fetch(`https://api.salf.maximizaedu.com/api/assessments/${id}/document`, {
         headers: {
             'Authorization': `Bearer ${getAuthToken()}`
         }

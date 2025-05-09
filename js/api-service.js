@@ -4,7 +4,7 @@
  */
 const ApiService = (function() {
     // URL base da API
-    const API_BASE_URL = 'https://salf-salf-api.py5r5i.easypanel.host/api';
+    const API_BASE_URL = 'https://api.salf.maximizaedu.com/api';
     
     /**
      * Obtém um token de autenticação do localStorage

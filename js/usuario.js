@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const isListPage = window.location.href.includes('listar.html');
     
     // Endpoint base da API
-    const API_BASE_URL = 'https://salf-salf-api.py5r5i.easypanel.host/api';
+    const API_BASE_URL = 'https://api.salf.maximizaedu.com/api';
     
     // Token de autenticação (mock)
     const AUTH_TOKEN = localStorage.getItem('token');

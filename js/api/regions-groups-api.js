@@ -6,7 +6,7 @@
  */
 async function getAllRegions() {
   const token = localStorage.getItem('token') || '';
-  const url = 'https://salf-salf-api.py5r5i.easypanel.host/api/regions';
+  const url = 'https://api.salf.maximizaedu.com/api/regions';
   
   const response = await fetch(url, {
     headers: {
@@ -28,7 +28,7 @@ async function getAllRegions() {
  */
 async function createRegion(data) {
   const token = localStorage.getItem('token') || '';
-  const url = 'https://salf-salf-api.py5r5i.easypanel.host/api/regions';
+  const url = 'https://api.salf.maximizaedu.com/api/regions';
   
   const response = await fetch(url, {
     method: 'POST',
@@ -53,7 +53,7 @@ async function createRegion(data) {
  */
 async function getAllGroups() {
   const token = localStorage.getItem('token') || '';
-  const url = 'https://salf-salf-api.py5r5i.easypanel.host/api/groups';
+  const url = 'https://api.salf.maximizaedu.com/api/groups';
   
   const response = await fetch(url, {
     headers: {
@@ -75,7 +75,7 @@ async function getAllGroups() {
  */
 async function createGroup(data) {
   const token = localStorage.getItem('token') || '';
-  const url = 'https://salf-salf-api.py5r5i.easypanel.host/api/groups';
+  const url = 'https://api.salf.maximizaedu.com/api/groups';
   
   const response = await fetch(url, {
     method: 'POST',
