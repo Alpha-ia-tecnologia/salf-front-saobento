@@ -1,4 +1,11 @@
 document.addEventListener('DOMContentLoaded', function() {
+    let cacheData = {
+        regiao : null,
+        grupo : null,
+        serie : null,
+        classGroupId : null
+
+    }
     // Referências aos elementos
     const btnNovoAluno = document.getElementById('btn-novo-aluno');
     const btnImportarAlunos = document.getElementById('btn-importar-alunos');
@@ -16,8 +23,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const turmaSelect = document.getElementById('filtro-turma');
     const escolaFormSelect = document.getElementById('escola-aluno-form');
     const turmaFormSelect = document.getElementById('turma-aluno-form');
-    const regiaoFormSelect = document.getElementById('regiao-aluno-form');
-    const grupoFormSelect = document.getElementById('grupo-aluno-form');
     const fileUpload = document.getElementById('file-upload');
     const arquivoSelecionado = document.getElementById('arquivo-selecionado');
     const nomeArquivo = document.getElementById('nome-arquivo');
@@ -49,18 +54,33 @@ document.addEventListener('DOMContentLoaded', function() {
     regiaoSelect.addEventListener('change', function() {
         filtroRegiaoId = this.value;
         carregarGruposParaFiltro(filtroRegiaoId);
+        // Limpar os filtros subsequentes
+        grupoSelect.value = '';
+        escolaSelect.value = '';
+        turmaSelect.value = '';
+        filtroGrupoId = '';
+        filtroEscolaId = '';
+        filtroTurmaId = '';
         carregarAlunos();
     });
-    
+
     grupoSelect.addEventListener('change', function() {
         filtroGrupoId = this.value;
         carregarEscolasParaFiltro(filtroGrupoId);
+        // Limpar os filtros subsequentes
+        escolaSelect.value = '';
+        turmaSelect.value = '';
+        filtroEscolaId = '';
+        filtroTurmaId = '';
         carregarAlunos();
     });
-    
+
     escolaSelect.addEventListener('change', function() {
         filtroEscolaId = this.value;
         carregarTurmasParaFiltro(filtroEscolaId);
+        // Limpar o filtro de turma
+        turmaSelect.value = '';
+        filtroTurmaId = '';
         carregarAlunos();
     });
     
@@ -69,12 +89,30 @@ document.addEventListener('DOMContentLoaded', function() {
         carregarAlunos();
     });
     
-    // Event listeners no formulário
-    escolaFormSelect.addEventListener('change', carregarTurmasParaFormulario);
-    regiaoFormSelect.addEventListener('change', function() {
-        carregarGruposParaFormulario(this.value);
+    turmaFormSelect.addEventListener('change', async function() {
+        filtroTurmaId = this.value;
+        const request = await fetch(`${API_BASE_URL}/class-groups/${filtroTurmaId}`, {
+            headers: {
+                'Accept': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        })
+        .then(res => res.json())
+        .then(cache => {
+            cacheData.regiao = cache.school.regionId;
+            cacheData.grupo = cache.school.groupId;
+            cacheData.serie = cache.grade;
+            cacheData.classGroupId = cache.id;
+            console.log(cacheData);
+        }); 
+        
+        carregarAlunos();
     });
     
+    // Event listeners no formulário
+    escolaFormSelect.addEventListener('change', carregarTurmasParaFormulario);
+
+
     fileUpload.addEventListener('change', exibirNomeArquivo);
     
     // Inicializar dados
@@ -82,8 +120,11 @@ document.addEventListener('DOMContentLoaded', function() {
     carregarAlunos();
     
     // Funções
+
+    /**
+     * Carrega as regiões para o filtro
+     */
     function carregarRegioes() {
-        // Carregar regiões para o filtro
         fetch(`${API_BASE_URL}/regions`, {
             headers: {
                 'Accept': 'application/json',
@@ -111,7 +152,11 @@ document.addEventListener('DOMContentLoaded', function() {
             alert('Erro ao carregar regiões. Por favor, tente novamente.');
         });
     }
-    
+
+    /**
+     * Carrega os grupos para o filtro com base na região selecionada
+     * @param {string} regiaoId - ID da região selecionada
+     */
     function carregarGruposParaFiltro(regiaoId = '') {
         // URL da requisição
         let url = `${API_BASE_URL}/groups`;
@@ -133,7 +178,6 @@ document.addEventListener('DOMContentLoaded', function() {
             return response.json();
         })
         .then(grupos => {
-            console.log(grupos);
             // Preencher select de grupos do filtro
             grupoSelect.innerHTML = '<option value="">Todos os grupos</option>';
             grupos.forEach(grupo => {
@@ -152,8 +196,15 @@ document.addEventListener('DOMContentLoaded', function() {
     function carregarEscolasParaFiltro(grupoId = '') {
         // URL da requisição
         let url = `${API_BASE_URL}/schools`;
-        if (grupoId) {
-            url += `?groupId=${grupoId}`;
+        
+        // Adicionar parâmetros de filtro
+        let params = [];
+        if (filtroRegiaoId) params.push(`regionId=${filtroRegiaoId}`);
+        if (grupoId) params.push(`groupId=${grupoId}`);
+        
+        // Adicionar parâmetros à URL
+        if (params.length > 0) {
+            url += `?${params.join('&')}`;
         }
         
         // Carregar escolas para o filtro
@@ -197,8 +248,16 @@ document.addEventListener('DOMContentLoaded', function() {
     function carregarTurmasParaFiltro(escolaId = '') {
         // URL da requisição
         let url = `${API_BASE_URL}/class-groups`;
-        if (escolaId) {
-            url += `?schoolId=${escolaId}`;
+        
+        // Adicionar parâmetros de filtro
+        let params = [];
+        if (filtroRegiaoId) params.push(`regionId=${filtroRegiaoId}`);
+        if (filtroGrupoId) params.push(`groupId=${filtroGrupoId}`);
+        if (escolaId) params.push(`schoolId=${escolaId}`);
+        
+        // Adicionar parâmetros à URL
+        if (params.length > 0) {
+            url += `?${params.join('&')}`;
         }
         
         // Carregar turmas para o filtro
@@ -314,19 +373,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }).then(res => res.json()); 
 
-        regioes.forEach(regiao => {
-            const option = document.createElement('option');
-            option.value = regiao.id;
-            option.textContent = regiao.name;
-            grupoFormSelect.appendChild(option);
-        });
 
-        grupos.forEach(grupo => {
-            const option = document.createElement('option');
-            option.value = grupo.id;
-            option.textContent = grupo.name;
-            regiaoFormSelect.appendChild(option);
-        });
         
         
         
@@ -441,13 +488,10 @@ document.addEventListener('DOMContentLoaded', function() {
         
         const formEscolaId = escolaFormSelect.value;
         const formTurmaId = turmaFormSelect.value;
-        const formRegiaoId = regiaoFormSelect.value;
-        const formGrupoId = grupoFormSelect.value;
         const nomeAluno = document.getElementById('nome-aluno').value;
         const matriculaAluno = document.getElementById('matricula-aluno').value;
-        const serieAluno = document.getElementById('serie-aluno').value;
         
-        if (!formEscolaId || !formTurmaId || !formRegiaoId || !formGrupoId || !nomeAluno || !matriculaAluno || !serieAluno) {
+        if (!formEscolaId || !formTurmaId  || !nomeAluno || !matriculaAluno) {
             alert('Por favor, preencha todos os campos obrigatórios.');
             return;
         }
@@ -457,10 +501,10 @@ document.addEventListener('DOMContentLoaded', function() {
             name: nomeAluno,
             registrationNumber: matriculaAluno,
             classGroupId: parseInt(formTurmaId),
-            regionId: parseInt(formRegiaoId),
-            groupId: parseInt(formGrupoId),
+            regionId: cacheData.regiao,
+            groupId: cacheData.grupo,
             schoolId: parseInt(formEscolaId),
-            grade: serieAluno
+            grade: cacheData.serie
         };
         
         // Verificar se estamos editando ou criando um novo aluno

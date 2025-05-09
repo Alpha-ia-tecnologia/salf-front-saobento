@@ -40,7 +40,6 @@ function capturarEEnviarDadosFormulario() {
         gradeRange: dadosFormulario.gradeRange,
         words: dadosFormulario.palavras,
         pseudowords: dadosFormulario.pseudopalavras,
-        sentences: [],
         assessmentEventId: 1,
         phrases: dadosFormulario.frases.map(frase => ({ text: frase })),
         questions: dadosFormulario.questoes.map(questao => ({

@@ -7,8 +7,40 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            display: none;
+        }
+        
+        .card-transition {
+            transition: all 0.3s ease;
+        }
+        
+        .card-transition:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+    </style>
 </head>
 <body class="bg-gray-100 min-h-screen">
+    <!-- Loading indicator -->
+    <div id="loading-indicator" class="loading-overlay">
+        <div class="bg-white p-6 rounded-lg shadow-lg text-center">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-3"></div>
+            <p class="text-gray-700">Carregando dados...</p>
+        </div>
+    </div>
+
     <div class="flex h-screen bg-gray-100">
         <!-- Sidebar -->
         <div id="sidebar-container"></div>
@@ -23,13 +55,23 @@
                 <div class="container mx-auto">
                     <!-- Título da página -->
                     <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-                        <h1 class="text-2xl font-bold text-gray-800 mb-2">Dashboard de Avaliações</h1>
-                        <p class="text-gray-600">Visualize e analise os dados das avaliações de leitura</p>
+                        <h1 class="text-2xl font-bold text-gray-800 mb-2">Dashboard Analítico</h1>
+                        <p class="text-gray-600">Visualize e analise os dados das avaliações de leitura e fluência</p>
                     </div>
                     
                     <!-- Filtros -->
                     <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-                        <h2 class="text-lg font-semibold text-gray-800 mb-4">Filtros</h2>
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-lg font-semibold text-gray-800">Filtros</h2>
+                            <div class="flex space-x-2">
+                                <button id="limpar-filtros" class="bg-gray-200 text-gray-800 py-1 px-3 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 transition text-sm">
+                                    <i class="fas fa-undo mr-1"></i> Limpar
+                                </button>
+                                <button id="aplicar-filtros" class="bg-blue-600 text-white py-1 px-3 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition text-sm">
+                                    <i class="fas fa-filter mr-1"></i> Aplicar
+                                </button>
+                            </div>
+                        </div>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                             <div>
                                 <label for="regiao" class="block text-sm font-medium text-gray-700 mb-1">Região</label>
@@ -47,8 +89,6 @@
                                 <label for="escola" class="block text-sm font-medium text-gray-700 mb-1">Escola</label>
                                 <select id="escola" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                                     <option value="">Todas as escolas</option>
-                                    <option value="1">Escola Municipal João da Silva</option>
-                                    <option value="2">Escola Estadual Maria José</option>
                                 </select>
                             </div>
                         </div>
@@ -66,90 +106,81 @@
                                     <option value="7">7º Ano</option>
                                     <option value="8">8º Ano</option>
                                     <option value="9">9º Ano</option>
+                            
                                 </select>
                             </div>
                             <div>
                                 <label for="evento" class="block text-sm font-medium text-gray-700 mb-1">Evento de Avaliação</label>
                                 <select id="evento" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                                     <option value="">Todos os eventos</option>
-                                    <option value="1">Avaliação 1º Semestre 2023</option>
-                                    <option value="2">Avaliação 2º Semestre 2023</option>
                                 </select>
                             </div>
-                        </div>
-                        <div class="mt-4">
-                            <button id="aplicar-filtros" class="bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition">
-                                Aplicar Filtros
-                            </button>
-                            <button id="limpar-filtros" class="ml-2 bg-gray-200 text-gray-800 py-2 px-4 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 transition">
-                                Limpar Filtros
-                            </button>
                         </div>
                     </div>
                     
                     <!-- Cards de resumo -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-6">
-                        <!-- Card 1 - Total de estudantes avaliados -->
-                        <div id="card-total-students" class="bg-white rounded-lg shadow-md p-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4 mb-6">
+                        <!-- Card 1 - Total de estudantes -->
+                        <div id="card-total-students" class="bg-white rounded-lg shadow-md p-4 card-transition">
                             <div class="flex items-center">
                                 <div class="p-3 rounded-full bg-blue-100 text-blue-600">
                                     <i class="fas fa-users text-xl"></i>
                                 </div>
                                 <div class="ml-4">
                                     <p class="text-sm font-medium text-gray-500">Total de Alunos</p>
-                                    <p class="card-value text-2xl font-semibold text-gray-800">245</p>
+                                    <p class="card-value text-2xl font-semibold text-gray-800">0</p>
                                 </div>
                             </div>
                         </div>
                         
                         <!-- Card 2 - Alunos avaliados -->
-                        <div id="card-students-assessed" class="bg-white rounded-lg shadow-md p-6">
+                        <div id="card-students-assessed" class="bg-white rounded-lg shadow-md p-4 card-transition">
                             <div class="flex items-center">
                                 <div class="p-3 rounded-full bg-green-100 text-green-600">
-                                    <i class="fas fa-tachometer-alt text-xl"></i>
+                                    <i class="fas fa-clipboard-check text-xl"></i>
                                 </div>
                                 <div class="ml-4">
                                     <p class="text-sm font-medium text-gray-500">Alunos Avaliados</p>
-                                    <p class="card-value text-2xl font-semibold text-gray-800">78</p>
+                                    <p class="card-value text-2xl font-semibold text-gray-800">0</p>
                                 </div>
                             </div>
                         </div>
                         
                         <!-- Card 3 - Taxa de participação -->
-                        <div id="card-participation-rate" class="bg-white rounded-lg shadow-md p-6">
+                        <div id="card-participation-rate" class="bg-white rounded-lg shadow-md p-4 card-transition">
                             <div class="flex items-center">
                                 <div class="p-3 rounded-full bg-yellow-100 text-yellow-600">
                                     <i class="fas fa-percentage text-xl"></i>
                                 </div>
                                 <div class="ml-4">
                                     <p class="text-sm font-medium text-gray-500">Taxa de Participação</p>
-                                    <p class="card-value text-2xl font-semibold text-gray-800">87%</p>
+                                    <p class="card-value text-2xl font-semibold text-gray-800">0%</p>
                                 </div>
                             </div>
                         </div>
                         
                         <!-- Card 4 - Média de palavras por minuto -->
-                        <div id="card-avg-wpm" class="bg-white rounded-lg shadow-md p-6">
+                        <div id="card-avg-wpm" class="bg-white rounded-lg shadow-md p-4 card-transition">
                             <div class="flex items-center">
                                 <div class="p-3 rounded-full bg-blue-100 text-blue-600">
                                     <i class="fas fa-book-reader text-xl"></i>
                                 </div>
                                 <div class="ml-4">
                                     <p class="text-sm font-medium text-gray-500">PPM Médio</p>
-                                    <p class="card-value text-2xl font-semibold text-gray-800">78</p>
+                                    <p class="card-value text-2xl font-semibold text-gray-800">0</p>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Card 5 - Taxa de compreensão -->
-                        <div id="card-comprehension-rate" class="bg-white rounded-lg shadow-md p-6">
+                        <div id="card-comprehension-rate" class="bg-white rounded-lg shadow-md p-4 card-transition">
                             <div class="flex items-center">
                                 <div class="p-3 rounded-full bg-purple-100 text-purple-600">
                                     <i class="fas fa-brain text-xl"></i>
                                 </div>
                                 <div class="ml-4">
                                     <p class="text-sm font-medium text-gray-500">Compreensão</p>
-                                    <p class="card-value text-2xl font-semibold text-gray-800">65%</p>
+                                    <p class="card-value text-2xl font-semibold text-gray-800">0%</p>
                                 </div>
                             </div>
                         </div>
@@ -160,16 +191,26 @@
                         <!-- Gráfico de pizza - Distribuição por nível de leitura -->
                         <div class="bg-white rounded-lg shadow-md p-6">
                             <h2 class="text-lg font-semibold text-gray-800 mb-4">Distribuição por Nível de Leitura</h2>
-                            <div class="h-64">
+                            <div class="h-64 relative">
                                 <canvas id="chart-niveis"></canvas>
+                                <div class="chart-loading absolute inset-0 flex items-center justify-center bg-white bg-opacity-70 hidden">
+                                    <div class="text-blue-600">
+                                        <i class="fas fa-circle-notch fa-spin text-2xl"></i>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         
                         <!-- Gráfico de barras - Desempenho por série -->
                         <div class="bg-white rounded-lg shadow-md p-6">
                             <h2 class="text-lg font-semibold text-gray-800 mb-4">Desempenho por Série</h2>
-                            <div class="h-64">
+                            <div class="h-64 relative">
                                 <canvas id="chart-series"></canvas>
+                                <div class="chart-loading absolute inset-0 flex items-center justify-center bg-white bg-opacity-70 hidden">
+                                    <div class="text-blue-600">
+                                        <i class="fas fa-circle-notch fa-spin text-2xl"></i>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -178,17 +219,27 @@
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
                         <!-- Gráfico de linha - Evolução temporal -->
                         <div class="bg-white rounded-lg shadow-md p-6">
-                            <h2 class="text-lg font-semibold text-gray-800 mb-4">Evolução dos Níveis de Leitura por Evento de Avaliação</h2>
-                            <div class="h-64">
+                            <h2 class="text-lg font-semibold text-gray-800 mb-4">Evolução dos Níveis por Avaliação</h2>
+                            <div class="h-64 relative">
                                 <canvas id="chart-evolucao"></canvas>
+                                <div class="chart-loading absolute inset-0 flex items-center justify-center bg-white bg-opacity-70 hidden">
+                                    <div class="text-blue-600">
+                                        <i class="fas fa-circle-notch fa-spin text-2xl"></i>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         
                         <!-- Gráfico de barras - Progressão de níveis -->
                         <div class="bg-white rounded-lg shadow-md p-6">
                             <h2 class="text-lg font-semibold text-gray-800 mb-4">Progressão de Níveis por Ano</h2>
-                            <div class="h-64">
+                            <div class="h-64 relative">
                                 <canvas id="chart-progressao"></canvas>
+                                <div class="chart-loading absolute inset-0 flex items-center justify-center bg-white bg-opacity-70 hidden">
+                                    <div class="text-blue-600">
+                                        <i class="fas fa-circle-notch fa-spin text-2xl"></i>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

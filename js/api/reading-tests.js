@@ -16,7 +16,7 @@ async function getAllReadingTests() {
       throw new Error('Falha ao buscar testes de leitura');
     }
     
-    return response.json();
+  return response.json();
   } catch (error) {
     console.error('Erro ao buscar testes de leitura:', error);
     // Retornar um array vazio em vez de lançar erro, para evitar quebrar a UI

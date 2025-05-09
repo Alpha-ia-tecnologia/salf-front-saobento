@@ -138,19 +138,19 @@ function inicializarModuloLeituras() {
 function configurarBotoesNavegacao() {
     // Verificar se os elementos existem antes de adicionar os event listeners
     if (etapasDOM.btnProximoPalavras) {
-        etapasDOM.btnProximoPalavras.addEventListener('click', () => mudarEtapa('palavras', 'pseudopalavras'));
+    etapasDOM.btnProximoPalavras.addEventListener('click', () => mudarEtapa('palavras', 'pseudopalavras'));
     }
     
     if (etapasDOM.btnProximoPseudopalavras) {
-        etapasDOM.btnProximoPseudopalavras.addEventListener('click', () => mudarEtapa('pseudopalavras', 'frases'));
+    etapasDOM.btnProximoPseudopalavras.addEventListener('click', () => mudarEtapa('pseudopalavras', 'frases'));
     }
     
     if (etapasDOM.btnProximoFrases) {
-        etapasDOM.btnProximoFrases.addEventListener('click', () => mudarEtapa('frases', 'texto'));
+    etapasDOM.btnProximoFrases.addEventListener('click', () => mudarEtapa('frases', 'texto'));
     }
     
     if (etapasDOM.btnProximoTexto) {
-        etapasDOM.btnProximoTexto.addEventListener('click', () => mudarEtapa('texto', 'resultado'));
+    etapasDOM.btnProximoTexto.addEventListener('click', () => mudarEtapa('texto', 'resultado'));
     }
 }
 
@@ -158,19 +158,19 @@ function configurarBotoesNavegacao() {
 function configurarBotoesTimer() {
     // Verificar se os elementos existem antes de adicionar os event listeners
     if (etapasDOM.btnTimerPalavras) {
-        etapasDOM.btnTimerPalavras.addEventListener('click', () => iniciarTimer('palavras'));
+    etapasDOM.btnTimerPalavras.addEventListener('click', () => iniciarTimer('palavras'));
     }
     
     if (etapasDOM.btnTimerPseudopalavras) {
-        etapasDOM.btnTimerPseudopalavras.addEventListener('click', () => iniciarTimer('pseudopalavras'));
+    etapasDOM.btnTimerPseudopalavras.addEventListener('click', () => iniciarTimer('pseudopalavras'));
     }
     
     if (etapasDOM.btnTimerFrases) {
-        etapasDOM.btnTimerFrases.addEventListener('click', () => iniciarTimer('frases'));
+    etapasDOM.btnTimerFrases.addEventListener('click', () => iniciarTimer('frases'));
     }
     
     if (etapasDOM.btnTimerTexto) {
-        etapasDOM.btnTimerTexto.addEventListener('click', () => iniciarTimer('texto'));
+    etapasDOM.btnTimerTexto.addEventListener('click', () => iniciarTimer('texto'));
     }
 }
 

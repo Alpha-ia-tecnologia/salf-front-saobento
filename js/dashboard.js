@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const filtroRegiao = document.getElementById('regiao');
     const filtroGrupo = document.getElementById('grupo');
     const filtroEscola = document.getElementById('escola');
-    const filtroAnoEscolar = document.getElementById('ano-escolar');
+    // const filtroAnoEscolar = document.getElementById('ano-escolar');
     const filtroEvento = document.getElementById('evento');
     
     // Limpar todos os filtros para deixá-los só com a opção default
@@ -100,7 +100,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Função para limpar todos os filtros para o estado default
     function limparFiltrosParaDefault() {
         // Lista de todos os filtros
-        const filtros = [filtroRegiao, filtroGrupo, filtroEscola, filtroAnoEscolar, filtroEvento];
+        const filtros = [filtroRegiao, filtroGrupo, filtroEscola, filtroEvento];
         
         // Para cada filtro, remover todas as opções exceto a primeira (default)
         filtros.forEach(filtro => {
@@ -204,10 +204,10 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             // 4. Anos Escolares (schoolYears → select#ano-escolar)
-            if (filterData.schoolYears && filterData.schoolYears.length > 0) {
-                console.log(`Preenchendo select 'ano-escolar' com ${filterData.schoolYears.length} opções`);
-                populateGradeLevelFilter(filterData.schoolYears);
-            }
+            // if (filterData.schoolYears && filterData.schoolYears.length > 0) {
+            //     console.log(`Preenchendo select 'ano-escolar' com ${filterData.schoolYears.length} opções`);
+            //     populateGradeLevelFilter(filterData.schoolYears);
+            // }
             
             // 5. Eventos de Avaliação (assessmentEvents → select#evento)
             if (filterData.assessmentEvents && filterData.assessmentEvents.length > 0) {
@@ -253,25 +253,25 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Preencher o filtro de ano escolar (Campo 'schoolYears' → select#ano-escolar)
     function populateGradeLevelFilter(schoolYears) {
-        if (!filtroAnoEscolar) {
-            console.warn("Elemento select#ano-escolar não encontrado");
-            return;
-        }
+        // if (!filtroAnoEscolar) {
+        //     console.warn("Elemento select#ano-escolar não encontrado");
+        //     return;
+        // }
         
         console.log("Preenchendo select de anos escolares com:", schoolYears);
         
-        // Limpar opções atuais, mantendo a opção default
-        while (filtroAnoEscolar.options.length > 1) {
-            filtroAnoEscolar.remove(1);
-        }
+        // // Limpar opções atuais, mantendo a opção default
+        // while (filtroAnoEscolar.options.length > 1) {
+        //     filtroAnoEscolar.remove(1);
+        // }
         
         // Adicionar os anos escolares ao select
-        schoolYears.forEach(year => {
-            const option = document.createElement('option');
-            option.value = year;
-            option.textContent = year + "º Ano";
-            filtroAnoEscolar.appendChild(option);
-        });
+        // schoolYears.forEach(year => {
+        //     const option = document.createElement('option');
+        //     option.value = year;
+        //     option.textContent = year + "º Ano";
+        //     filtroAnoEscolar.appendChild(option);
+        // });
     }
     
     // Preencher o filtro de eventos (Campo 'assessmentEvents' → select#evento)
@@ -301,6 +301,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // - Campo 'regions' → select#regiao
     // - Campo 'groups' → select#grupo
     function populateFilter(filterElement, options) {
+        console.log("Populando filtro com:", filterElement, options);
         if (!filterElement) {
             console.warn("Elemento select não encontrado");
             return;
@@ -314,10 +315,10 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         // Adicionar as opções ao select
-        options.forEach(optionValue => {
+        options.forEach(({id, name}) => {
             const option = document.createElement('option');
-            option.value = optionValue;
-            option.textContent = optionValue;
+            option.value = id;
+            option.textContent = name;
             filterElement.appendChild(option);
         });
     }
@@ -387,7 +388,7 @@ document.addEventListener('DOMContentLoaded', function() {
             regiao: filtroRegiao.value,
             grupo: filtroGrupo.value,
             escola: filtroEscola.value,
-            anoEscolar: filtroAnoEscolar.value,
+            // anoEscolar: filtroAnoEscolar.value,
             turma: document.getElementById('turma') ? document.getElementById('turma').value : '',
             evento: filtroEvento.value
         };
@@ -428,7 +429,7 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log("🔍 Iniciando carregamento de dados de evolução dos níveis de leitura...");
             
             // Mostrar indicador de carregamento
-            showLoading(true);
+            showLoading(true, 'chart-evolucao');
             
             // URL específica para dados de evolução dos níveis de leitura
             const url = `${API_BASE_URL}/dashboard/reading-level-evolution${queryString ? '?' + queryString : ''}`;
@@ -481,14 +482,14 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log("✓ Gráfico de evolução atualizado com sucesso!");
             
             // Esconder indicador de carregamento
-            showLoading(false);
+            showLoading(false, 'chart-evolucao');
         } catch (error) {
             console.error("❌ Erro ao carregar dados de evolução:", error);
             // Usar dados de exemplo em caso de erro
             const exampleData = { evolution: getExampleEvolutionData() };
             console.log("🔄 Usando dados de exemplo devido a erro:", exampleData);
             updateReadingLevelEvolutionChart(exampleData);
-            showLoading(false);
+            showLoading(false, 'chart-evolucao');
         }
     }
     
@@ -664,7 +665,7 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log("🔍 Iniciando carregamento de dados de desempenho por série...");
             
             // Mostrar indicador de carregamento
-            showLoading(true);
+            showLoading(true, 'chart-series');
             
             // URL específica para dados de desempenho por série
             const url = `${API_BASE_URL}/dashboard/performance-by-grade${queryString ? '?' + queryString : ''}`;
@@ -717,14 +718,14 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log("✓ Gráfico de desempenho por série atualizado com sucesso!");
             
             // Esconder indicador de carregamento
-            showLoading(false);
+            showLoading(false, 'chart-series');
         } catch (error) {
             console.error("❌ Erro ao carregar dados de desempenho por série:", error);
             // Usar dados de exemplo em caso de erro
             const exampleData = { gradePerformance: getExampleGradePerformanceData() };
             console.log("🔄 Usando dados de exemplo devido a erro:", exampleData);
             updatePerformanceByGradeChart(exampleData);
-            showLoading(false);
+            showLoading(false, 'chart-series');
         }
     }
     
@@ -938,7 +939,7 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log("🔍 Iniciando carregamento de dados de distribuição de níveis de leitura...");
             
             // Mostrar indicador de carregamento
-            showLoading(true);
+            showLoading(true, 'chart-niveis');
             
             // URL específica para dados de distribuição de níveis de leitura
             const url = `${API_BASE_URL}/dashboard/reading-level-distribution${queryString ? '?' + queryString : ''}`;
@@ -991,14 +992,14 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log("✓ Gráfico de níveis de leitura atualizado com sucesso!");
             
             // Esconder indicador de carregamento
-            showLoading(false);
+            showLoading(false, 'chart-niveis');
         } catch (error) {
             console.error("❌ Erro ao carregar dados de distribuição:", error);
             // Usar dados de exemplo em caso de erro
             const exampleData = { distribution: getExampleDistributionData() };
             console.log("🔄 Usando dados de exemplo devido a erro:", exampleData);
             updateReadingLevelChart(exampleData);
-            showLoading(false);
+            showLoading(false, 'chart-niveis');
         }
     }
     
@@ -1099,7 +1100,7 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log("🔍 Iniciando carregamento de dados de progressão anual...");
             
             // Mostrar indicador de carregamento
-            showLoading(true);
+            showLoading(true, 'chart-progressao');
             
             // URL específica para dados de progressão anual
             const url = `${API_BASE_URL}/dashboard/yearly-progression${queryString ? '?' + queryString : ''}`;
@@ -1152,14 +1153,14 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log("✓ Gráfico de progressão anual atualizado com sucesso!");
             
             // Esconder indicador de carregamento
-            showLoading(false);
+            showLoading(false, 'chart-progressao');
         } catch (error) {
             console.error("❌ Erro ao carregar dados de progressão anual:", error);
             // Usar dados de exemplo em caso de erro
             const exampleData = { yearly: getExampleYearlyProgressionData() };
             console.log("🔄 Usando dados de exemplo devido a erro:", exampleData);
             updateYearlyProgressionChart(exampleData);
-            showLoading(false);
+            showLoading(false, 'chart-progressao');
         }
     }
     
@@ -1319,7 +1320,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Carregar dados do dashboard da API
     async function loadDashboardData(queryString = '') {
         try {
-            // Mostrar indicador de carregamento
+            // Mostrar indicador de carregamento global
             showLoading(true);
             
             // URL base para analytics
@@ -1352,10 +1353,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 throw new Error(`Erro ao buscar dados do dashboard: ${response.status} ${response.statusText}`);
             }
             
+            // Processar os dados recebidos
             const dashboardData = await response.json();
             console.log("Dados do dashboard recebidos:", dashboardData);
             
             // Verificar a presença dos campos críticos
+            if (!dashboardData || typeof dashboardData !== 'object') {
+                throw new Error('Formato de dados inválido recebido da API');
+            }
+            
+            // Verificar campos principais e imprimir para debug
             console.log("Verificando campos principais:");
             console.log("- totalStudents:", dashboardData.totalStudents);
             console.log("- studentsAssessed:", dashboardData.studentsAssessed);
@@ -1368,17 +1375,43 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Esconder indicador de carregamento
             showLoading(false);
+            
+            return dashboardData;
         } catch (error) {
             console.error("Erro ao carregar dados do dashboard:", error);
-            // Esconder indicador de carregamento mesmo em caso de erro
-            showLoading(false);
             
             // Usar dados de exemplo em caso de erro
             const exampleData = getExampleData();
             updateDashboardCards(exampleData);
             
-            // Exibir mensagem de erro para o usuário
-            alert('Erro ao carregar dados do dashboard. Usando dados de exemplo.');
+            // Mostrar notificação de erro de forma mais elegante
+            const errorMessage = document.createElement('div');
+            errorMessage.className = 'bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4 rounded shadow-md';
+            errorMessage.innerHTML = `
+                <div class="flex items-center">
+                    <div class="py-1"><i class="fas fa-exclamation-circle text-red-500 mr-2"></i></div>
+                    <div>
+                        <p class="font-bold">Erro ao carregar dados</p>
+                        <p class="text-sm">${error.message || 'Usando dados de exemplo temporariamente'}</p>
+                    </div>
+                </div>
+            `;
+            
+            // Adicionar a mensagem ao topo da página
+            const container = document.querySelector('main .container');
+            if (container && container.firstChild) {
+                container.insertBefore(errorMessage, container.firstChild);
+                
+                // Remover a mensagem após 5 segundos
+                setTimeout(() => {
+                    errorMessage.remove();
+                }, 5000);
+            }
+            
+            // Esconder indicador de carregamento mesmo em caso de erro
+            showLoading(false);
+            
+            return exampleData;
         }
     }
     
@@ -1524,12 +1557,35 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Função para mostrar/esconder indicador de carregamento
-    function showLoading(isLoading) {
-        // Implementação simplificada - em uma versão real, 
-        // poderíamos adicionar um elemento de spinner ou overlay
+    function showLoading(isLoading, chartId = null) {
+        // Indicador de carregamento principal
+        const loadingOverlay = document.getElementById('loading-indicator');
+        if (loadingOverlay) {
+            loadingOverlay.style.display = isLoading && !chartId ? 'flex' : 'none';
+        }
+        
+        // Cursor de carregamento global
         document.body.style.cursor = isLoading ? 'wait' : 'default';
         
-        // Adicionar ou remover classe de loading em cards e gráficos
+        // Se for especificado um ID de gráfico, mostrar/ocultar apenas o indicador desse gráfico
+        if (chartId) {
+            const chartContainer = document.getElementById(chartId);
+            if (chartContainer) {
+                const chartLoading = chartContainer.parentElement.querySelector('.chart-loading');
+                if (chartLoading) {
+                    chartLoading.classList.toggle('hidden', !isLoading);
+                }
+            }
+            return;
+        }
+        
+        // Mostrar/ocultar indicadores de carregamento de todos os gráficos
+        const chartLoadings = document.querySelectorAll('.chart-loading');
+        chartLoadings.forEach(loader => {
+            loader.classList.toggle('hidden', !isLoading);
+        });
+        
+        // Adicionar ou remover classe de opacity para os cards
         const cards = document.querySelectorAll('.card-value');
         cards.forEach(card => {
             if (isLoading) {

@@ -3,6 +3,9 @@
 document.addEventListener('DOMContentLoaded', () => {
   // Verificar se já existem botões de edição e adicionar event listeners
   adicionarEventListenersEditarAvaliacao();
+  
+  // Configurar botões de adicionar itens
+  configurarBotoesAdicionarItens();
 });
 
 // Função para adicionar event listeners aos botões de editar avaliação
@@ -20,6 +23,11 @@ function adicionarEventListenersEditarAvaliacao() {
 // Função para abrir o modal de edição com os dados da avaliação
 async function abrirModalEditarAvaliacao(id) {
   try {
+    // Inicializar arrays para evitar problemas com botões de remover
+    window.palavrasAdicionadas = [];
+    window.pseudopalavrasAdicionadas = [];
+    window.frasesAdicionadas = [];
+    
     // Buscar dados da avaliação
     const avaliacao = await window.AssessmentAPI.getAssessmentById(id);
     
@@ -62,11 +70,6 @@ async function abrirModalEditarAvaliacao(id) {
     listaPalavras.innerHTML = '';
     listaPseudopalavras.innerHTML = '';
     listaFrases.innerHTML = '';
-    
-    // Arrays para armazenar itens adicionados
-    window.palavrasAdicionadas = [];
-    window.pseudopalavrasAdicionadas = [];
-    window.frasesAdicionadas = [];
     
     // Adicionar palavras, se houverem
     if (avaliacao.words && avaliacao.words.length > 0) {
@@ -145,7 +148,15 @@ function adicionarPalavraAoDOM(palavra) {
   
   div.querySelector('button').addEventListener('click', function() {
     const palavraParaRemover = this.getAttribute('data-palavra');
-    window.palavrasAdicionadas = window.palavrasAdicionadas.filter(p => p !== palavraParaRemover);
+    
+    // Verificar se o array existe antes de usar filter
+    if (window.palavrasAdicionadas) {
+      window.palavrasAdicionadas = window.palavrasAdicionadas.filter(p => p !== palavraParaRemover);
+    } else {
+      console.warn('Array palavrasAdicionadas não está definido');
+      window.palavrasAdicionadas = [];
+    }
+    
     div.remove();
   });
   
@@ -167,7 +178,15 @@ function adicionarPseudopalavraAoDOM(pseudopalavra) {
   
   div.querySelector('button').addEventListener('click', function() {
     const pseudopalavraParaRemover = this.getAttribute('data-pseudopalavra');
-    window.pseudopalavrasAdicionadas = window.pseudopalavrasAdicionadas.filter(p => p !== pseudopalavraParaRemover);
+    
+    // Verificar se o array existe antes de usar filter
+    if (window.pseudopalavrasAdicionadas) {
+      window.pseudopalavrasAdicionadas = window.pseudopalavrasAdicionadas.filter(p => p !== pseudopalavraParaRemover);
+    } else {
+      console.warn('Array pseudopalavrasAdicionadas não está definido');
+      window.pseudopalavrasAdicionadas = [];
+    }
+    
     div.remove();
   });
   
@@ -189,7 +208,15 @@ function adicionarFraseAoDOM(frase) {
   
   div.querySelector('button').addEventListener('click', function() {
     const fraseParaRemover = this.getAttribute('data-frase');
-    window.frasesAdicionadas = window.frasesAdicionadas.filter(f => f !== fraseParaRemover);
+    
+    // Verificar se o array existe antes de usar filter
+    if (window.frasesAdicionadas) {
+      window.frasesAdicionadas = window.frasesAdicionadas.filter(f => f !== fraseParaRemover);
+    } else {
+      console.warn('Array frasesAdicionadas não está definido');
+      window.frasesAdicionadas = [];
+    }
+    
     div.remove();
   });
   
@@ -386,4 +413,157 @@ async function salvarEdicaoAvaliacao(id) {
     console.error('Erro ao salvar avaliação:', error);
     alert(`Erro ao salvar avaliação: ${error.message}`);
   }
+}
+
+// Função para configurar botões de adicionar novos itens
+function configurarBotoesAdicionarItens() {
+  // Botão para adicionar palavra
+  const btnAdicionarPalavra = document.getElementById('adicionar-palavra');
+  const inputNovaPalavra = document.getElementById('nova-palavra');
+  
+  if (btnAdicionarPalavra && inputNovaPalavra) {
+    btnAdicionarPalavra.addEventListener('click', (e) => {
+      e.preventDefault();
+      adicionarNovaPalavra();
+    });
+    
+    // Também permitir adicionar com Enter
+    inputNovaPalavra.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        adicionarNovaPalavra();
+      }
+    });
+  }
+  
+  // Botão para adicionar pseudopalavra
+  const btnAdicionarPseudopalavra = document.getElementById('adicionar-pseudopalavra');
+  const inputNovaPseudopalavra = document.getElementById('nova-pseudopalavra');
+  
+  if (btnAdicionarPseudopalavra && inputNovaPseudopalavra) {
+    btnAdicionarPseudopalavra.addEventListener('click', (e) => {
+      e.preventDefault();
+      adicionarNovaPseudopalavra();
+    });
+    
+    // Também permitir adicionar com Enter
+    inputNovaPseudopalavra.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        adicionarNovaPseudopalavra();
+      }
+    });
+  }
+  
+  // Botão para adicionar frase
+  const btnAdicionarFrase = document.getElementById('adicionar-frase');
+  const inputNovaFrase = document.getElementById('nova-frase');
+  
+  if (btnAdicionarFrase && inputNovaFrase) {
+    btnAdicionarFrase.addEventListener('click', (e) => {
+      e.preventDefault();
+      adicionarNovaFrase();
+    });
+    
+    // Também permitir adicionar com Enter
+    inputNovaFrase.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        adicionarNovaFrase();
+      }
+    });
+  }
+}
+
+// Função para adicionar nova palavra
+function adicionarNovaPalavra() {
+  const inputNovaPalavra = document.getElementById('nova-palavra');
+  const palavra = inputNovaPalavra.value.trim();
+  
+  if (palavra === '') {
+    return;
+  }
+  
+  // Garantir que o array existe
+  if (!window.palavrasAdicionadas) {
+    window.palavrasAdicionadas = [];
+  }
+  
+  // Verificar se a palavra já existe
+  if (window.palavrasAdicionadas.includes(palavra)) {
+    alert('Esta palavra já foi adicionada.');
+    return;
+  }
+  
+  // Adicionar ao DOM e ao array
+  adicionarPalavraAoDOM(palavra);
+  window.palavrasAdicionadas.push(palavra);
+  
+  // Limpar o input
+  inputNovaPalavra.value = '';
+  inputNovaPalavra.focus();
+}
+
+// Função para adicionar nova pseudopalavra
+function adicionarNovaPseudopalavra() {
+  const inputNovaPseudopalavra = document.getElementById('nova-pseudopalavra');
+  const pseudopalavra = inputNovaPseudopalavra.value.trim();
+  
+  if (pseudopalavra === '') {
+    return;
+  }
+  
+  // Garantir que o array existe
+  if (!window.pseudopalavrasAdicionadas) {
+    window.pseudopalavrasAdicionadas = [];
+  }
+  
+  // Verificar se a pseudopalavra já existe
+  if (window.pseudopalavrasAdicionadas.includes(pseudopalavra)) {
+    alert('Esta pseudopalavra já foi adicionada.');
+    return;
+  }
+  
+  // Adicionar ao DOM e ao array
+  adicionarPseudopalavraAoDOM(pseudopalavra);
+  window.pseudopalavrasAdicionadas.push(pseudopalavra);
+  
+  // Limpar o input
+  inputNovaPseudopalavra.value = '';
+  inputNovaPseudopalavra.focus();
+}
+
+// Função para adicionar nova frase
+function adicionarNovaFrase() {
+  const inputNovaFrase = document.getElementById('nova-frase');
+  const frase = inputNovaFrase.value.trim();
+  
+  if (frase === '') {
+    return;
+  }
+  
+  // Adicionar ponto final se não tiver
+  let fraseFormatada = frase;
+  if (!/[.!?]$/.test(fraseFormatada)) {
+    fraseFormatada = fraseFormatada + '.';
+  }
+  
+  // Garantir que o array existe
+  if (!window.frasesAdicionadas) {
+    window.frasesAdicionadas = [];
+  }
+  
+  // Verificar se a frase já existe
+  if (window.frasesAdicionadas.includes(fraseFormatada)) {
+    alert('Esta frase já foi adicionada.');
+    return;
+  }
+  
+  // Adicionar ao DOM e ao array
+  adicionarFraseAoDOM(fraseFormatada);
+  window.frasesAdicionadas.push(fraseFormatada);
+  
+  // Limpar o input
+  inputNovaFrase.value = '';
+  inputNovaFrase.focus();
 } 

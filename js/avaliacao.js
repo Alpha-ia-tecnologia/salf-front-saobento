@@ -92,6 +92,7 @@ const modalEnvioSimples = document.getElementById('modal-envio-simples');
 const fecharModalSimples = document.getElementById('fechar-modal-simples');
 const cancelarEnvioSimples = document.getElementById('cancelar-envio-simples');
 const formEnvioSimples = document.getElementById('form-envio-simples');
+const btnSalvarAvaliacao = document.getElementById('btn-salvar-avaliacao');
 
 // Dados simulados para avaliações
 // let avaliacoes = [
@@ -115,6 +116,60 @@ let frasesAdicionadas = [];
 // Variáveis para as questões
 let questoesAdicionadas = [];
 let contadorQuestoes = 0;
+
+btnSalvarAvaliacao.addEventListener('click', async () => {
+    const nomeAvaliacao = document.getElementById('nome-avaliacao').value;
+    const texto = textoAvaliacao.value;
+    const questoesElements = document.querySelectorAll('#container-questoes .questao:not(.questao-template)');
+    questoesAdicionadas = Array.from(questoesElements).map(questaoEl => {
+        const enunciado = questaoEl.querySelector('.enunciado-questao').value;
+        const opcoes = Array.from(questaoEl.querySelectorAll('.opcao-container')).map(opt =>
+            opt.querySelector('.texto-opcao').value
+        );
+
+        return {
+            text: enunciado,
+            options: opcoes,
+        };
+    });
+
+    if (nomeAvaliacao.trim() === '') {
+        alert('Por favor, informe o nome da avaliação.');
+        return;
+    }
+
+    const request = {
+        name: nomeAvaliacao,
+        text: texto,
+        words: palavrasAdicionadas,
+        pseudowords: pseudopalavrasAdicionadas,
+        assessmentEventId: 1,
+        phrases: frasesAdicionadas,
+        questions: questoesAdicionadas,
+        gradeRange: document.getElementById('faixa-serie').value,
+        totalWords: palavrasAdicionadas.length,
+        totalPseudowords: pseudopalavrasAdicionadas.length,
+    }
+
+
+    
+    const response = await fetch('https://salf-salf-api.py5r5i.easypanel.host/api/assessments', {
+        method: 'POST',
+        headers: {
+            "Content-Type": "application/json",
+            'Authorization': `Bearer ${getAuthToken()}`
+        },
+        body: JSON.stringify(request)
+    });
+
+    if (response.ok) {
+        alert('Avaliação criada com sucesso!');
+        resetFormAvaliacao();
+        modalAvaliacao.classList.add('hidden');
+    } else {
+        alert('Erro ao criar avaliação. Por favor, tente novamente.');
+    }
+});
 
 // Abrir e fechar modal de avaliação
 btnNovaAvaliacao.addEventListener('click', function () {
@@ -152,101 +207,6 @@ cancelarEvento.addEventListener('click', function () {
 });
 
 // Submissão do formulário de avaliação
-formAvaliacao.addEventListener('submit', function (e) {
-    e.preventDefault();
-
-    const nomeAvaliacao = document.getElementById('nome-avaliacao').value;
-    const texto = textoAvaliacao.value;
-
-    if (nomeAvaliacao.trim() === '') {
-        alert('Por favor, informe o nome da avaliação.');
-        return;
-    }
-
-    if (palavrasAdicionadas.length === 0) {
-        alert('Por favor, adicione pelo menos uma palavra à avaliação.');
-        return;
-    }
-
-    if (pseudopalavrasAdicionadas.length === 0) {
-        alert('Por favor, adicione pelo menos uma pseudopalavra à avaliação.');
-        return;
-    }
-
-    if (texto.trim() === '') {
-        alert('Por favor, adicione o texto para a avaliação.');
-        return;
-    }
-
-    const contarPalavras = texto.trim().split(/\s+/).length;
-    if (contarPalavras < 150 || contarPalavras > 180) {
-        alert('O texto deve conter entre 150 e 180 palavras.');
-        return;
-    }
-
-    // Coletar questões do formulário
-    const questoes = [];
-    document.querySelectorAll('.questao:not(.questao-template)').forEach(questaoEl => {
-        const enunciado = questaoEl.querySelector('.enunciado-questao').value;
-        const opcoes = [];
-        let respostaCorreta = null;
-
-        questaoEl.querySelectorAll('.opcao-container').forEach((opcaoEl, index) => {
-            const texto = opcaoEl.querySelector('.texto-opcao').value;
-            const selecionada = opcaoEl.querySelector('.resposta-correta').checked;
-
-            if (texto.trim()) {
-                opcoes.push(texto);
-                if (selecionada) {
-                    respostaCorreta = index;
-                }
-            }
-        });
-
-        if (enunciado.trim() && opcoes.length >= 2 && respostaCorreta !== null) {
-            questoes.push({
-                enunciado,
-                opcoes,
-                respostaCorreta
-            });
-        }
-    });
-
-    if (avaliacaoIdEmEdicao === null) {
-        // Adicionar nova avaliação
-        const novaAvaliacao = {
-            id: avaliacoes.length > 0 ? Math.max(...avaliacoes.map(a => a.id)) + 1 : 1,
-            nome: nomeAvaliacao,
-            palavras: [...palavrasAdicionadas],
-            pseudopalavras: [...pseudopalavrasAdicionadas],
-            frases: [...frasesAdicionadas],
-            texto: texto,
-            totalPalavras: palavrasAdicionadas.length,
-            totalPseudopalavras: pseudopalavrasAdicionadas.length,
-            questoes: questoes
-        };
-
-        avaliacoes.push(novaAvaliacao);
-        alert('Avaliação adicionada com sucesso!');
-    } else {
-        // Atualizar avaliação existente
-        const index = avaliacoes.findIndex(a => a.id === avaliacaoIdEmEdicao);
-        if (index !== -1) {
-            avaliacoes[index].nome = nomeAvaliacao;
-            avaliacoes[index].palavras = [...palavrasAdicionadas];
-            avaliacoes[index].pseudopalavras = [...pseudopalavrasAdicionadas];
-            avaliacoes[index].frases = [...frasesAdicionadas];
-            avaliacoes[index].texto = texto;
-            avaliacoes[index].totalPalavras = palavrasAdicionadas.length;
-            avaliacoes[index].totalPseudopalavras = pseudopalavrasAdicionadas.length;
-            avaliacoes[index].questoes = questoes;
-            alert('Avaliação atualizada com sucesso!');
-        }
-    }
-
-    atualizarTabelaAvaliacoes();
-    modalAvaliacao.classList.add('hidden');
-});
 
 // Função para carregar os eventos da API
 function carregarEventos() {
@@ -392,6 +352,154 @@ function excluirAssessment(id) {
     }
 }
 
+function configurarAdicionarQuestoes() {
+    const btnAdicionarQuestao = document.getElementById('adicionar-questao');
+    const templateQuestao = document.getElementById('template-questao');
+    const containerQuestoes = document.getElementById('container-questoes');
+
+    let contadorQuestoes = 0;
+
+    if (!btnAdicionarQuestao || !templateQuestao || !containerQuestoes) {
+        console.warn('Elementos para adicionar questões não encontrados');
+        return;
+    }
+
+    console.log('Configurando funcionalidade de adicionar questões');
+
+    btnAdicionarQuestao.addEventListener('click', () => {
+        adicionarNovaQuestao();
+    });
+
+    function adicionarNovaQuestao(questaoData = null) {
+        contadorQuestoes++;
+
+        const novaQuestao = templateQuestao.cloneNode(true);
+        novaQuestao.classList.remove('questao-template', 'hidden');
+        novaQuestao.classList.add('questao');
+        novaQuestao.id = `questao-${contadorQuestoes}`;
+
+        const enunciadoQuestao = novaQuestao.querySelector('.enunciado-questao');
+        const textosOpcoes = novaQuestao.querySelectorAll('.texto-opcao');
+        const respostasCorretas = novaQuestao.querySelectorAll('.resposta-correta');
+
+        respostasCorretas.forEach(radio => {
+            radio.name = `resposta-correta-${contadorQuestoes}`;
+        });
+
+        if (questaoData) {
+            enunciadoQuestao.value = questaoData.enunciado || '';
+
+            textosOpcoes.forEach((input, index) => {
+                if (questaoData.opcoes && questaoData.opcoes[index]) {
+                    input.value = questaoData.opcoes[index];
+                }
+            });
+
+            if (questaoData.respostaCorreta !== undefined &&
+                respostasCorretas[questaoData.respostaCorreta]) {
+                respostasCorretas[questaoData.respostaCorreta].checked = true;
+            }
+        }
+
+        const btnRemoverQuestao = novaQuestao.querySelector('.btn-remover-questao');
+        if (btnRemoverQuestao) {
+            btnRemoverQuestao.addEventListener('click', function () {
+                novaQuestao.remove();
+
+                const questoes = document.querySelectorAll('#container-questoes .questao:not(.questao-template)');
+                if (questoes.length === 0) {
+                    const semQuestoes = document.getElementById('sem-questoes');
+                    if (semQuestoes) {
+                        semQuestoes.classList.remove('hidden');
+                    }
+                }
+            });
+        }
+
+        const botoesRemoverOpcao = novaQuestao.querySelectorAll('.btn-remover-opcao');
+        botoesRemoverOpcao.forEach(btn => {
+            btn.addEventListener('click', function () {
+                const opcoes = novaQuestao.querySelectorAll('.opcao-container');
+                if (opcoes.length <= 2) {
+                    alert('É necessário ter pelo menos 2 alternativas.');
+                    return;
+                }
+
+                this.closest('.opcao-container').remove();
+            });
+        });
+
+        const btnAdicionarOpcao = novaQuestao.querySelector('.btn-adicionar-opcao');
+        if (btnAdicionarOpcao) {
+            btnAdicionarOpcao.addEventListener('click', function () {
+                adicionarNovaOpcao(novaQuestao, contadorQuestoes);
+            });
+        }
+
+        containerQuestoes.appendChild(novaQuestao);
+
+        const semQuestoes = document.getElementById('sem-questoes');
+        if (semQuestoes) {
+            semQuestoes.classList.add('hidden');
+        }
+
+        console.log(`Questão ${contadorQuestoes} adicionada`);
+        return novaQuestao;
+    }
+
+    function adicionarNovaOpcao(questaoEl, questaoId) {
+        const opcoesContainer = questaoEl.querySelectorAll('.opcao-container');
+        if (opcoesContainer.length === 0) {
+            console.error('Nenhuma opção encontrada para clonar');
+            return;
+        }
+
+        const ultimaOpcao = opcoesContainer[opcoesContainer.length - 1];
+        const novaOpcao = ultimaOpcao.cloneNode(true);
+
+        const inputTexto = novaOpcao.querySelector('.texto-opcao');
+        if (inputTexto) {
+            inputTexto.value = '';
+            inputTexto.placeholder = `Alternativa ${String.fromCharCode(65 + opcoesContainer.length)}`;
+        }
+
+        const radioButton = novaOpcao.querySelector('.resposta-correta');
+        if (radioButton) {
+            radioButton.checked = false;
+            radioButton.name = `resposta-correta-${questaoId}`;
+        }
+
+        const btnRemover = novaOpcao.querySelector('.btn-remover-opcao');
+        if (btnRemover) {
+            btnRemover.addEventListener('click', function () {
+                const opcoes = questaoEl.querySelectorAll('.opcao-container');
+                if (opcoes.length <= 2) {
+                    alert('É necessário ter pelo menos 2 alternativas.');
+                    return;
+                }
+                novaOpcao.remove();
+            });
+        }
+
+        const btnAdicionarOpcao = questaoEl.querySelector('.btn-adicionar-opcao');
+        if (btnAdicionarOpcao) {
+            btnAdicionarOpcao.parentNode.insertBefore(novaOpcao, btnAdicionarOpcao);
+        } else {
+            const container = questaoEl.querySelector('.space-y-2');
+            if (container) {
+                container.appendChild(novaOpcao);
+            }
+        }
+
+        console.log(`Nova opção adicionada à questão ${questaoId}`);
+    }
+}
+
+
+
+// Inicializar a interface
+configurarAdicionarQuestoes();
+
 // Adição de palavras
 adicionarPalavra.addEventListener('click', function () {
     adicionarPalavrasMultiplas();
@@ -535,7 +643,7 @@ function adicionarFrasesMultiplas() {
 
         if (!frasesAdicionadas.includes(frase)) {
             adicionarFraseAoDOM(frase);
-            frasesAdicionadas.push(frase);
+            frasesAdicionadas.push({ text: frase });
             adicionadas++;
         } else {
             repetidas++;
@@ -1050,7 +1158,7 @@ if (formEnvioSimples) {
     });
 }
 
- var associarEvento = async () => {
+var associarEvento = async () => {
     try {
         const response = await fetch(`https://salf-salf-api.py5r5i.easypanel.host/api/assessments/${1})}/associate-event`, {
             method: 'POST',
@@ -1058,7 +1166,7 @@ if (formEnvioSimples) {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${getAuthToken()}`
             },
-            body: JSON.stringify({ assessmentEventId: 1})
+            body: JSON.stringify({ assessmentEventId: 1 })
         });
 
         if (!response.ok) {
@@ -1133,7 +1241,7 @@ formEvento.addEventListener('submit', function (e) {
                 // Mostrar notificação de sucesso
                 alert('Evento adicionado com sucesso!');
                 associarEvento()
-                
+
                 // Fechar o modal
                 modalEvento.classList.add('hidden');
 

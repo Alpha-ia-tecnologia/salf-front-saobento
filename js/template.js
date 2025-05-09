@@ -116,10 +116,6 @@ function loadTemplate() {
                 <i class="fas fa-user-graduate w-6"></i>
                 <span>Alunos</span>
             </a>
-            <a href="${basePath}pages/regiao-grupo/gerenciar.html" class="flex items-center px-4 py-3 hover:bg-blue-700 transition ${currentPage.includes('/regiao-grupo/') ? 'bg-blue-700' : ''}">
-                <i class="fas fa-map-marker-alt w-6"></i>
-                <span>Regiões e Grupos</span>
-            </a>
             <a href="${basePath}pages/avaliacao/listar.html" class="flex items-center px-4 py-3 hover:bg-blue-700 transition ${currentPage.includes('/avaliacao/listar') ? 'bg-blue-700' : ''}">
                 <i class="fas fa-clipboard-check w-6"></i>
                 <span>Avaliações</span>
