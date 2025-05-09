@@ -68,7 +68,7 @@ function corrigirDuplicacaoEventos() {
             if (window.TimerModule && typeof window.iniciarTimer !== 'function') {
                 const timerElement = document.getElementById(`timer-${etapaDOM}`);
                 
-                window.TimerModule.iniciarCronometro(etapa, 60, {
+                window.TimerModule.iniciarCronometro(etapa, 0.3, {
                     onStart: () => {
                         // Atualizar UI
                         this.textContent = 'Cronômetro iniciado';

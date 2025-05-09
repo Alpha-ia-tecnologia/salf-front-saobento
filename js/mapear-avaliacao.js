@@ -6,12 +6,13 @@
 function mapearAvaliacao(avaliacaoAPI) {
     // Se a entrada for um array, usar o primeiro item
     const avaliacao = Array.isArray(avaliacaoAPI) ? avaliacaoAPI[0] : avaliacaoAPI;
-    
+    console.log('🚀 avaliacao:', avaliacao);
+
     if (!avaliacao) {
         console.error("Dados de avaliação inválidos");
         return null;
     }
-    
+
     // Mapear o objeto para o formato esperado pela aplicação
     return {
         id: avaliacao.id,
@@ -72,13 +73,13 @@ function gerarLista(quantidade, tipo, frases = false) {
         "pele", "cama", "papel", "terra", "água", "boca", "ponte", "porta", "rede", "sol",
         "folha", "vento", "nuvem", "chuva", "praia", "vidro", "barco", "peixe", "rosa", "dente"
     ];
-    
+
     const exemplosPseudopalavras = [
         "dalu", "fema", "pilo", "sati", "beco", "vota", "mipe", "catu", "lemi", "rano",
         "bagi", "pute", "seco", "vilo", "fota", "zema", "neri", "joba", "tibe", "cuna",
         "larpo", "bestu", "pilda", "vamil", "torpa", "sertu", "ganso", "finpo", "melfa", "darno"
     ];
-    
+
     const exemplosFrases = [
         "O menino corre no parque.",
         "A menina gosta de sorvete.",
@@ -91,7 +92,7 @@ function gerarLista(quantidade, tipo, frases = false) {
         "Meu pai dirige um carro vermelho.",
         "A professora ensina matemática."
     ];
-    
+
     // Escolher a lista de exemplos apropriada
     let exemplos;
     if (frases) {
@@ -101,7 +102,7 @@ function gerarLista(quantidade, tipo, frases = false) {
     } else {
         exemplos = exemplosPalavras;
     }
-    
+
     // Verificar se temos exemplos suficientes
     if (exemplos.length < quantidade) {
         // Repetir exemplos se necessário
@@ -112,7 +113,7 @@ function gerarLista(quantidade, tipo, frases = false) {
         }
         exemplos = listaExpandida;
     }
-    
+
     // Retornar a quantidade solicitada
     return exemplos.slice(0, quantidade);
 }
@@ -128,10 +129,10 @@ function gerarTextoMock() {
 // Sistema de Avaliação de Leitura e Fluência
 // Módulo para mapear dados de avaliação da API para as etapas no HTML
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // API Base URL
     const API_BASE_URL = "https://api.salf.maximizaedu.com/api";
-    
+
     // Token de autenticação
     const token = localStorage.getItem('token');
     const headers = {
@@ -147,13 +148,13 @@ document.addEventListener('DOMContentLoaded', function() {
         frases: document.getElementById('etapa-frases'),
         texto: document.getElementById('etapa-texto'),
         resultado: document.getElementById('etapa-resultado'),
-        
+
         // Grids e containers
         gridPalavras: document.querySelector('#etapa-palavras .grid'),
         gridPseudopalavras: document.querySelector('#etapa-pseudopalavras .grid'),
         containerFrases: document.getElementById('frases-container'),
         containerTexto: document.getElementById('texto-container'),
-        
+
         // Contadores
         totalPalavrasLidas: document.getElementById('total-palavras-lidas'),
         totalPalavras: document.getElementById('total-palavras'),
@@ -177,7 +178,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const alunoSelect = document.getElementById('aluno');
         const eventoSelect = document.getElementById('evento-avaliacao');
         const avaliacaoAtual = document.getElementById('teste-leitura');
-        
+
         if (!alunoSelect || !eventoSelect) {
             console.error("Elementos de seleção não encontrados");
             return;
@@ -239,9 +240,13 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         const assessment = avaliacaoData.assessment;
-        
+        console.log('🚀 phheheheheh:', assessment.phrases);
+
         // Preparar e exibir a etapa de palavras
         prepararEtapaPalavras(assessment);
+        prepararEtapaPseudopalavras(assessment);
+        prepararEtapaFrases(assessment);
+        prepararEtapaTexto(assessment);
         if (etapasDOM.palavras) {
             etapasDOM.palavras.classList.remove('hidden');
         }
@@ -256,25 +261,25 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Limpar o grid
         etapasDOM.gridPalavras.innerHTML = '';
-        
+
         // Obter palavras do assessment
         let palavras = [];
         if (assessment.words) {
             // Verificar se words já é um array ou se precisa ser parseado
-            palavras = Array.isArray(assessment.words) 
-                ? assessment.words 
+            palavras = Array.isArray(assessment.words)
+                ? assessment.words
                 : JSON.parse(assessment.words);
         }
-        
+
         // Criar elementos para cada palavra
         palavras.forEach((palavra, index) => {
             const divPalavra = document.createElement('div');
             divPalavra.className = 'border rounded p-2 flex items-center justify-center palavra-item bg-white hover:bg-blue-100 cursor-pointer transition-colors';
             divPalavra.setAttribute('data-id', index);
             divPalavra.innerHTML = `<span class="text-sm text-gray-800 select-none w-full text-center">${palavra}</span>`;
-            
+
             // Adicionar evento de clique ao div inteiro
-            divPalavra.addEventListener('click', function(e) {
+            divPalavra.addEventListener('click', function (e) {
                 // Permitir cliques a qualquer momento
                 if (!this.classList.contains('bg-green-200')) {
                     this.classList.remove('bg-white', 'hover:bg-blue-100');
@@ -287,10 +292,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     atualizarContadorPalavras();
                 }
             });
-            
+
             etapasDOM.gridPalavras.appendChild(divPalavra);
         });
-        
+
         // Atualizar contador
         if (etapasDOM.totalPalavras) {
             etapasDOM.totalPalavras.textContent = palavras.length;
@@ -309,25 +314,25 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Limpar o grid
         etapasDOM.gridPseudopalavras.innerHTML = '';
-        
+
         // Obter pseudopalavras do assessment
         let pseudopalavras = [];
         if (assessment.pseudowords) {
             // Verificar se pseudowords já é um array ou se precisa ser parseado
-            pseudopalavras = Array.isArray(assessment.pseudowords) 
-                ? assessment.pseudowords 
+            pseudopalavras = Array.isArray(assessment.pseudowords)
+                ? assessment.pseudowords
                 : JSON.parse(assessment.pseudowords);
         }
-        
+
         // Criar elementos para cada pseudopalavra
         pseudopalavras.forEach((palavra, index) => {
             const divPalavra = document.createElement('div');
             divPalavra.className = 'border rounded p-2 flex items-center justify-center pseudopalavra-item bg-white hover:bg-blue-100 cursor-pointer transition-colors';
             divPalavra.setAttribute('data-id', index);
             divPalavra.innerHTML = `<span class="text-sm text-gray-800 select-none w-full text-center">${palavra}</span>`;
-            
+
             // Adicionar evento de clique ao div inteiro
-            divPalavra.addEventListener('click', function(e) {
+            divPalavra.addEventListener('click', function (e) {
                 // Permitir cliques a qualquer momento
                 if (!this.classList.contains('bg-green-200')) {
                     this.classList.remove('bg-white', 'hover:bg-blue-100');
@@ -340,10 +345,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     atualizarContadorPseudopalavras();
                 }
             });
-            
+
             etapasDOM.gridPseudopalavras.appendChild(divPalavra);
         });
-        
+
         // Atualizar contador
         if (etapasDOM.totalPseudopalavras) {
             etapasDOM.totalPseudopalavras.textContent = pseudopalavras.length;
@@ -362,28 +367,25 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Limpar o container
         etapasDOM.containerFrases.innerHTML = '';
-        
+
         // Obter frases do assessment
         let frases = [];
 
         // Verificar se frases vêm do campo 'phrases' ou 'sentences'
-        if (assessment.phrases && assessment.phrases.length) {
-            frases = assessment.phrases.map(phrase => phrase.text);
-        } else if (assessment.sentences) {
-            frases = Array.isArray(assessment.sentences) 
-                ? assessment.sentences 
-                : JSON.parse(assessment.sentences);
-        }
-        
+        frases = assessment.phrases.map(phrase => phrase.text);
+
+        console.log('🚀 frases MMMMMMM:', frases);
+
+        console.log('🚀 frases:', frases);
         // Criar elementos para cada frase
         frases.forEach((frase, index) => {
             const divFrase = document.createElement('div');
             divFrase.className = 'border rounded p-3 flex items-center frase-item bg-white hover:bg-blue-100 cursor-pointer transition-colors';
             divFrase.setAttribute('data-id', index);
             divFrase.innerHTML = `<span class="text-sm text-gray-800 select-none w-full">${frase}</span>`;
-            
+
             // Adicionar evento de clique ao div inteiro
-            divFrase.addEventListener('click', function(e) {
+            divFrase.addEventListener('click', function (e) {
                 // Permitir cliques a qualquer momento
                 if (!this.classList.contains('bg-green-200')) {
                     this.classList.remove('bg-white', 'hover:bg-blue-100');
@@ -396,10 +398,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     atualizarContadorFrases();
                 }
             });
-            
+
             etapasDOM.containerFrases.appendChild(divFrase);
         });
-        
+
         // Atualizar contador
         if (etapasDOM.totalFrases) {
             etapasDOM.totalFrases.textContent = frases.length;
@@ -418,15 +420,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Limpar o container
         etapasDOM.containerTexto.innerHTML = '';
-        
+
         // Obter texto do assessment
         const texto = assessment.text || '';
-        
+
         // Dividir o texto em linhas (aproximadamente 12 palavras por linha)
         const palavras = texto.split(' ');
         const linhas = [];
         let linhaAtual = [];
-        
+
         palavras.forEach(palavra => {
             linhaAtual.push(palavra);
             if (linhaAtual.length >= 12) {
@@ -434,21 +436,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 linhaAtual = [];
             }
         });
-        
+
         // Adicionar a última linha se houver palavras restantes
         if (linhaAtual.length > 0) {
             linhas.push(linhaAtual.join(' '));
         }
-        
+
         // Criar elementos para cada linha
         linhas.forEach((linha, index) => {
             const divLinha = document.createElement('div');
             divLinha.className = 'border rounded p-2 mb-2 linha-texto-item bg-white hover:bg-blue-100 cursor-pointer transition-colors';
             divLinha.setAttribute('data-id', index);
             divLinha.innerHTML = `<span class="text-sm text-gray-800 select-none">${linha}</span>`;
-            
+
             // Adicionar evento de clique ao div inteiro
-            divLinha.addEventListener('click', function(e) {
+            divLinha.addEventListener('click', function (e) {
                 // Permitir cliques a qualquer momento
                 if (!this.classList.contains('bg-green-200')) {
                     this.classList.remove('bg-white', 'hover:bg-blue-100');
@@ -461,10 +463,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     atualizarContadorLinhas();
                 }
             });
-            
+
             etapasDOM.containerTexto.appendChild(divLinha);
         });
-        
+
         // Atualizar contador
         if (etapasDOM.totalLinhas) {
             etapasDOM.totalLinhas.textContent = linhas.length;
@@ -477,37 +479,37 @@ document.addEventListener('DOMContentLoaded', function() {
     // Contadores
     function atualizarContadorPalavras() {
         if (!etapasDOM.totalPalavrasLidas) return;
-        
+
         const marcadas = document.querySelectorAll('.palavra-item.bg-green-200').length;
         etapasDOM.totalPalavrasLidas.textContent = marcadas;
     }
 
     function atualizarContadorPseudopalavras() {
         if (!etapasDOM.totalPseudopalavrasLidas) return;
-        
+
         const marcadas = document.querySelectorAll('.pseudopalavra-item.bg-green-200').length;
         etapasDOM.totalPseudopalavrasLidas.textContent = marcadas;
     }
 
     function atualizarContadorFrases() {
         if (!etapasDOM.totalFrasesLidas) return;
-        
+
         const marcadas = document.querySelectorAll('.frase-item.bg-green-200').length;
         etapasDOM.totalFrasesLidas.textContent = marcadas;
     }
 
     function atualizarContadorLinhas() {
         if (!etapasDOM.totalLinhasLidas) return;
-        
+
         const marcadas = document.querySelectorAll('.linha-texto-item.bg-green-200').length;
         etapasDOM.totalLinhasLidas.textContent = marcadas;
     }
 
     // Configurar botões de navegação entre etapas
-    document.addEventListener('cronometroFinalizado', function(e) {
+    document.addEventListener('cronometroFinalizado', function (e) {
         const etapa = e.detail.etapa;
         console.log(`Cronômetro finalizado para etapa: ${etapa}`);
-        
+
         // Habilitar botão de próxima etapa
         const mapaBotoes = {
             'WORDS': 'proximoEtapaPalavras',
@@ -515,7 +517,7 @@ document.addEventListener('DOMContentLoaded', function() {
             'SENTENCES': 'proximoEtapaFrases',
             'TEXT': 'proximoEtapaTexto'
         };
-        
+
         const botaoId = mapaBotoes[etapa];
         if (botaoId) {
             const botao = document.getElementById(botaoId);
@@ -533,22 +535,22 @@ document.addEventListener('DOMContentLoaded', function() {
     const btnProximoEtapaTexto = document.getElementById('proximo-etapa-texto');
 
     if (btnProximoEtapaPalavras) {
-        btnProximoEtapaPalavras.addEventListener('click', function() {
+        btnProximoEtapaPalavras.addEventListener('click', function () {
             const avaliacaoAtualStr = localStorage.getItem('avaliacaoAtual');
             if (avaliacaoAtualStr) {
                 const avaliacaoAtual = JSON.parse(avaliacaoAtualStr);
-                
+
                 // Atualizar estado da avaliação
                 const palavrasLidas = document.querySelectorAll('.palavra-item.bg-green-200').length;
                 const totalPalavras = document.querySelectorAll('.palavra-item').length;
-                
+
                 // Ocultar etapa atual e mostrar próxima
                 if (etapasDOM.palavras) etapasDOM.palavras.classList.add('hidden');
                 if (etapasDOM.pseudopalavras) {
                     etapasDOM.pseudopalavras.classList.remove('hidden');
                     prepararEtapaPseudopalavras(avaliacaoAtual.assessment);
                 }
-                
+
                 // Enviar dados para a API
                 atualizarAvaliacao({
                     stage: "WORDS",
@@ -560,22 +562,22 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     if (btnProximoEtapaPseudopalavras) {
-        btnProximoEtapaPseudopalavras.addEventListener('click', function() {
+        btnProximoEtapaPseudopalavras.addEventListener('click', function () {
             const avaliacaoAtualStr = localStorage.getItem('avaliacaoAtual');
             if (avaliacaoAtualStr) {
                 const avaliacaoAtual = JSON.parse(avaliacaoAtualStr);
-                
+
                 // Atualizar estado da avaliação
                 const pseudopalavrasLidas = document.querySelectorAll('.pseudopalavra-item.bg-green-200').length;
                 const totalPseudopalavras = document.querySelectorAll('.pseudopalavra-item').length;
-                
+
                 // Ocultar etapa atual e mostrar próxima
                 if (etapasDOM.pseudopalavras) etapasDOM.pseudopalavras.classList.add('hidden');
                 if (etapasDOM.frases) {
                     etapasDOM.frases.classList.remove('hidden');
                     prepararEtapaFrases(avaliacaoAtual.assessment);
                 }
-                
+
                 // Enviar dados para a API
                 atualizarAvaliacao({
                     stage: "PSEUDOWORDS",
@@ -587,22 +589,22 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     if (btnProximoEtapaFrases) {
-        btnProximoEtapaFrases.addEventListener('click', function() {
+        btnProximoEtapaFrases.addEventListener('click', function () {
             const avaliacaoAtualStr = localStorage.getItem('avaliacaoAtual');
             if (avaliacaoAtualStr) {
                 const avaliacaoAtual = JSON.parse(avaliacaoAtualStr);
-                
+
                 // Atualizar estado da avaliação
                 const frasesLidas = document.querySelectorAll('.frase-item.bg-green-200').length;
                 const totalFrases = document.querySelectorAll('.frase-item').length;
-                
+
                 // Ocultar etapa atual e mostrar próxima
                 if (etapasDOM.frases) etapasDOM.frases.classList.add('hidden');
                 if (etapasDOM.texto) {
                     etapasDOM.texto.classList.remove('hidden');
                     prepararEtapaTexto(avaliacaoAtual.assessment);
                 }
-                
+
                 // Enviar dados para a API
                 atualizarAvaliacao({
                     stage: "SENTENCES",
@@ -614,22 +616,22 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     if (btnProximoEtapaTexto) {
-        btnProximoEtapaTexto.addEventListener('click', function() {
+        btnProximoEtapaTexto.addEventListener('click', function () {
             const avaliacaoAtualStr = localStorage.getItem('avaliacaoAtual');
             if (avaliacaoAtualStr) {
                 const avaliacaoAtual = JSON.parse(avaliacaoAtualStr);
-                
+
                 // Atualizar estado da avaliação
                 const linhasLidas = document.querySelectorAll('.linha-texto-item.bg-green-200').length;
                 const totalLinhas = document.querySelectorAll('.linha-texto-item').length;
-                
+
                 // Ocultar etapa atual e mostrar próxima
                 if (etapasDOM.texto) etapasDOM.texto.classList.add('hidden');
                 if (etapasDOM.resultado) {
                     etapasDOM.resultado.classList.remove('hidden');
                     renderizarResultado(avaliacaoAtual);
                 }
-                
+
                 // Enviar dados para a API
                 atualizarAvaliacao({
                     stage: "TEXT",
@@ -648,13 +650,13 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error("Nenhuma avaliação em andamento para atualizar");
             return;
         }
-        
+
         const avaliacaoAtual = JSON.parse(avaliacaoAtualStr);
         const id = avaliacaoAtual.id;
-        
+
         // Construir a URL
         const url = `${API_BASE_URL}/reading-assessments/${id}/stage`;
-        
+
         // Preparar o body no formato especificado
         const requestBody = {
             stage: dados.stage,
@@ -662,31 +664,31 @@ document.addEventListener('DOMContentLoaded', function() {
             totalItems: dados.totalItems,
             ...dados
         };
-        
+
         console.log("Enviando dados:", requestBody);
-        
+
         // Enviar os dados
         fetch(url, {
             method: 'PUT',
             headers: headers,
             body: JSON.stringify(requestBody)
         })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`Erro ao atualizar avaliação: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then(data => {
-            console.log("Avaliação atualizada com sucesso:", data);
-            
-            // Atualizar a avaliação no localStorage
-            const avaliacaoAtualizada = { ...avaliacaoAtual, ...dados };
-            localStorage.setItem('avaliacaoAtual', JSON.stringify(avaliacaoAtualizada));
-        })
-        .catch(error => {
-            console.error("Erro ao atualizar avaliação:", error);
-        });
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Erro ao atualizar avaliação: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log("Avaliação atualizada com sucesso:", data);
+
+                // Atualizar a avaliação no localStorage
+                const avaliacaoAtualizada = { ...avaliacaoAtual, ...dados };
+                localStorage.setItem('avaliacaoAtual', JSON.stringify(avaliacaoAtualizada));
+            })
+            .catch(error => {
+                console.error("Erro ao atualizar avaliação:", error);
+            });
     }
 
     // Função para renderizar o resultado
@@ -694,19 +696,19 @@ document.addEventListener('DOMContentLoaded', function() {
         // Preencher informações do aluno
         const nomeAlunoElement = document.getElementById('resultado-aluno-nome');
         const serieElement = document.getElementById('resultado-serie');
-        
+
         if (nomeAlunoElement && avaliacaoAtual.student) {
             nomeAlunoElement.textContent = avaliacaoAtual.student.name;
         }
-        
+
         if (serieElement && avaliacaoAtual.student) {
             serieElement.textContent = avaliacaoAtual.student.grade || '-';
         }
-        
+
         // Determinar nível de leitura baseado nos dados coletados
         const palavrasLidas = document.querySelectorAll('.palavra-item.bg-green-200').length;
         let nivel, descricao, porcentagem;
-        
+
         if (palavrasLidas === 0) {
             nivel = "NÍVEL 0 - NÃO AVALIADO";
             descricao = "Não foi possível avaliar o nível de leitura.";
@@ -736,29 +738,29 @@ document.addEventListener('DOMContentLoaded', function() {
             descricao = `Lê mais de 50 palavras/min. Excelente desempenho!`;
             porcentagem = 100;
         }
-        
+
         // Atualizar a interface
         const nivelElement = document.getElementById('nivel-leitor-sugerido');
         const descricaoElement = document.getElementById('descricao-nivel');
         const progressoElement = document.getElementById('nivel-progresso');
-        
+
         if (nivelElement) nivelElement.textContent = nivel;
         if (descricaoElement) descricaoElement.textContent = descricao;
         if (progressoElement) progressoElement.style.width = `${porcentagem}%`;
-        
+
         // Configurar botões de ação final
         const btnNovaAvaliacao = document.getElementById('btn-nova-avaliacao');
         const btnVoltarDashboard = document.getElementById('btn-voltar-dashboard');
-        
+
         if (btnNovaAvaliacao) {
-            btnNovaAvaliacao.addEventListener('click', function() {
+            btnNovaAvaliacao.addEventListener('click', function () {
                 localStorage.removeItem('avaliacaoAtual');
                 location.reload();
             });
         }
-        
+
         if (btnVoltarDashboard) {
-            btnVoltarDashboard.addEventListener('click', function() {
+            btnVoltarDashboard.addEventListener('click', function () {
                 localStorage.removeItem('avaliacaoAtual');
                 window.location.href = '/dashboard.html';
             });

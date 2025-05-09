@@ -80,9 +80,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
                 
                 const data = await response.json();
+                const requestAvaliacao = await fetch(`https://api.salf.maximizaedu.com/api/reading-assessments/${data.id}`,{
+                    headers: headers
+                });
+                const dataAvaliacao = await requestAvaliacao.json();
                 
                 // Mapear dados da avaliação para o formato usado pela aplicação
-                const avaliacaoMapeada = mapearAvaliacao(data);
+                const avaliacaoMapeada = mapearAvaliacao(dataAvaliacao);
                 
                 // Armazenar no localStorage para uso pelas etapas
                 localStorage.setItem('avaliacaoAtual', JSON.stringify(avaliacaoMapeada));
@@ -788,7 +792,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             // CORREÇÃO IMPORTANTE: A estrutura correta da API possui os dados da avaliação dentro do campo 'assessment'
-            const assessmentData = dadosAvaliacao.assessment || dadosAvaliacao;
+            const assessmentData = dadosAvaliacao.assessment ;
             
             console.log('📊 Usando assessmentData:', assessmentData);
             
@@ -839,6 +843,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             // Extrair dados do assessment
+            console.log('🚀 assessmentData:', assessmentData);
             const { 
                 pseudowords = [], 
                 sentences = [], 
@@ -846,6 +851,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 phrases = [], 
                 questions = [] 
             } = assessmentData;
+            console.log('🚀 assessmentData: ', phrases);
             
             // Converter arrays se necessário
             const pseudowordsArray = processarCampoArray(pseudowords, 'pseudowords');
@@ -1094,6 +1100,7 @@ document.addEventListener('DOMContentLoaded', function() {
      */
     function prepararEtapaFrases(frases) {
         console.log('✅ INÍCIO DA RENDERIZAÇÃO DE FRASES:', frases);
+    
         
         // FORÇA: Se não houver frases, criar alguns exemplos
         if (!frases || frases.length === 0) {
@@ -1490,7 +1497,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // CORREÇÃO IMPORTANTE: A estrutura correta da API possui os dados da avaliação dentro do campo 'assessment'
             // Extrair informações do assessment (dados da avaliação)
-            const assessmentData = dadosAvaliacao.assessment || dadosAvaliacao;
+            const assessmentData = dadosAvaliacao.assessment;
             
             // Extrair os campos do assessment
             const {
@@ -1509,6 +1516,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 questions = [],
                 phrases = []
             } = assessmentData;
+            console.log('🚀 assessmentData: ', assessmentData);
             
             console.log('Campos extraídos do assessment:', { 
                 id, name, totalWords, totalPseudowords, gradeRange, assessmentEventId,
@@ -1553,7 +1561,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
                         <div><span class="font-medium">Nome:</span> ${dadosAvaliacao.student.name || 'N/A'}</div>
                         <div><span class="font-medium">Matrícula:</span> ${dadosAvaliacao.student.registrationNumber || 'N/A'}</div>
-                        <div><span class="font-medium">Série:</span> ${dadosAvaliacao.student.grade || 'N/A'}</div>
                     </div>
                 </div>`;
             }
@@ -1562,12 +1569,10 @@ document.addEventListener('DOMContentLoaded', function() {
             sumarioAvaliacao.innerHTML = `
                 <h2 class="text-lg font-semibold mb-2">Informações da Avaliação</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
-                    <div><span class="font-medium">ID:</span> ${id || 'N/A'}</div>
                     <div><span class="font-medium">Nome:</span> ${name || 'N/A'}</div>
                     <div><span class="font-medium">Faixa de Série:</span> ${gradeRange || 'N/A'}</div>
                     <div><span class="font-medium">Total de Palavras:</span> ${totalWords || wordsArray.length || 0}</div>
                     <div><span class="font-medium">Total de Pseudopalavras:</span> ${totalPseudowords || pseudowordsArray.length || 0}</div>
-                    <div><span class="font-medium">ID do Evento:</span> ${assessmentEventId || 'N/A'}</div>
                     <div><span class="font-medium">Criado em:</span> ${formatarData(createdAt) || 'N/A'}</div>
                     <div><span class="font-medium">Atualizado em:</span> ${formatarData(updatedAt) || 'N/A'}</div>
                 </div>
@@ -1655,6 +1660,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (typeof frase === 'string') {
                         textoFrase = frase;
                     } else if (typeof frase === 'object') {
+                        console.log('Frase é um objeto:', frase);
                         // Suportar diferentes propriedades que podem conter o texto da frase
                         textoFrase = frase.text || frase.content || frase.phrase || frase.sentence || '';
                     }
