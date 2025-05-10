@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif, monospace;
+        }
+
+        body {
+            padding: 2rem 2rem;
+            display: flex;
+            flex-flow: column wrap;
+            gap: 2rem;
+            /* width: 1px; */
+        }
+
+        hr {
+            border: 1.2px solid rgb(87, 118, 255);
+        }
+
+        main {
+            width: 100%;
+            display: flex;
+            flex-flow: column wrap;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        header {
+            display: flex;
+            flex-flow: column;
+            gap: 1.5rem;
+        }
+
+        header>.data {
+            display: flex;
+            gap: .5rem;
+        }
+
+        .component {
+            width: 100%;
+            display: flex;
+            gap: 1.5rem;
+            flex-flow: column;
+        }
+
+        .component>p {
+            width: 850px;
+        }
+
+        .component>ul,
+        ol {
+            padding-left: 2rem;
+        }
+
+        .component>ul>li {
+            margin-top: 1rem;
+        }
+
+        .component>ol>li {
+            margin-top: 1rem;
+        }
+
+        .component>table {
+            width: 100%;
+            border: 1px solid black;
+            border-radius: 4px;
+            border-collapse: separate;
+            text-align: center;
+        }
+
+        .component>fieldset {
+            padding: 2rem 1rem;
+        }
+
+        .component>fieldset>div>p {
+            margin-top: 1rem;
+        }
+
+        .component>tr {
+            padding: 4rem 2rem;
+        }
+
+        .component > .content-quests {
+            padding: 1.2rem;
+            display: flex;
+            flex-flow: column;
+            gap: 2rem;
+        }
+
+
+        .component > .content-quests > .quest{
+            display: flex;
+            flex-flow:column;
+            gap: 1.5rem;
+        }
+        .component > .content-quests > .quest > ol{
+            list-style: lower-alpha;
+        }
+        .component > .content-quests > .quest > ol > li{
+            font-weight: bolder;
+        }
+
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1></h1>
+        <h1 class="conteinerNameExam" id="ExamName">
+            Nome da avaliação
+        </h1>
+        <div class="data" id="data">
+            <h4>
+                <span>data :</span>
+                23/04/2005
+            </h4>
+        </div>
+        <hr>
+    </header>
+    <main>
+        <section class="example component">
+            <h4>FOLHA 1 - EXEMPLOS E INSTRUÇÕES </h4>
+            <h4>ORIENTAÇÕES PARA O ALUNO:</h4>
+            <p>
+                Olá! Vamos fazer uma atividade de leitura juntos. Primeiro, vamos praticar com estas três palavras
+                exemplo. Leia cada uma em voz alta.
+            </p>
+            <b>
+                OBS : leia-se da esquerda para direita
+            </b>
+            <h4>
+                <h4>Exemplo : </h4>
+            </h4>
+            <table>
+                <tbody>
+                    <tr>
+                        <td>banana</td>
+                        <td>banana</td>
+                        <td>banana</td>
+                        <td>banana</td>
+                    </tr>
+                    <tr>
+                        <td>banana</td>
+                        <td>banana</td>
+                        <td>banana</td>
+                    </tr>
+                </tbody>
+            </table>
+            <hr>
+        </section>
+        <section class="words component">
+            <h4>FOLHA 2 - Leitura de palavras </h4>
+            <h4>ORIENTAÇÕES PARA O ALUNO:</h4>
+            <p>
+                Agora, você vai ler palavras em voz alta. Comece pela primeira palavra e siga a direção da seta.
+                Leia com atenção, sem pressa. Não se preocupe se errar, apenas continue lendo.
+            <h4>
+                Por exemplo:
+            </h4>
+            <ul>
+                <li>
+                    <b>
+                        Se estiver escrito "CASA", você deve ler "casa".
+                    </b>
+                </li>
+                <li>
+                    <b>
+                        Se estiver escrito "BOLINHA", você deve ler "bolinha".
+                    </b>
+                </li>
+            </ul>
+            </p>
+            <table>
+                <tr>
+                    <td>banana</td>
+                    <td>banana</td>
+                    <td>banana</td>
+                </tr>
+            </table>
+            <hr>
+        </section>
+        <section class="pseudo component">
+            <h4>FOLHA 3 - LEITURA DE PSEUDOPALAVRAS</h4>
+            <h4>ORIENTAÇÕES PARA O ALUNO:</h4>
+            <p>
+                Estas são palavras inventadas, que não existem de verdade. Mesmo assim, tente lê-las em voz alta,
+                como se fossem palavras normais. Siga a direção da seta e leia o melhor que puder.
+            <h4>
+                Por exemplo:
+            </h4>
+            <ul>
+                <li>
+                    <b>
+                        Se estiver escrito "PIMELA", você deve ler "pimela", mesmo que essa palavra não exista.
+                    </b>
+                </li>
+                <li>
+                    <b>
+                        Se estiver escrito "ZATUDO", você deve ler "zatudo", mesmo que essa palavra não exista.
+                    </b>
+                </li>
+            </ul>
+            </p>
+            <table>
+                <tbody>
+                    <tr>
+                        <td>banana</td>
+                        <td>banana</td>
+                        <td>banana</td>
+                    </tr>
+                </tbody>
+            </table>
+            <hr>
+        </section>
+        <section class="phrases component">
+            <h4>FOLHA 4 - LEITURA DE FRASES</h4>
+            <h4>ORIENTAÇÕES PARA O ALUNO:</h4>
+            <p>Agora, você vai ler algumas frases em voz alta. Leia com atenção, respeitando os pontos, as
+                vírgulas e os pontos de exclamação. Tente ler como se estivesse contando algo para um amigo.
+            </p>
+            <h4>Por exemplo :</h4>
+            <ul>
+                <li>Se estiver escrito "O menino jogou bola.", você deve ler com entonação de final de frase.</li>
+                <li>Se estiver escrito "Que dia bonito!", você deve ler com entonação de exclamação.</li>
+            </ul>
+            <ol>
+                <li>
+                    <b>
+                        TOMÁS E SEUS IRMÃO CAMINHAVAM A PASSOS LARGOS.
+                    </b>
+                </li>
+                <li>
+                    <b>
+                        EU NÃO ACREDITO EM ASSOMBRAÇÃO!
+                </li>
+                </b>
+                <li>
+                    <b>
+                        APERTAVAM O PASSO SEMPRE QUE SE APROXIMAVAM DO VELHO CASARÃO
+                    </b>
+                </li>
+            </ol>
+            <hr>
+        </section>
+        <section class="text component">
+            <h4>FOLHA 5 - LEITURA DE TEXTO</h4>
+            <h4>ORIENTAÇÕES PARA O ALUNO:</h4>
+            <p>
+                Por último, você vai ler uma história completa. Leia em voz alta, com atenção, respeitando a
+                pontuação. Após a leitura, eu farei algumas perguntas sobre a história, então tente entender o que
+                está acontecendo. Não tenha pressa, leia no seu ritmo.
+            </p>
+            <h4>
+                Por exemplo, eu poderei perguntar:
+            </h4>
+            <ul>
+                <li>
+                    <b>
+                        "Quem são os personagens principais do texto?"
+                    </b>
+                </li>
+                <li>
+                    <b>
+                        "O que aconteceu com a personagem Bia no final da história?"
+                    </b>
+                </li>
+            </ul>
+            <fieldset>
+                <h3>Title</h5>
+                    <div class="textConteiner">
+                        <p>
+                            A rua estava deserta. Na noite fria e encoberta pela névoa, Tomás e seus irmãos caminhavam a
+                            passos
+                            largos.
+                        </p>
+                        <p>
+                            Apertavam o passo sempre que se aproximavam do velho casarão.
+                        </p>
+                        <p>
+                            Nesse momento, um grito cortou o silêncio da noite. Bia estancou... paralisada de medo.
+                            Curiosos, Tomás e Davi puxaram a irmã e se aproximaram do portão.
+                        </p>
+                        <p>
+                            Esse casarão é mal-assombrado! — sussurrou Davi, tentando esconder ...
+                            Eu não acredito em assombração! — falou Tomás, o mais velho dos três. Outro grito. A voz
+                            lamuriosa
+                            vinha, provavelmente, do porão.
+                        </p>
+                        <p>
+                            Quem será? Por que está gritando? O que vamos fazer? — disparou Davi, bombardeando os irmãos
+                            com perguntas e mais perguntas, como se eles soubessem mais do que ele.
+                        </p>
+                    </div>
+            </fieldset>
+        </section>
+        <div class="question component">
+            <h4>FOLHA 6 - QUESTÕES DE COMPREENSÃO DE TEXTO</h4>
+            <p>
+                <b>
+                    Agora que você terminou de ler o texto "O mistério do casarão", vou fazer algumas perguntas
+                    para ver se você entendeu a história. Para cada pergunta, vou ler quatro alternativas. Você deve
+                    escolher a alternativa que melhor responde à pergunta.
+                </b>
+            </p>
+
+            <div class="content-quests">
+                <div class="quest">
+                    <h3>
+                        Questao 1°
+                    </h3>
+                    <h4>
+                        Qual é o tema central do texto?
+                    </h4>
+                    <ol>
+                        <li>uva</li>
+                        <li>banana</li>
+                        <li>maracuja</li>
+                        <li>mel</li>
+                        <li>cachorro</li>
+                    </ol>
+                </div>
+                <div class="quest">
+                    <h3>
+                        Questao 1°
+                    </h3>
+                    <h4>
+                        Qual é o tema central do texto?
+                    </h4>
+                    <ol>
+                        <li>uva</li>
+                        <li>banana</li>
+                        <li>maracuja</li>
+                        <li>mel</li>
+                        <li>cachorro</li>
+                    </ol>
+                </div>
+                <div class="quest">
+                    <h3>
+                        Questao 1°
+                    </h3>
+                    <h4>
+                        Qual é o tema central do texto?
+                    </h4>
+                    <ol>
+                        <li>uva</li>
+                        <li>banana</li>
+                        <li>maracuja</li>
+                        <li>mel</li>
+                        <li>cachorro</li>
+                    </ol>
+                </div>
+
+            </div>
+        </div>
+    </main>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"
+        integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="./exportfile.js"></script>
+</body>
+
+</html>

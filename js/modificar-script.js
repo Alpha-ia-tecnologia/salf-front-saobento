@@ -92,7 +92,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     const avaliacaoAtual = JSON.parse(localStorage.getItem('avaliacaoAtual') || '{}');
                     if (avaliacaoAtual.id) {
                         await finalizarAvaliacaoAPI(avaliacaoAtual.id);
-                    }
+                }
                 });
             } catch (error) {
                 console.error('Erro ao iniciar avaliação:', error);
