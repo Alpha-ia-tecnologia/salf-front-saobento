@@ -4,7 +4,7 @@
 async function getAllReadingTests() {
   try {
     const token = localStorage.getItem('token') || '';
-    const response = await fetch('https://api.salf.maximizaedu.com/api/reading-tests', {
+    const response = await fetch('https://salf-salf-api2.gkgtsp.easypanel.host/reading-tests', {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
@@ -26,7 +26,7 @@ async function getAllReadingTests() {
 
 // Função para obter um teste de leitura específico por ID
 async function getReadingTestById(id) {
-  const response = await fetch(`https://api.salf.maximizaedu.com/api/reading-tests/${id}`);
+  const response = await fetch(`https://salf-salf-api2.gkgtsp.easypanel.host/reading-tests/${id}`);
   if (!response.ok) throw new Error('Teste de leitura não encontrado');
   return response.json();
 }
@@ -35,7 +35,7 @@ async function getReadingTestById(id) {
 async function deleteReadingTest(id) {
   const token = localStorage.getItem('token') || '';
   
-  const response = await fetch(`https://api.salf.maximizaedu.com/api/reading-tests/${id}`, {
+  const response = await fetch(`https://salf-salf-api2.gkgtsp.easypanel.host/reading-tests/${id}`, {
     method: 'DELETE',
     headers: {
       'Authorization': `Bearer ${token}`

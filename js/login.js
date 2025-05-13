@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
     // URL base da API
-    const API_BASE_URL = "https://api.salf.maximizaedu.com/api";
+    const API_BASE_URL = "https://salf-salf-api2.gkgtsp.easypanel.host/api";
     
     // Referências aos elementos do DOM
     const loginForm = document.getElementById('login-form');

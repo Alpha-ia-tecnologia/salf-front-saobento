@@ -1,10 +1,13 @@
 // URL base da API
-const API_BASE_URL_FILTROS = 'https://api.salf.maximizaedu.com/api';
+const API_BASE_URL_FILTROS = 'https://salf-salf-api2.gkgtsp.easypanel.host/api';
 
 // Elementos DOM
 const escolaSelect = document.getElementById('escola');
 const turmaSelect = document.getElementById('turma');
 const alunoSelect = document.getElementById('aluno');
+localStorage.removeItem("aluno")
+localStorage.removeItem("turma")
+localStorage.removeItem("queryId")
 const btnIniciarAvaliacao = document.getElementById('iniciar-avaliacao');
 // Função para fazer requisições à API
 async function fetchAPI(endpoint) {
@@ -69,7 +72,6 @@ async function carregarTurmas(escolaId) {
 
     // Busca as turmas na API com base na escola selecionada
     const turmas = await fetchAPI(`/class-groups?schoolId=${escolaId}`);
-
     // Limpa o select de turmas para adicionar as novas opções
     limparSelect(turmaSelect, 'Selecione uma turma');
 
@@ -153,7 +155,7 @@ const filtroEvento = document.getElementById('evento-avaliacao');
 const filtroTestes = document.getElementById('teste-leitura');
 
 const carregarEventos = async () => {
-    const eventos = await fetch('https://api.salf.maximizaedu.com/api/assessment-events');
+    const eventos = await fetch('https://salf-salf-api2.gkgtsp.easypanel.host/api/assessment-events');
     const eventosJson = await eventos.json();
     eventosJson.forEach(evento => {
         const option = document.createElement('option');
@@ -161,7 +163,7 @@ const carregarEventos = async () => {
         option.textContent = evento.name;
         filtroEvento.appendChild(option);
     });
-    const testes = await fetch('https://api.salf.maximizaedu.com/api/assessments');
+    const testes = await fetch('https://salf-salf-api2.gkgtsp.easypanel.host/api/assessments');
     const testesJson = await testes.json();
     testesJson.forEach(teste => {
         const option = document.createElement('option');
@@ -181,6 +183,10 @@ document.addEventListener('DOMContentLoaded', function () {
         const eventoId = filtroEvento.value;
         const testeId = filtroTestes.value;
         const alunoId = alunoSelect.value;
+        const nameAluno = alunoSelect.options[alunoSelect.selectedIndex].textContent;
+        const nameTurma = turmaSelect.options[turmaSelect.selectedIndex].textContent;
+        localStorage.setItem('aluno', JSON.stringify(nameAluno));
+        localStorage.setItem('turma', JSON.stringify(nameTurma));
         console.log(eventoId, testeId, alunoId);
     });
 

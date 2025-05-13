@@ -33,7 +33,8 @@
                 
 //                 const token = localStorage.getItem('token');
 //                 try {
-//                     const request = await fetch('https://api.salf.maximizaedu.com/api/assessments', {
+//                     const request = await fetch('https://salf-salf-api2.gkgtsp.easypanel.host/api/assessments
+', {
 //                         method: 'POST',
 //                         body: JSON.stringify(dadosAvaliacao),
 //                         headers: {

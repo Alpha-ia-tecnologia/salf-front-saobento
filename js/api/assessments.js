@@ -2,14 +2,16 @@
 
 // Função para obter todas as avaliações
 async function getAllAssessments() {
-  const response = await fetch('https://api.salf.maximizaedu.com/api/assessments');
+  const response = await fetch('https://salf-salf-api2.gkgtsp.easypanel.host/api/assessments
+');
   if (!response.ok) throw new Error('Falha ao buscar avaliações');
   return response.json();
 }
 
 // Função para obter uma avaliação específica por ID
 async function getAssessmentById(id) {
-  const response = await fetch(`https://api.salf.maximizaedu.com/api/assessments/${id}`);
+  const response = await fetch(`https://salf-salf-api2.gkgtsp.easypanel.host/api/assessments
+/${id}`);
   if (!response.ok) throw new Error('Avaliação não encontrada');
   return response.json();
 }
@@ -18,7 +20,8 @@ async function getAssessmentById(id) {
 async function updateAssessment(id, data) {
   const token = localStorage.getItem('token') || '';
   
-  const response = await fetch(`https://api.salf.maximizaedu.com/api/assessments/${id}`, {
+  const response = await fetch(`https://salf-salf-api2.gkgtsp.easypanel.host/api/assessments
+/${id}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -34,7 +37,8 @@ async function updateAssessment(id, data) {
 async function deleteAssessment(id) {
   const token = localStorage.getItem('token') || '';
   
-  const response = await fetch(`https://api.salf.maximizaedu.com/api/assessments/${id}`, {
+  const response = await fetch(`https://salf-salf-api2.gkgtsp.easypanel.host/api/assessments
+/${id}`, {
     method: 'DELETE',
     headers: {
       'Authorization': `Bearer ${token}`
@@ -48,7 +52,8 @@ async function deleteAssessment(id) {
 async function createAssessment(data) {
   const token = localStorage.getItem('token') || '';
   
-  const response = await fetch('https://api.salf.maximizaedu.com/api/assessments', {
+  const response = await fetch('https://salf-salf-api2.gkgtsp.easypanel.host/api/assessments
+', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

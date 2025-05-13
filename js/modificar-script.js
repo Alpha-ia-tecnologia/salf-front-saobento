@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const dataInicial = hoje.toISOString().split('T')[0];
                 const dataFinal = dataFutura.toISOString().split('T')[0];
                 
-                const url = `https://api.salf.maximizaedu.com/api/reading-assessments`;
+                const url = `https://salf-salf-api2.gkgtsp.easypanel.host/reading-assessments`;
               
                 const response = await fetch(url, { 
                     headers, 
@@ -80,7 +80,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
                 
                 const data = await response.json();
-                const requestAvaliacao = await fetch(`https://api.salf.maximizaedu.com/api/reading-assessments/${data.id}`,{
+                localStorage.setItem('queryId', data.id)
+                const requestAvaliacao = await fetch(`https://salf-salf-api2.gkgtsp.easypanel.host/reading-assessments/${data.id}`,{
                     headers: headers
                 });
                 const dataAvaliacao = await requestAvaliacao.json();
@@ -160,7 +161,7 @@ document.addEventListener('DOMContentLoaded', function() {
             };
             
             // Construir URL da rota
-            const url = `https://api.salf.maximizaedu.com/api/reading-assessments/${avaliacaoId}/stage`;
+            const url = `https://salf-salf-api2.gkgtsp.easypanel.host/reading-assessments/${avaliacaoId}/stage`;
             
             // Preparar dados a serem enviados
             const dados = {
@@ -666,7 +667,7 @@ document.addEventListener('DOMContentLoaded', function() {
             };
             
             // Construir URL da rota
-            const url = `https://api.salf.maximizaedu.com/api/reading-assessments/${avaliacaoId}/finalize`;
+            const url = `https://salf-salf-api2.gkgtsp.easypanel.host/reading-assessments/${avaliacaoId}/finalize`;
             
             console.log(`Finalizando avaliação ID ${avaliacaoId}`);
             

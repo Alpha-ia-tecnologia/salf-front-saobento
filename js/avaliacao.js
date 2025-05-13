@@ -152,7 +152,8 @@ btnSalvarAvaliacao.addEventListener('click', async () => {
 
 
     
-    const response = await fetch('https://api.salf.maximizaedu.com/api/assessments', {
+    const response = await fetch('https://salf-salf-api2.gkgtsp.easypanel.host/api/assessments
+', {
         method: 'POST',
         headers: {
             "Content-Type": "application/json",
@@ -226,7 +227,7 @@ function carregarEventos() {
             });
     } else {
         // Fallback para o método antigo
-        fetch('https://api.salf.maximizaedu.com/api/assessment-events', {
+        fetch('https://salf-salf-api2.gkgtsp.easypanel.host/assessment-events', {
             headers: {
                 'Authorization': `Bearer ${getAuthToken()}`
             }
@@ -327,7 +328,8 @@ function adicionarEventListenersTabelaEventos() {
 // Função para excluir um assessment
 function excluirAssessment(id) {
     if (confirm('Tem certeza que deseja excluir esta avaliação?')) {
-        fetch(`https://api.salf.maximizaedu.com/api/assessments/${id}`, {
+        fetch(`https://salf-salf-api2.gkgtsp.easypanel.host/api/assessments
+/${id}`, {
             method: 'DELETE',
             headers: {
                 'Authorization': `Bearer ${getAuthToken()}`
@@ -848,7 +850,8 @@ function preencherFormEvento(evento) {
 
 // Função para carregar as avaliações da API
 function carregarAvaliacoes() {
-    fetch('https://api.salf.maximizaedu.com/api/assessments', {
+    fetch('https://salf-salf-api2.gkgtsp.easypanel.host/api/assessments
+', {
         headers: {
             'Authorization': `Bearer ${getAuthToken()}`
         }
@@ -954,7 +957,8 @@ function editarAvaliacao(id) {
     }
 
     // Implementação antiga como fallback
-    fetch(`https://api.salf.maximizaedu.com/api/assessments/${id}`, {
+    fetch(`https://salf-salf-api2.gkgtsp.easypanel.host/api/assessments
+/${id}`, {
         headers: {
             'Authorization': `Bearer ${getAuthToken()}`
         }
@@ -1062,7 +1066,8 @@ function editarAvaliacao(id) {
 // Função para excluir uma avaliação
 function excluirAvaliacao(id) {
     if (confirm('Tem certeza que deseja excluir esta avaliação?')) {
-        fetch(`https://api.salf.maximizaedu.com/api/assessments/${id}`, {
+        fetch(`https://salf-salf-api2.gkgtsp.easypanel.host/api/assessments
+/${id}`, {
             method: 'DELETE',
             headers: {
                 'Authorization': `Bearer ${getAuthToken()}`
@@ -1128,7 +1133,8 @@ if (formEnvioSimples) {
         };
 
         // Enviar para a API
-        fetch('https://api.salf.maximizaedu.com/api/assessments', {
+        fetch('https://salf-salf-api2.gkgtsp.easypanel.host/api/assessments
+', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -1160,7 +1166,8 @@ if (formEnvioSimples) {
 
 var associarEvento = async () => {
     try {
-        const response = await fetch(`https://api.salf.maximizaedu.com/api/assessments/${1})}/associate-event`, {
+        const response = await fetch(`https://salf-salf-api2.gkgtsp.easypanel.host/api/assessments
+/${1})}/associate-event`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -1214,7 +1221,7 @@ formEvento.addEventListener('submit', function (e) {
 
     if (eventoIdEmEdicao === null) {
         // Adicionar novo evento
-        fetch('https://api.salf.maximizaedu.com/api/assessment-events', {
+        fetch('https://salf-salf-api2.gkgtsp.easypanel.host/assessment-events', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -1253,7 +1260,7 @@ formEvento.addEventListener('submit', function (e) {
 
     } else {
         // Atualizar evento existente
-        fetch(`https://api.salf.maximizaedu.com/api/assessment-events/${eventoIdEmEdicao}`, {
+        fetch(`https://salf-salf-api2.gkgtsp.easypanel.host/assessment-events/${eventoIdEmEdicao}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -1301,7 +1308,8 @@ function carregarAvaliacoesParaSelect() {
     // Mostrar indicador de carregamento
     avaliacaoSelect.innerHTML = '<option value="">Carregando avaliações...</option>';
 
-    return fetch('https://api.salf.maximizaedu.com/api/assessments', {
+    return fetch('https://salf-salf-api2.gkgtsp.easypanel.host/api/assessments
+', {
         headers: {
             'Authorization': `Bearer ${getAuthToken()}`
         }
@@ -1366,7 +1374,7 @@ function editarEvento(id) {
             });
     } else {
         // Fallback para o método antigo
-        fetch(`https://api.salf.maximizaedu.com/api/assessment-events/${id}`, {
+        fetch(`https://salf-salf-api2.gkgtsp.easypanel.host/assessment-events/${id}`, {
             headers: {
                 'Authorization': `Bearer ${getAuthToken()}`
             }
@@ -1420,7 +1428,7 @@ function excluirEvento(id) {
                 });
         } else {
             // Fallback para o método antigo
-            fetch(`https://api.salf.maximizaedu.com/api/assessment-events/${id}`, {
+            fetch(`https://salf-salf-api2.gkgtsp.easypanel.host/assessment-events/${id}`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${getAuthToken()}`
@@ -1465,33 +1473,6 @@ function exportarProva(id) {
     document.body.appendChild(loadingOverlay);
 
     // Buscar link de download da API
-    fetch(`https://api.salf.maximizaedu.com/api/assessments/${id}/document`, {
-        headers: {
-            'Authorization': `Bearer ${getAuthToken()}`
-        }
-    })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Erro ao gerar documento da avaliação');
-            }
-            return response.json();
-        })
-        .then(data => {
-            // Remover o overlay de carregamento
-            document.body.removeChild(loadingOverlay);
-
-            window.open('https://salf-salf-api.py5r5i.easypanel.host' + data.url, '_blank');
-            // Verificar se a API retornou um link válido
-            if (data && data.documentUrl) {
-                // Criar link para download e acessar diretamente
-            } else {
-                throw new Error('A API não retornou um link válido para o documento');
-            }
-        })
-        .catch(error => {
-            console.error('Erro ao exportar prova:', error);
-            // Remover overlay de carregamento
-            // Mostrar mensagem de erro
-            alert('Erro ao exportar prova. Por favor, tente novamente.');
-        });
+    localStorage.setItem('id', id)
+    location.href = location.origin + '/js/file/Exame.html'
 }

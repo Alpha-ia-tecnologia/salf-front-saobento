@@ -31,47 +31,69 @@ window.estadoAvaliacao = {
 function inicializarAvaliacao(dadosAvaliacao, callbackFinalizar) {
   try {
     console.log('Inicializando avaliação com dados:', dadosAvaliacao);
-
+    
     // Armazenar dados para uso futuro
     window.estadoAvaliacao.dadosAvaliacao = dadosAvaliacao;
-
+    
     // Extrair dados para cada etapa
     const assessment = dadosAvaliacao.assessment || dadosAvaliacao;
-
+    
     // Processar cada tipo de dados
     const palavras = extrairArray(assessment.words || []);
     const pseudopalavras = extrairArray(assessment.pseudowords || []);
     const frases = extrairArray(assessment.phrases || assessment.sentences || []);
     const texto = extrairTexto(assessment.text || '');
-
+    
     // Ocultar seleção e mostrar primeira etapa
     document.getElementById('selecao-avaliacao')?.classList.add('hidden');
     document.getElementById('etapa-palavras')?.classList.remove('hidden');
-
+    
+    // Garantir que a seção de resultado esteja oculta inicialmente
+    ocultarSecaoResultado();
+    
     // Inicializar cada etapa
     renderizarEtapaPalavras(palavras);
     renderizarEtapaPseudopalavras(pseudopalavras);
     renderizarEtapaFrases(frases);
     renderizarEtapaTexto(texto);
-
+    
     // Configurar botões de cronômetro para todas as etapas
     configurarCronometros();
-
+    
     // Configurar botões de navegação entre etapas
     configurarBotoesNavegacao(callbackFinalizar);
-
+    
     // Armazenar no localStorage
     localStorage.setItem('avaliacaoAtual', JSON.stringify({
       id: dadosAvaliacao.id,
       assessment: assessment
     }));
-
+    
     return true;
   } catch (error) {
     console.error('Erro ao inicializar avaliação:', error);
-
     return false;
   }
+}
+
+/**
+ * Oculta todas as seções de resultado
+ * Chamada no início para garantir que elementos de resultado não apareçam antes da hora
+ */
+function ocultarSecaoResultado() {
+  // Ocultar o modal de resultado
+  const modalResult = document.getElementById('modalResult');
+  if (modalResult) {
+    modalResult.classList.add('d-none');
+  }
+  
+  // Ocultar a área de botões finais (Nova Avaliação, Ver Resultado, etc)
+  const secaoFinal = document.querySelector('.text-center.py-4');
+  if (secaoFinal) {
+    secaoFinal.classList.add('hidden');
+  }
+  
+  console.log('✅ Seções de resultado ocultadas com sucesso');
 }
 
 /**
@@ -538,6 +560,10 @@ function configurarBotoesNavegacao(callbackFinalizar) {
       botao.onclick = async function (event) {
         event.preventDefault();
         console.log(`🚀 Botão de avançar clicado: ${config.atual} -> ${config.proxima}`);
+        if (config.proxima === 'RESULT') {
+          console.log('Chegou na tela de resultado! 902')
+          return;
+        }
         
         // Mostrar estado de carregamento no botão
         botao.disabled = true;
@@ -622,7 +648,7 @@ async function enviarDadosEtapaApiSimplificado(etapa, contagens) {
   }
 
   // 2. Construir URL da API - CORREÇÃO: Garantindo URL correta conforme especificado
-  const API_URL = `https://api.salf.maximizaedu.com/api/reading-assessments/${avaliacaoId}/stage`;
+  const API_URL = `https://salf-salf-api2.gkgtsp.easypanel.host/reading-assessments/${avaliacaoId}/stage`;
   console.log(`📡 URL da API corrigida: ${API_URL}`);
 
   // 3. Configurar cabeçalhos da requisição
@@ -1081,13 +1107,13 @@ async function salvarDadosEtapa(etapa, contagens) {
         if (etapa === 'texto') {
           
           avaliacao.completed = true;
-          const urlFinalize = `https://api.salf.maximizaedu.com/api/reading-assessments/${avaliacaoId}/finalize`;
+          const urlFinalize = `https://salf-salf-api2.gkgtsp.easypanel.host/reading-assessments/${avaliacaoId}/finalize`;
           const responseFinalize = await fetch(urlFinalize, {
             method: 'PUT',
             headers: headers
           });
           
-          const urlResult = `https://api.salf.maximizaedu.com/api/reading-assessments/${avaliacaoId}/result`;
+          const urlResult = `https://salf-salf-api2.gkgtsp.easypanel.host/reading-assessments/${avaliacaoId}/result`;
 
           const responseResult = await fetch(urlResult, {
             method: 'GET',
@@ -1249,7 +1275,7 @@ async function finalizarEObterResultadoAvaliacao() {
 
     // 3. FINALIZAR A AVALIAÇÃO - Primeira chamada
     console.log(`📡 Finalizando avaliação: ID ${avaliacaoId}`);
-    const urlFinalize = `https://api.salf.maximizaedu.com/api/reading-assessments/${avaliacaoId}/finalize`;
+    const urlFinalize = `https://salf-salf-api2.gkgtsp.easypanel.host/reading-assessments/${avaliacaoId}/finalize`;
 
     const responseFinalize = await fetch(urlFinalize, {
       method: 'POST',
@@ -1266,7 +1292,7 @@ async function finalizarEObterResultadoAvaliacao() {
 
     // 4. OBTER RESULTADO - Segunda chamada
     console.log(`📡 Obtendo resultado da avaliação: ID ${avaliacaoId}`);
-    const urlResult = `https://api.salf.maximizaedu.com/api/reading-assessments/${avaliacaoId}/result`;
+    const urlResult = `https://salf-salf-api2.gkgtsp.easypanel.host/reading-assessments/${avaliacaoId}/result`;
 
     const responseResult = await fetch(urlResult, {
       method: 'GET',
@@ -1399,7 +1425,7 @@ async function finalizarAvaliacao() {
     
     // 1. FINALIZAR A AVALIAÇÃO - com método PUT
     console.log(`🔒 Chamando API de finalização: PUT /reading-assessments/${avaliacaoId}/finalize`);
-    const urlFinalize = `https://api.salf.maximizaedu.com/api/reading-assessments/${avaliacaoId}/finalize`;
+    const urlFinalize = `https://salf-salf-api2.gkgtsp.easypanel.host/reading-assessments/${avaliacaoId}/finalize`;
     
     const responseFinalize = await fetch(urlFinalize, {
       method: 'PUT',
@@ -1415,7 +1441,7 @@ async function finalizarAvaliacao() {
     
     // 2. OBTER RESULTADO - com método GET
     console.log(`🔍 Chamando API de resultado: GET /reading-assessments/${avaliacaoId}/result`);
-    const urlResult = `https://api.salf.maximizaedu.com/api/reading-assessments/${avaliacaoId}/result`;
+    const urlResult = `https://salf-salf-api2.gkgtsp.easypanel.host/reading-assessments/${avaliacaoId}/result`;
     
     const responseResult = await fetch(urlResult, {
       method: 'GET',
@@ -1435,6 +1461,9 @@ async function finalizarAvaliacao() {
       // Salvar no localStorage
       localStorage.setItem('resultadoAvaliacao', JSON.stringify(resultado));
       
+      // Mostrar a seção de resultado agora que tudo está pronto
+      mostrarSecaoResultado();
+      
       // Destacar elemento na tela para mostrar que foi carregado
       const nivelLeitorElement = document.getElementById('nivel-leitor-sugerido');
       if (nivelLeitorElement) {
@@ -1448,4 +1477,28 @@ async function finalizarAvaliacao() {
   } catch (error) {
     console.error("❌ ERRO NA FINALIZAÇÃO:", error);
   }
+}
+
+/**
+ * Mostra as seções de resultado após a finalização da avaliação
+ */
+function mostrarSecaoResultado() {
+  // Mostrar a área de botões finais
+  const secaoFinal = document.querySelector('.text-center.py-4');
+  if (secaoFinal) {
+    secaoFinal.classList.remove('hidden');
+  }
+  
+  // Configurar botão para mostrar modal de resultado
+  const btnModalResult = document.getElementById('btn-modal-result');
+  if (btnModalResult) {
+    btnModalResult.addEventListener('click', () => {
+      const modalResult = document.getElementById('modalResult');
+      if (modalResult) {
+        modalResult.classList.remove('d-none');
+      }
+    });
+  }
+  
+  console.log('✅ Seções de resultado exibidas após finalização');
 } 

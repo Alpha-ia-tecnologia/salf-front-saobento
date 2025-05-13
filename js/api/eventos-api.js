@@ -6,7 +6,7 @@
  */
 async function getAllAssessmentEvents() {
   const token = localStorage.getItem('token') || '';
-  const url = 'https://api.salf.maximizaedu.com/api/assessment-events';
+  const url = 'https://salf-salf-api2.gkgtsp.easypanel.host/assessment-events';
   
   const response = await fetch(url, {
     headers: {
@@ -28,7 +28,7 @@ async function getAllAssessmentEvents() {
  */
 async function getAssessmentEventById(id) {
   const token = localStorage.getItem('token') || '';
-  const url = `https://api.salf.maximizaedu.com/api/assessment-events/${id}`;
+  const url = `https://salf-salf-api2.gkgtsp.easypanel.host/assessment-events/${id}`;
   
   const response = await fetch(url, {
     headers: {
@@ -51,7 +51,7 @@ async function getAssessmentEventById(id) {
  */
 async function updateAssessmentEvent(id, data) {
   const token = localStorage.getItem('token') || '';
-  const url = `https://api.salf.maximizaedu.com/api/assessment-events/${id}`;
+  const url = `https://salf-salf-api2.gkgtsp.easypanel.host/assessment-events/${id}`;
   
   const response = await fetch(url, {
     method: 'PUT',
@@ -77,7 +77,7 @@ async function updateAssessmentEvent(id, data) {
  */
 async function createAssessmentEvent(data) {
   const token = localStorage.getItem('token') || '';
-  const url = 'https://api.salf.maximizaedu.com/api/assessment-events';
+  const url = 'https://salf-salf-api2.gkgtsp.easypanel.host/assessment-events';
   
   const response = await fetch(url, {
     method: 'POST',
@@ -103,7 +103,7 @@ async function createAssessmentEvent(data) {
  */
 async function deleteAssessmentEvent(id) {
   const token = localStorage.getItem('token') || '';
-  const url = `https://api.salf.maximizaedu.com/api/assessment-events/${id}`;
+  const url = `https://salf-salf-api2.gkgtsp.easypanel.host/assessment-events/${id}`;
   
   const response = await fetch(url, {
     method: 'DELETE',
