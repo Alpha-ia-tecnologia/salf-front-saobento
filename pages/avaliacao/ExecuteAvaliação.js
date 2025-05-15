@@ -68,7 +68,7 @@ const cacheStage = {
     "id": null
 }
 
-const examGet = async (path) => {
+const examGet = async () => {
     const RequestSave = await fetch(pathBase + "/reading-assessments", {
         method: "POST",
         headers: {
@@ -76,13 +76,13 @@ const examGet = async (path) => {
             "Authorization": "Bearer " + localStorage.getItem("token")
         },
         body: JSON.stringify({
-            "studentId": document.getElementById('studentId').value ? document.getElementById('studentId').value : () => {
+            "studentId": document.getElementById('aluno').value ? Number.parseInt(document.getElementById('aluno').value) : () => {
                 throw new Error("Student ID is required")
             },
-            "assessmentEventId": document.getElementById('assessmentEventId').value ? document.getElementById('assessmentEventId').value : () => {
+            "assessmentEventId": document.getElementById('evento-avaliacao').value ? Number.parseInt(document.getElementById('evento-avaliacao').value) : () => {
                 throw new Error("Assessment Event ID is required")
             },
-            "assessmentId": document.getElementById('assessmentId').value ? document.getElementById('assessmentId').value : () => {
+            "assessmentId": document.getElementById('teste-leitura').value ? Number.parseInt(document.getElementById('teste-leitura').value) : () => {
                 throw new Error("Assessment ID is required")
             }
         })
@@ -193,7 +193,7 @@ const timer = document.getElementById("timer-palavras")
 const timerText = document.getElementById("timer-texto")
 const timerPhrases = document.getElementById("timer-frases")
 const timerPseudowords = document.getElementById("timer-pseudopalavras")
-const timedafault = "00:02"
+const timedafault = "1:00"
 btnTimerWords.addEventListener("click", () => {
     const itemsClick = document.querySelectorAll(".item-click")
     itemsClick.forEach(item => {
@@ -354,8 +354,8 @@ btnTimerPseudowords.addEventListener("click", () => {
 
 const filterIsEmpty = () => {
     const filterSchool = document.getElementById('escola')
-    const filterEvent = document.getElementById('evento')
-    const filterTest = document.getElementById('teste')
+    const filterEvent = document.getElementById('evento-avaliacao')
+    const filterTest = document.getElementById('teste-leitura')
     const filterStudent = document.getElementById('aluno')
     if(!filterSchool.value || !filterEvent.value || !filterTest.value || !filterStudent.value){
         alert("Todos os filtros são obrigatórios")
