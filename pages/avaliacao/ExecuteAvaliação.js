@@ -1,5 +1,5 @@
 // const PATH_BASE = "https://api.salf.maximizaedu.com/api"
-const pathBase = "https://salf-salf-api2.gkgtsp.easypanel.host/api"
+const pathBase = "https://api.salf.maximizaedu.com/api"
 const btnTimerWords = document.getElementById("iniciar-timer-palavras")
 const btnTimerPseudowords = document.getElementById("iniciar-timer-pseudopalavras")
 const btnTimerPhrases = document.getElementById("iniciar-timer-frases")

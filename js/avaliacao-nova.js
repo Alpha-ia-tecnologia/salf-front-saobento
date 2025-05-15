@@ -1607,7 +1607,7 @@ Regras aplicadas: ${faixaSerieExibicao}`;
      */
     function criarAvaliacao(dadosAvaliacao) {
         // URL base da API
-        const API_BASE_URL = 'https://salf-salf-api2.gkgtsp.easypanel.host/api';
+        const API_BASE_URL = 'https://api.salf.maximizaedu.com/api';
         
         // Token de autenticação do localStorage
         const token = localStorage.getItem('token');

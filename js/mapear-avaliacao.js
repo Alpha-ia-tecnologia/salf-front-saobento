@@ -131,7 +131,7 @@ function gerarTextoMock() {
 
 document.addEventListener('DOMContentLoaded', function () {
     // API Base URL
-    const API_BASE_URL = "https://salf-salf-api2.gkgtsp.easypanel.host/api";
+    const API_BASE_URL = "https://api.salf.maximizaedu.com/api";
 
     // Token de autenticação
     const token = localStorage.getItem('token');

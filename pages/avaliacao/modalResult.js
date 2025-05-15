@@ -24,7 +24,7 @@ document.getElementById('closeModal').addEventListener('click',() => {
 })
 
 const getResult = async () => {
-    const url = `https://salf-salf-api2.gkgtsp.easypanel.host/api/reading-assessments/${localStorage.getItem('id')}/result`
+    const url = `https://api.salf.maximizaedu.com/api/reading-assessments/${localStorage.getItem('id')}/result`
     const response = await fetch(url, {
         headers: {
             'Content-Type': 'application/json',

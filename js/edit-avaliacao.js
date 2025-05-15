@@ -29,7 +29,7 @@ async function abrirModalEditarAvaliacao(id) {
     window.frasesAdicionadas = [];
     
     // Buscar dados da avaliação
-    let path_base = 'https://salf-salf-api2.gkgtsp.easypanel.host/api';
+    let path_base = 'https://api.salf.maximizaedu.com/api';
     let headers = {
         'Authorization': `Bearer ${getAuthToken()}`
     };
