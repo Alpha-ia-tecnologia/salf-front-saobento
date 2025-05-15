@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', function() {
         'proximo-etapa-pseudopalavras',
         'proximo-etapa-frases',
         'proximo-etapa-texto'
-    ];
+    ]
     
     botoesSeguintes.forEach(id => {
         const botao = document.getElementById(id);

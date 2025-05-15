@@ -17,7 +17,7 @@ async function fetchAPI(endpoint) {
             throw new Error(`Erro ao acessar a API: ${response.status}`);
         }
         return await response.json();
-        } catch (error) {
+    } catch (error) {
         console.error(`Erro na requisição: ${error.message}`);
         return [];
     }
@@ -65,10 +65,10 @@ async function carregarTurmas(escolaId) {
     turmaSelect.disabled = true;
     alunoSelect.disabled = true;
 
-        if (!escolaId) {
+    if (!escolaId) {
         limparSelect(turmaSelect, 'Selecione uma escola primeiro');
-            return;
-        }
+        return;
+    }
 
     // Busca as turmas na API com base na escola selecionada
     const turmas = await fetchAPI(`/class-groups?schoolId=${escolaId}`);
@@ -76,7 +76,7 @@ async function carregarTurmas(escolaId) {
     limparSelect(turmaSelect, 'Selecione uma turma');
 
     // Adiciona as opções de turmas ao select
-                if (turmas && turmas.length > 0) {
+    if (turmas && turmas.length > 0) {
         turmas.forEach(turma => {
             const option = document.createElement('option');
             option.value = turma.id;
@@ -101,8 +101,8 @@ async function carregarAlunos(turmaId) {
 
     if (!turmaId) {
         limparSelect(alunoSelect, 'Selecione uma turma primeiro');
-            return;
-        }
+        return;
+    }
 
     // Busca os alunos na API com base na turma selecionada
     const alunos = await fetchAPI(`/students?classGroupId=${turmaId}`);
@@ -142,12 +142,12 @@ function limparSelect(selectElement, textoOpcaoPadrao) {
 
 // Event listeners
 escolaSelect.addEventListener('change', function () {
-                const escolaId = this.value;
+    const escolaId = this.value;
     carregarTurmas(escolaId);
 });
 
 turmaSelect.addEventListener('change', function () {
-                const turmaId = this.value;
+    const turmaId = this.value;
     carregarAlunos(turmaId);
 });
 
@@ -174,21 +174,13 @@ const carregarEventos = async () => {
 }
 
 
+
+
 // Inicializa os filtros quando o DOM estiver pronto
 document.addEventListener('DOMContentLoaded', function () {
     carregarEscolas();
     carregarEventos();
 
-    btnIniciarAvaliacao.addEventListener('click', function () {
-        const eventoId = filtroEvento.value;
-        const testeId = filtroTestes.value;
-        const alunoId = alunoSelect.value;
-        const nameAluno = alunoSelect.options[alunoSelect.selectedIndex].textContent;
-        const nameTurma = turmaSelect.options[turmaSelect.selectedIndex].textContent;
-        localStorage.setItem('aluno', JSON.stringify(nameAluno));
-        localStorage.setItem('turma', JSON.stringify(nameTurma));
-        console.log(eventoId, testeId, alunoId);
-    });
 
 });
 

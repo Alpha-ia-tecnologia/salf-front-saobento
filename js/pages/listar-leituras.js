@@ -20,7 +20,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
         
         // Buscar dados da API
-        const leituras = await window.ReadingTestAPI.getAllReadingTests();
+        // const leituras = await fetch(path_base + '/reading-tests', {
+        //     headers: headers
+        // });
+        // const response = await leituras.json();
+        // console.log(response)   ;
         
         // Limpar tabela
         tabelaLeituras.innerHTML = '';

@@ -76,13 +76,20 @@ const examGet = async (path) => {
             "Authorization": "Bearer " + localStorage.getItem("token")
         },
         body: JSON.stringify({
-            "studentId": 1,
-            "assessmentEventId": 1,
-            "assessmentId": 1
+            "studentId": document.getElementById('studentId').value ? document.getElementById('studentId').value : () => {
+                throw new Error("Student ID is required")
+            },
+            "assessmentEventId": document.getElementById('assessmentEventId').value ? document.getElementById('assessmentEventId').value : () => {
+                throw new Error("Assessment Event ID is required")
+            },
+            "assessmentId": document.getElementById('assessmentId').value ? document.getElementById('assessmentId').value : () => {
+                throw new Error("Assessment ID is required")
+            }
         })
     })
     const responseJson = await RequestSave.json()
     cacheStage.id = responseJson.id
+    localStorage.setItem('id', responseJson.id)
     const requestGrep = await fetch(pathBase + "/reading-assessments/" + responseJson.assessmentId, {
         method: "GET",
         headers: {
@@ -97,7 +104,8 @@ const examGet = async (path) => {
     cacheStage.gradeRange = gradeRange
     cacheStage.words = JSON.parse(words)
     cacheStage.pseudowords = JSON.parse(pseudowords)
-    cacheStage.phrases = phrases.map(phrase => phrase.text)
+    cacheStage.phrases = phrases.map(phrase => phrase.text
+    )
 
     if (requestGrep.ok) {
         renderStage("etapa-palavras", "words", "#palavras-container", "palavras", "palavras-lidas")
@@ -185,7 +193,7 @@ const timer = document.getElementById("timer-palavras")
 const timerText = document.getElementById("timer-texto")
 const timerPhrases = document.getElementById("timer-frases")
 const timerPseudowords = document.getElementById("timer-pseudopalavras")
-const timedafault = "1:00"
+const timedafault = "00:02"
 btnTimerWords.addEventListener("click", () => {
     const itemsClick = document.querySelectorAll(".item-click")
     itemsClick.forEach(item => {
@@ -344,10 +352,20 @@ btnTimerPseudowords.addEventListener("click", () => {
     }, 1000)
 })
 
-
+const filterIsEmpty = () => {
+    const filterSchool = document.getElementById('escola')
+    const filterEvent = document.getElementById('evento')
+    const filterTest = document.getElementById('teste')
+    const filterStudent = document.getElementById('aluno')
+    if(!filterSchool.value || !filterEvent.value || !filterTest.value || !filterStudent.value){
+        alert("Todos os filtros são obrigatórios")
+        throw new Error("Todos os filtros são obrigatórios")
+    }
+}
 document.addEventListener("DOMContentLoaded", function () {
 
     stages["selecao-avaliacao"].stage.querySelector("button").addEventListener("click", (e) => {
+        filterIsEmpty()
         examGet()
         stage = "WORDS"
         stageBody.itemsRead = 0

@@ -29,7 +29,14 @@ async function abrirModalEditarAvaliacao(id) {
     window.frasesAdicionadas = [];
     
     // Buscar dados da avaliação
-    const avaliacao = await window.AssessmentAPI.getAssessmentById(id);
+    let path_base = 'https://salf-salf-api2.gkgtsp.easypanel.host/api';
+    let headers = {
+        'Authorization': `Bearer ${getAuthToken()}`
+    };
+    const avaliacao = await fetch(path_base + `/assessment-events/${id}`, {
+        headers: headers
+    });
+    const response = await avaliacao.json();
     
     // Referências aos elementos do modal
     const modal = document.getElementById('modal-avaliacao');
@@ -41,11 +48,11 @@ async function abrirModalEditarAvaliacao(id) {
     tituloModal.textContent = 'Editar Avaliação';
     
     // Preencher o formulário com os dados da avaliação
-    document.getElementById('nome-avaliacao').value = avaliacao.name || '';
+    document.getElementById('nome-avaliacao').value = response.name || '';
     
     // Preencher o texto
     const textoAvaliacao = document.getElementById('texto-avaliacao');
-    textoAvaliacao.value = avaliacao.text || '';
+    textoAvaliacao.value = response.text || '';
     
     // Atualizar contagem de palavras
     const contagemPalavras = document.getElementById('contagem-palavras');

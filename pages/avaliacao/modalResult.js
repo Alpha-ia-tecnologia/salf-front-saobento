@@ -2,6 +2,10 @@ const modalResult = document.getElementById('btn-modal-result')
 const resultElement = document.getElementById('etapa-result')
 const queryIdEvent = localStorage.getItem('queryId')
 const modal = document.getElementById('modalResult')
+const voltar = document.getElementById('btn-voltar-dashboard')
+voltar.addEventListener('click',() => {
+    window.location.href = location.origin + '/dashboard/dashboard.html'
+})
 
 modalResult.addEventListener('click',async () => {
     const modal = document.getElementById('modalResult')
@@ -15,10 +19,12 @@ const cache = {
 document.getElementById('closeModal').addEventListener('click',() => {
     resultElement.classList.toggle('hidden')
     modal.classList.add('hidden')
+    cache.result = null
+    localStorage.removeItem('id')
 })
 
 const getResult = async () => {
-    const url = `https://salf-salf-api2.gkgtsp.easypanel.host/reading-assessments/198/result`
+    const url = `https://salf-salf-api2.gkgtsp.easypanel.host/api/reading-assessments/${localStorage.getItem('id')}/result`
     const response = await fetch(url, {
         headers: {
             'Content-Type': 'application/json',
