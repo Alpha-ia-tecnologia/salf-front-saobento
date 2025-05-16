@@ -6,6 +6,8 @@ document.addEventListener('DOMContentLoaded', function() {
         classGroupId : null
 
     }
+    let paginaAtual = 1;
+
     // Referências aos elementos
     const btnNovoAluno = document.getElementById('btn-novo-aluno');
     const btnImportarAlunos = document.getElementById('btn-importar-alunos');
@@ -140,7 +142,7 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(regioes => {
             // Preencher select de regiões do filtro
             regiaoSelect.innerHTML = '<option value="">Todas as regiões</option>';
-            regioes.forEach(regiao => {
+            regioes.data.forEach(regiao => {
                 const option = document.createElement('option');
                 option.value = regiao.id;
                 option.textContent = regiao.name;
@@ -180,7 +182,7 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(grupos => {
             // Preencher select de grupos do filtro
             grupoSelect.innerHTML = '<option value="">Todos os grupos</option>';
-            grupos.forEach(grupo => {
+            grupos.data.forEach(grupo => {
                 const option = document.createElement('option');
                 option.value = grupo.id;
                 option.textContent = grupo.name;
@@ -223,7 +225,7 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(escolas => {
             // Preencher select de escolas do filtro
             escolaSelect.innerHTML = '<option value="">Todas as escolas</option>';
-            escolas.forEach(escola => {
+            escolas.data.forEach(escola => {
                 const option = document.createElement('option');
                 option.value = escola.id;
                 option.textContent = escola.name;
@@ -232,7 +234,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Preencher select de escolas do formulário
             escolaFormSelect.innerHTML = '<option value="">Selecione uma escola</option>';
-            escolas.forEach(escola => {
+            escolas.data.forEach(escola => {
                 const option = document.createElement('option');
                 option.value = escola.id;
                 option.textContent = escola.name;
@@ -276,7 +278,7 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(turmas => {
             // Preencher select de turmas do filtro
             turmaSelect.innerHTML = '<option value="">Todas as turmas</option>';
-            turmas.forEach(turma => {
+            turmas.data.forEach(turma => {
                 const option = document.createElement('option');
                 option.value = turma.id;
                 option.textContent = `${turma.name} (${turma.gradeLevel})`;
@@ -288,10 +290,22 @@ document.addEventListener('DOMContentLoaded', function() {
             alert('Erro ao carregar turmas. Por favor, tente novamente.');
         });
     }
-    
+    const btnPagina = document.getElementById('btn-page');
+    const btnPaginaAnterior = document.getElementById('btn-page-anterior');
+    const btnPaginaProximo = document.getElementById('btn-page-proximo');
+    btnPaginaAnterior.addEventListener('click', function() {
+        btnPagina.textContent = paginaAtual - 1;
+        paginaAtual = Number.parseInt(btnPagina.textContent);
+        carregarAlunos();
+    });
+    btnPaginaProximo.addEventListener('click', function() {
+        btnPagina.textContent = paginaAtual + 1;
+        paginaAtual = Number.parseInt(btnPagina.textContent);
+        carregarAlunos();
+    });
     function carregarAlunos() {
         // Construir URL com parâmetros de filtro
-        let url = `${API_BASE_URL}/students?`;
+        let url = `${API_BASE_URL}/students?page=${paginaAtual || 1}`;
         
         // Adicionar filtros se existirem
         if (filtroRegiaoId) url += `regionId=${filtroRegiaoId}&`;
@@ -315,7 +329,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             return response.json();
         })
-        .then(data => {
+        .then(({data}) => {
             alunos = data;
             atualizarTabela();
         })
@@ -377,7 +391,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         
         
-        turmas.forEach(turma => {
+        turmas.data.forEach(turma => {
             const option = document.createElement('option');
             option.value = turma.id;
             option.textContent = `${turma.name} (${turma.gradeLevel})`;
@@ -432,7 +446,7 @@ document.addEventListener('DOMContentLoaded', function() {
             return response.json();
         })
         .then(turmas => {
-            turmas.forEach(turma => {
+            turmas.data.forEach(turma => {
                 const option = document.createElement('option');
                 option.value = turma.id;
                 option.textContent = `${turma.name}`;
@@ -608,19 +622,19 @@ document.addEventListener('DOMContentLoaded', function() {
                     ${aluno.id}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
-                    <div class="text-sm font-medium text-gray-900">${aluno.name}</div>
+                    <div class="text-sm font-medium text-gray-900">${aluno.name || 'sem nome'}</div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    ${aluno.registrationNumber}
+                    ${aluno.registrationNumber || 'sem matricula'}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    ${aluno.grade || aluno.classGroup?.gradeLevel || ''}
+                    ${aluno.grade || aluno.classGroup?.gradeLevel || 'sem serie'}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    ${aluno.classGroup?.name || ''}
+                    ${aluno.classGroup?.name || 'sem turma'}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    ${aluno?.school?.name || ''}
+                    ${aluno?.school?.name || 'sem escola'}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <button class="text-yellow-600 hover:text-yellow-900 mr-3 btn-editar" data-id="${aluno.id}">

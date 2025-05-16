@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             return response.json();
         })
-        .then(data => {
+        .then(({data}) => {
             usuarios = data;
             atualizarTabela();
             configurarBotoes();

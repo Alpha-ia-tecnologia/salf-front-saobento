@@ -24,6 +24,7 @@ document.getElementById('closeModal').addEventListener('click',() => {
 })
 
 const getResult = async () => {
+console.log(localStorage.getItem('id'))
     const url = `https://salf-salf-api2.gkgtsp.easypanel.host/api/reading-assessments/${localStorage.getItem('id')}/result`
     const response = await fetch(url, {
         headers: {

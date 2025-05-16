@@ -45,6 +45,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
+let paginaAtual = 1;
 // Elementos de Avaliação
 const btnNovaAvaliacao = document.getElementById('btn-nova-avaliacao');
 const btnExportarAvaliacoes = document.getElementById('btn-exportar-avaliacoes');
@@ -206,6 +207,32 @@ cancelarEvento.addEventListener('click', function () {
     modalEvento.classList.add('hidden');
 });
 
+const btnPagina = document.getElementById('btn-page');
+const btnPaginaAnterior = document.getElementById('btn-page-anterior');
+const btnPaginaProximo = document.getElementById('btn-page-proximo');  
+const btnPaginaAvaliacao = document.getElementById('btn-page-avaliacao');
+const btnPaginaAnteriorAvaliacao = document.getElementById('btn-page-anterior-avaliacao');
+const btnPaginaProximoAvaliacao = document.getElementById('btn-page-proximo-avaliacao');    
+
+btnPaginaAvaliacao.addEventListener('click', function() {
+    btnPagina.textContent = paginaAtual - 1;
+    carregarEventos();
+});
+
+btnPaginaProximoAvaliacao.addEventListener('click', function() {
+    btnPaginaAvaliacao.textContent = paginaAtual + 1;
+    carregarEventos();
+});
+
+btnPaginaAnterior.addEventListener('click', function() {
+    btnPagina.textContent = paginaAtual - 1;
+    carregarEventos();
+});
+btnPaginaProximo.addEventListener('click', function() {
+    btnPagina.textContent = paginaAtual + 1;
+    carregarEventos();
+});
+
 // Submissão do formulário de avaliação
 
 // Função para carregar os eventos da API
@@ -236,7 +263,7 @@ function carregarEventos() {
                 }
                 return response.json();
             })
-            .then(data => {
+            .then((data) => {
                 // Atualizar a variável de eventos
                 eventos = data;
                 // Atualizar a exibição na tabela
@@ -340,7 +367,7 @@ function excluirAssessment(id) {
                 }
                 return response.json();
             })
-            .then(data => {
+            .then(({data}) => {
                 alert('Avaliação excluída com sucesso!');
                 // Recarregar as avaliações e eventos após a exclusão
                 carregarAvaliacoes();
@@ -860,7 +887,7 @@ function carregarAvaliacoes() {
         }
         return response.json();
     })
-    .then(data => {
+    .then(({data}) => {
         // Atualizar a variável de avaliações
         avaliacoes = data;
         // Atualizar a exibição na tabela
@@ -1291,7 +1318,7 @@ formEvento.addEventListener('submit', function (e) {
 });
 
 // Função para carregar as avaliações disponíveis para o select de eventos
-function carregarAvaliacoesParaSelect() {
+async function carregarAvaliacoesParaSelect() {
     const avaliacaoSelect = document.getElementById('avaliacao-evento');
 
     // Limpar opções atuais, mantendo a opção default
@@ -1372,16 +1399,18 @@ function editarEvento(id) {
                 'Authorization': `Bearer ${getAuthToken()}`
             }
         })
-            .then(response => {
+            .then(async response => {
                 if (!response.ok) {
                     throw new Error('Erro ao buscar detalhes do evento');
                 }
-                return response.json();
+                const data = await response.json();
+                return data;
             })
             .then(evento => {
                 // Preencher o formulário com os dados do evento
-                document.getElementById('nome-evento').value = evento.nome;
-                document.getElementById('status-evento').checked = evento.status === 'ACTIVE';
+                console.log(evento);
+                document.getElementById('nome-evento').value = evento.name ?? "Sem nome";
+                // document.getElementById('status-evento').checked = evento.status === 'ACTIVE';
 
                 // Carregar avaliações e selecionar a correta
                 carregarAvaliacoesParaSelect().then(() => {

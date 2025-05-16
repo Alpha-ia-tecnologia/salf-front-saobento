@@ -35,11 +35,13 @@ async function carregarEscolas() {
     alunoSelect.disabled = true;
 
     // Busca as escolas na API
-    const escolas = await fetchAPI('/schools');
+    const { data} = await fetchAPI('/schools');
+
 
     // Adiciona as opções de escolas ao select
-    if (escolas && escolas.length > 0) {
-        escolas.forEach(escola => {
+
+    if (data   && data.length > 0) {
+        data.forEach(escola => {
             const option = document.createElement('option');
             option.value = escola.id;
             option.textContent = escola.name;
@@ -71,13 +73,13 @@ async function carregarTurmas(escolaId) {
     }
 
     // Busca as turmas na API com base na escola selecionada
-    const turmas = await fetchAPI(`/class-groups?schoolId=${escolaId}`);
+    const { data } = await fetchAPI(`/class-groups?schoolId=${escolaId}`);
     // Limpa o select de turmas para adicionar as novas opções
     limparSelect(turmaSelect, 'Selecione uma turma');
 
     // Adiciona as opções de turmas ao select
-    if (turmas && turmas.length > 0) {
-        turmas.forEach(turma => {
+    if (data && data.length > 0) {
+        data.forEach(turma => {
             const option = document.createElement('option');
             option.value = turma.id;
             option.textContent = turma.name;
@@ -105,14 +107,14 @@ async function carregarAlunos(turmaId) {
     }
 
     // Busca os alunos na API com base na turma selecionada
-    const alunos = await fetchAPI(`/students?classGroupId=${turmaId}`);
+    const { data } = await fetchAPI(`/students?classGroupId=${turmaId}`);
 
     // Limpa o select de alunos para adicionar as novas opções
     limparSelect(alunoSelect, 'Selecione um aluno');
 
     // Adiciona as opções de alunos ao select
-    if (alunos && alunos.length > 0) {
-        alunos.forEach(aluno => {
+    if (data && data.length > 0) {
+        data.forEach(aluno => {
             const option = document.createElement('option');
             option.value = aluno.id;
             option.textContent = aluno.name;
@@ -164,8 +166,8 @@ const carregarEventos = async () => {
         filtroEvento.appendChild(option);
     });
     const testes = await fetch('https://salf-salf-api2.gkgtsp.easypanel.host/api/assessments');
-    const testesJson = await testes.json();
-    testesJson.forEach(teste => {
+    const { data } = await testes.json();
+    data.forEach(teste => {
         const option = document.createElement('option');
         option.value = teste.id;
         option.textContent = teste.name;

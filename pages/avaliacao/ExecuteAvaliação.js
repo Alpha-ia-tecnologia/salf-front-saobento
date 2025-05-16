@@ -97,7 +97,7 @@ const examGet = async () => {
     const responseJson = await RequestSave
     cacheStage.id = responseJson.id
     localStorage.setItem('id', responseJson.id)
-    const requestGrep = await fetch(pathBase + "/reading-assessments/" + responseJson.assessmentId, {
+    const requestGrep = await fetch(pathBase + "/reading-assessments/" + localStorage.getItem('id'), {
         method: "GET",
         headers: {
             "Content-Type": "application/json",

@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             return response.json();
         })
-        .then(data => {
+        .then(({data}) => {
             escolas = data;
             
             // Preencher select de escolas do filtro
@@ -96,7 +96,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             return response.json();
         })
-        .then(data => {
+        .then(({data}) => {
             turmas = data;
             atualizarTabela();
         })
@@ -205,7 +205,17 @@ document.addEventListener('DOMContentLoaded', function() {
         
         return mapeamento[turno] || turno;
     }
-    
+    const btnPagina = document.getElementById('btn-page');
+    const btnPaginaAnterior = document.getElementById('btn-page-anterior');
+    const btnPaginaProximo = document.getElementById('btn-page-proximo');
+    btnPaginaAnterior.addEventListener('click', function() {
+        btnPagina.textContent = paginaAtual - 1;
+        carregarTurmas();
+    });
+    btnPaginaProximo.addEventListener('click', function() {
+        btnPagina.textContent = paginaAtual + 1;
+        carregarTurmas();
+    });
     function atualizarTabela(turmasFiltradas = null) {
         const dadosParaMostrar = turmasFiltradas || turmas;
         const tbody = document.querySelector('table tbody');
