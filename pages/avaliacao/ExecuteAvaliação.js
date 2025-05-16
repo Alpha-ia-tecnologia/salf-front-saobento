@@ -191,7 +191,7 @@ const renderStage = (currentStage, currentCache, currentContainer, currentTotal,
 }
 const renderStageText = () => {
     const divStage = stages["etapa-texto"].stage.querySelector("#texto-container")
-    const textMap = cacheStage.text.split(".")
+    const textMap = cacheStage.text.split(",")
 
     stages["etapa-texto"].stage.querySelector("#total-linhas").innerHTML = textMap.length
     textMap.forEach(text => {
