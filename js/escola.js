@@ -171,14 +171,18 @@ document.addEventListener('DOMContentLoaded', function () {
         grupo: null,
         lista: []
     }
+    console.log(filtroGrupo)
+    console.log(filtroRegiao)   
     filtroRegiao.addEventListener('change',async function() {
         cache.regiao = this.value;
-        cache.lista = cache.lista.filter(escola => escola.regionId == this.value || escola.regionId == cache.regiao);
+        cache.lista = todasEscolas.filter(escola => (escola.regionId || 1) === (this.value || 1) || escola.regionId  === (cache.regiao || 1));
         renderizarTabela(cache.lista);
     });
     filtroGrupo.addEventListener('change',async function() {       
         cache.grupo = this.value;
-        cache.lista = cache.lista.filter(escola => (escola.groupId || 1) === (this.value || 1) || (escola.groupId || 1) === (cache.grupo || 1));
+        console.log(todasEscolas);
+        console.log(cache.lista);
+        cache.lista = todasEscolas.filter(escola => (escola.groupId || 1) === (this.value || 1) || (escola.groupId || 1) === (cache.grupo || 1));
         renderizarTabela(cache.lista);
     });
 
@@ -283,6 +287,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // }
 
     // Função para renderizar a tabela com dados das escolas
+   
     function renderizarTabela(escolas) {
         // Limpar a tabela atual
         tabelaEscolas.innerHTML = '';
@@ -317,10 +322,10 @@ document.addEventListener('DOMContentLoaded', function () {
                     <div class="text-sm font-medium text-gray-900">${escola.name || 'N/A'}</div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    ${await name()}
+                    ${escola.name || "sem nome"}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    ${await group()}
+                    ${escola.groupId || "sem grupo"}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     ${escola.classGroups?.length || 0}
