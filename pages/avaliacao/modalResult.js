@@ -24,7 +24,7 @@ document.getElementById('closeModal').addEventListener('click',() => {
 })
 
 const getResult = async () => {
-    const url = `https://api.salf.maximizaedu.com/api/reading-assessments/${localStorage.getItem('id')}/result`
+    const url = `https://salf-salf-api2.gkgtsp.easypanel.host/api/reading-assessments/${localStorage.getItem('id')}/result`
     const response = await fetch(url, {
         headers: {
             'Content-Type': 'application/json',
@@ -53,9 +53,10 @@ const applyResult = ({ readingLevel, ppm, description, recommendations, progress
     const studentRecommendations = document.getElementById('nivel-observacao')
     const studentProgressPalavras = document.getElementById('nivel-progresso-palavras')
     const studentProgressPseudopalavras = document.getElementById('nivel-progresso-pseudopalavras')
-
-    studentName.textContent = localStorage.getItem('aluno').replaceAll('"', '')
-    studentGrade.textContent = localStorage.getItem('turma').replaceAll('"', '')
+    const studentProgressFrases = document.getElementById('nivel-progresso-frases')
+    const studentProgressTexto = document.getElementById('nivel-progresso-texto')
+    studentName.textContent = document.getElementById('aluno').options[document.getElementById('aluno').selectedIndex].text
+    studentGrade.textContent = document.getElementById('turma').options[document.getElementById('turma').selectedIndex].text
     studentLevel.textContent = niveisLeitor[readingLevel]
     studentDescription.textContent = description
     studentProgress.style.width = `${progress || 0}%`
@@ -64,6 +65,10 @@ const applyResult = ({ readingLevel, ppm, description, recommendations, progress
     studentProgressPalavras.textContent = `${wordAccuracy || 0}%`
     studentProgressPseudopalavras.style.width = `${pseudowordAccuracy || 0}%`
     studentProgressPseudopalavras.textContent = `${pseudowordAccuracy || 0}%`
+    studentProgressFrases.style.width = `${phraseAccuracy || 0}%`
+    studentProgressFrases.textContent = `${phraseAccuracy || 0}%`
+    studentProgressTexto.style.width = `${textAccuracy || 0}%`
+    studentProgressTexto.textContent = `${textAccuracy || 0}%`
 }   
 
 

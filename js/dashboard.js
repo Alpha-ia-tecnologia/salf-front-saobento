@@ -120,7 +120,7 @@ const headers = {
     'Content-Type': 'application/json',
     'Authorization': `Bearer ${localStorage.getItem('token')}`
 }
-const path_base = "https://api.salf.maximizaedu.com/api"
+const path_base = "https://salf-salf-api2.gkgtsp.easypanel.host/api"
 async function initialize() {
     const data = await fetch(path_base + '/dashboard/analytics', {
         headers: headers

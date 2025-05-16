@@ -6,121 +6,109 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <style>
-        * {
-            padding: 0;
-            margin: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif, monospace;
-        }
-
         body {
-            padding: 1rem;
-            display: block;
-            /* flux normal */
-        }
-
-        hr {
-            border: 1.2px solid rgb(87, 118, 255);
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #fff;
+            color: #000;
         }
 
         main {
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 2rem;
+            padding: 10mm;
+        }
+
+        h1,
+        h3,
+        h4 {
+            margin: 0 0 10px 0;
+            font-weight: bold;
+        }
+
+        p,
+        ul,
+        ol {
+            margin-bottom: 10px;
+            font-size: 12pt;
+            line-height: 1.5;
         }
 
         header {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #000;
+            padding-bottom: 5px;
         }
 
-        header>.data {
-            display: flex;
-            gap: .5rem;
+        header h1 {
+            font-size: 20pt;
         }
 
-        /* === .component agora só quebra ANTES, e evita quebra DENTRO === */
+        .data h4 span {
+            font-weight: bold;
+        }
+
         .component {
+            page-break-after: always;
+            padding: 15px;
+            border: 1px solid #ddd;
+            margin-bottom: 20px;
+        }
+
+        .table {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .table .item {
+            padding: 8px 12px;
+            border: 1px solid #333;
+            font-size: 14pt;
+            min-width: 80px;
+            text-align: center;
+        }
+
+        .a4-page {
             width: 210mm;
-            height: 297mm;
-            padding: 20mm;
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-            overflow: hidden;
-            background: #fff;
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-
-            /* evita quebra interna */
-            page-break-inside: avoid;
+            min-height: 297mm;
+            box-sizing: border-box;
         }
 
-        /* força quebra só antes de cada página, exceto a primeira */
-        .component:not(:first-child) {
-            page-break-before: always;
+        .quest {
+            margin-bottom: 20px;
         }
 
-        /* resto dos estilos permanece igual */
-        .component>p {
-            width: 550px;
+        .quest h3 {
+            margin-bottom: 5px;
+            font-size: 13pt;
         }
 
-        .component>ul,
-        .component>ol {
-            padding-left: 2rem;
+        .quest h4 {
+            font-size: 12pt;
+            font-weight: normal;
         }
 
-        .component>ul>li,
-        .component>ol>li {
-            margin-top: 1rem;
+        .content-quests ol {
+            padding-left: 20px;
         }
 
-        .component>.table {
-            width: 600px;
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            grid-gap: 1rem;
+        fieldset {
+            border: 1px solid #aaa;
+            padding: 10px;
+            margin-top: 10px;
         }
 
-        .component>.table .item {
-            border-radius: 10px;
-            background-color: #c0e1ff;
-            border: 1px solid #000;
-            padding: 1rem;
-        }
-
-        .component>fieldset {
-            padding: 2rem 1rem;
-        }
-
-        .component>.content-quests {
-            padding: 1.2rem;
-            display: flex;
-            flex-direction: column;
-            gap: 2rem;
-        }
-
-        .component>.content-quests>.quest {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-        }
-
-        .component>.content-quests>.quest>ol {
-            list-style: lower-alpha;
-        }
-
-        .component>.content-quests>.quest>ol>li {
-            font-weight: bolder;
+        .textConteiner {
+            white-space: pre-wrap;
+            margin-top: 10px;
+            font-size: 12pt;
+            line-height: 1.6;
         }
 
         @media print {
             .component {
-                box-shadow: none;
-                margin: 0;
+                page-break-before: always;
             }
         }
     </style>

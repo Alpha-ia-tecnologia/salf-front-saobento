@@ -58,7 +58,7 @@ function capturarEEnviarDadosFormulario() {
     };
     
     // URL da API
-    const url = 'https://api.salf.maximizaedu.com/api/assessments
+    const url = 'https://salf-salf-api2.gkgtsp.easypanel.host/api/assessments
 ';
     
     // Envia os dados para a API

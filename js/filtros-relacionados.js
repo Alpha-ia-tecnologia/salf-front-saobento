@@ -1,5 +1,5 @@
 // URL base da API
-const API_BASE_URL_FILTROS = 'https://api.salf.maximizaedu.com/api';
+const API_BASE_URL_FILTROS = 'https://salf-salf-api2.gkgtsp.easypanel.host/api';
 
 // Elementos DOM
 const escolaSelect = document.getElementById('escola');
@@ -155,7 +155,7 @@ const filtroEvento = document.getElementById('evento-avaliacao');
 const filtroTestes = document.getElementById('teste-leitura');
 
 const carregarEventos = async () => {
-    const eventos = await fetch('https://api.salf.maximizaedu.com/api/assessment-events');
+    const eventos = await fetch('https://salf-salf-api2.gkgtsp.easypanel.host/api/assessment-events');
     const eventosJson = await eventos.json();
     eventosJson.forEach(evento => {
         const option = document.createElement('option');
@@ -163,7 +163,7 @@ const carregarEventos = async () => {
         option.textContent = evento.name;
         filtroEvento.appendChild(option);
     });
-    const testes = await fetch('https://api.salf.maximizaedu.com/api/assessments');
+    const testes = await fetch('https://salf-salf-api2.gkgtsp.easypanel.host/api/assessments');
     const testesJson = await testes.json();
     testesJson.forEach(teste => {
         const option = document.createElement('option');

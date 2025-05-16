@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let filtroTurmaId = '';
     
     // API endpoints
-    const API_BASE_URL = 'https://api.salf.maximizaedu.com/api';
+    const API_BASE_URL = 'https://salf-salf-api2.gkgtsp.easypanel.host/api';
     
     // Token de autenticação (mock)
     const token = localStorage.getItem('token');

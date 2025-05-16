@@ -3,7 +3,7 @@
  */
 document.addEventListener('DOMContentLoaded', function() {
 // Configuração da URL base da API
-const API_BASE_URL = "https://api.salf.maximizaedu.com/api";
+const API_BASE_URL = "https://salf-salf-api2.gkgtsp.easypanel.host/api";
 
     // Elementos do DOM - apenas os três filtros básicos
 const alunoSelect = document.getElementById("aluno");

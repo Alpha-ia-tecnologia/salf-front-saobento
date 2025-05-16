@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const pesquisaTurma = document.querySelector('input[placeholder="Pesquisar turmas..."]');
     
     // Endpoint base da API
-    const API_BASE_URL = 'https://api.salf.maximizaedu.com/api';
+    const API_BASE_URL = 'https://salf-salf-api2.gkgtsp.easypanel.host/api';
     
     // Token de autenticação (mock)
     const AUTH_TOKEN = localStorage.getItem('token');

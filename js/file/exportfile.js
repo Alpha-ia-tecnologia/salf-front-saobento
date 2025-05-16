@@ -19,7 +19,7 @@ const cacheFactorys = {
 }
 async function loaderCache() {
     const id = localStorage.getItem('id')
-    const request = await fetch(`https://api.salf.maximizaedu.com/api/assessments
+    const request = await fetch(`https://salf-salf-api2.gkgtsp.easypanel.host/api/assessments
 /${id}`, {
         headers: {
             "Authorization": `Bearer ${token}`

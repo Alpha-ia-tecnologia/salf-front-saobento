@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let filtroTurmaId = '';
     
     // API endpoints
-    const API_BASE_URL = 'https://api.salf.maximizaedu.com/api';
+    const API_BASE_URL = 'https://salf-salf-api2.gkgtsp.easypanel.host/api';
     
     // Token de autenticação (mock)
     const token = localStorage.getItem('token');
@@ -391,38 +391,10 @@ document.addEventListener('DOMContentLoaded', function() {
     
     function carregarGruposParaFormulario(regiaoId = '') {
         // Limpar select de grupos
-        grupoFormSelect.innerHTML = '<option value="">Selecione um grupo</option>';
         
-        if (!regiaoId) return;
         
         // URL da requisição
-        let url = `${API_BASE_URL}/groups?regionId=${regiaoId}`;
-        
-        // Carregar grupos para o formulário
-        fetch(url, {
-            headers: {
-                'Accept': 'application/json',
-                'Authorization': `Bearer ${token}`
-            }
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Erro ao buscar grupos');
-            }
-            return response.json();
-        })
-        .then(grupos => {
-            grupos.forEach(grupo => {
-                const option = document.createElement('option');
-                option.value = grupo.id;
-                option.textContent = grupo.name;
-                grupoFormSelect.appendChild(option);
-            });
-        })
-        .catch(error => {
-            console.error('Erro ao carregar grupos:', error);
-            alert('Erro ao carregar grupos. Por favor, tente novamente.');
-        });
+      
     }
     
     function abrirModalImportar() {
@@ -721,48 +693,17 @@ document.addEventListener('DOMContentLoaded', function() {
             modalTitle.textContent = 'Editar Aluno';
             
             // Limpar selects
-            regiaoFormSelect.innerHTML = '<option value="">Selecione uma região</option>';
-            grupoFormSelect.innerHTML = '<option value="">Selecione um grupo</option>';
             escolaFormSelect.innerHTML = '<option value="">Selecione uma escola</option>';
             turmaFormSelect.innerHTML = '<option value="">Selecione uma turma</option>';
-            
-            // Carregar regiões, grupos, escolas e turmas
-            const regioes = await fetch(`${API_BASE_URL}/regions`, {
-                headers: {
-                    'Accept': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                }
-            }).then(res => res.json());
+
             
             // Preencher select de regiões
-            regioes.forEach(regiao => {
-                const option = document.createElement('option');
-                option.value = regiao.id;
-                option.textContent = regiao.name;
-                regiaoFormSelect.appendChild(option);
-            });
             
             // Selecionar região do aluno
-            regiaoFormSelect.value = aluno.regionId || '';
             
             // Carregar grupos da região selecionada
-            const grupos = await fetch(`${API_BASE_URL}/groups?regionId=${aluno.regionId}`, {
-                headers: {
-                    'Accept': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                }
-            }).then(res => res.json());
-            
-            // Preencher select de grupos
-            grupos.forEach(grupo => {
-                const option = document.createElement('option');
-                option.value = grupo.id;
-                option.textContent = grupo.name;
-                grupoFormSelect.appendChild(option);
-            });
             
             // Selecionar grupo do aluno
-            grupoFormSelect.value = aluno.groupId || '';
             
             // Carregar escolas
             const escolas = await fetch(`${API_BASE_URL}/schools`, {
