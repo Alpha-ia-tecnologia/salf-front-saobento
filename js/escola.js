@@ -172,18 +172,33 @@ document.addEventListener('DOMContentLoaded', function () {
         lista: []
     }
     console.log(filtroGrupo)
-    console.log(filtroRegiao)   
+    console.log(filtroRegiao)  
+    console.log(todasEscolas)
     filtroRegiao.addEventListener('change',async function() {
-        cache.regiao = this.value;
-        cache.lista = todasEscolas.filter(escola => (escola.regionId || 1) === (this.value || 1) || escola.regionId  === (cache.regiao || 1));
-        renderizarTabela(cache.lista);
+        cache.regiao = Number.parseInt(this.value);
+
+        if(cache.regiao){
+            console.log("FILTROU");
+            cache.lista = todasEscolas.filter(escola => {
+                return escola.regionId == cache.regiao || escola.groupId == cache.grupo
+            });
+            renderizarTabela(cache.lista)
+        }else{
+            console.log("NÃO FILTROU");
+            renderizarTabela(todasEscolas)
+        }
     });
     filtroGrupo.addEventListener('change',async function() {       
-        cache.grupo = this.value;
-        console.log(todasEscolas);
-        console.log(cache.lista);
-        cache.lista = todasEscolas.filter(escola => (escola.groupId || 1) === (this.value || 1) || (escola.groupId || 1) === (cache.grupo || 1));
-        renderizarTabela(cache.lista);
+        cache.grupo = Number.parseInt(this.value);
+        if(cache.regiao){
+            console.log("FILTROU");
+            cache.lista = todasEscolas.filter(escola => escola.groupId  === cache.grupo || escola.regionId == cache.regiao);
+            renderizarTabela(cache.lista);
+        }else{
+            console.log("NÃO FILTROU");
+            renderizarTabela(todasEscolas)
+        }
+
     });
 
     const btnAnterior = document.getElementById('btn-anterior');
@@ -198,8 +213,9 @@ document.addEventListener('DOMContentLoaded', function () {
             headers: headers
         });
         const { data } = await response.json();
+        todasEscolas = data;
         cache.lista = data;
-        renderizarTabela(cache.lista);
+        renderizarTabela(todasEscolas);
     });
     btnProximo.addEventListener('click',async function() {
         pagina++;
@@ -225,10 +241,20 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             const { data } = await response.json();
-            cache.lista = data;
-            todasEscolas = data;
+            const list = await Promise.all(data.map(async (escola) => {
+                const regiao = await fetch(`${API_BASE_URL}/regions/${escola.regionId}`, { headers }).then(res => res.json());
+                const grupo = await fetch(`${API_BASE_URL}/groups/${escola.groupId}`, { headers }).then(res => res.json());
+                return {
+                    ...escola,
+                    regiao: regiao.name,
+                    grupo: grupo.name
+                }
+            }));
+            console.log(list);
+            cache.lista = list;
+            todasEscolas = list;
 
-            renderizarTabela(todasEscolas);
+            renderizarTabela(list);
         } catch (error) {
             console.error('Erro ao carregar escolas:', error);
             mostrarErro('Não foi possível carregar a lista de escolas. Por favor, tente novamente.');
@@ -288,7 +314,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Função para renderizar a tabela com dados das escolas
    
-    function renderizarTabela(escolas) {
+    async function renderizarTabela(escolas) {
         // Limpar a tabela atual
         tabelaEscolas.innerHTML = '';
 
@@ -322,10 +348,10 @@ document.addEventListener('DOMContentLoaded', function () {
                     <div class="text-sm font-medium text-gray-900">${escola.name || 'N/A'}</div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    ${escola.name || "sem nome"}
+                    ${escola.regiao || "sem nome"}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    ${escola.groupId || "sem grupo"}
+                    ${escola.grupo || "sem grupo"}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     ${escola.classGroups?.length || 0}

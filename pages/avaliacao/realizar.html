@@ -78,12 +78,15 @@
                         <!-- Filtros relacionados -->
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                             <div>
-                                <label for="escola" class="block text-sm font-medium text-gray-700 mb-1">Escola</label>
+                                <input type="text" id="escola" placeholder="Pesquisar turmas..." list="escolas" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <datalist id="escolas">
+                                </datalist>
+                                <!-- <label for="escola" class="block text-sm font-medium text-gray-700 mb-1">Escola</label>
                                 <select id="escola"
                                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                    <option value="">Selecione uma escola</option>
+                                    <option value="">Selecione uma escola</option> -->
                                     <!-- As opções serão carregadas via JavaScript -->
-                                </select>
+                                <!-- </select> -->
                             </div>
                             <div>
                                 <label for="turma" class="block text-sm font-medium text-gray-700 mb-1">Turma</label>

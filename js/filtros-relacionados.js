@@ -3,6 +3,7 @@ const API_BASE_URL_FILTROS = 'https://salf-salf-api2.gkgtsp.easypanel.host/api';
 
 // Elementos DOM
 const escolaSelect = document.getElementById('escola');
+const escolasDatalist = document.getElementById('escolas');
 const turmaSelect = document.getElementById('turma');
 const alunoSelect = document.getElementById('aluno');
 localStorage.removeItem("aluno")
@@ -35,18 +36,20 @@ async function carregarEscolas() {
     alunoSelect.disabled = true;
 
     // Busca as escolas na API
-    const { data} = await fetchAPI('/schools');
+    const { data } = await fetchAPI('/schools');
 
 
     // Adiciona as opções de escolas ao select
 
-    if (data   && data.length > 0) {
+    if (data  && data.length > 0) {
         data.forEach(escola => {
             const option = document.createElement('option');
-            option.value = escola.id;
+            option.value = escola.name;
             option.textContent = escola.name;
-            escolaSelect.appendChild(option);
+            option.dataset.id = escola.id;
+            escolasDatalist.appendChild(option);
         });
+        
 
         // Habilita o select de escolas
         escolaSelect.disabled = false;
@@ -60,6 +63,7 @@ async function carregarEscolas() {
 // Função para carregar as turmas com base na escola selecionada
 async function carregarTurmas(escolaId) {
     // Limpa e desabilita os selects dependentes
+    console.log(escolaId);
     limparSelect(turmaSelect, 'Carregando turmas...');
     limparSelect(alunoSelect, 'Selecione um aluno');
 
@@ -144,7 +148,9 @@ function limparSelect(selectElement, textoOpcaoPadrao) {
 
 // Event listeners
 escolaSelect.addEventListener('change', function () {
-    const escolaId = this.value;
+    const val = escolaSelect.value;
+    const escolaId = escolasDatalist.querySelector(`option[value="${val}"]`).dataset.id;
+    console.log(escolaId);
     carregarTurmas(escolaId);
 });
 
