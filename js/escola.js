@@ -241,20 +241,10 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             const { data } = await response.json();
-            const list = await Promise.all(data.map(async (escola) => {
-                const regiao = await fetch(`${API_BASE_URL}/regions/${escola.regionId}`, { headers }).then(res => res.json());
-                const grupo = await fetch(`${API_BASE_URL}/groups/${escola.groupId}`, { headers }).then(res => res.json());
-                return {
-                    ...escola,
-                    regiao: regiao.name,
-                    grupo: grupo.name
-                }
-            }));
-            console.log(list);
-            cache.lista = list;
-            todasEscolas = list;
+            cache.lista = data;
+            todasEscolas = data;
 
-            renderizarTabela(list);
+            renderizarTabela(data);
         } catch (error) {
             console.error('Erro ao carregar escolas:', error);
             mostrarErro('Não foi possível carregar a lista de escolas. Por favor, tente novamente.');
@@ -348,10 +338,10 @@ document.addEventListener('DOMContentLoaded', function () {
                     <div class="text-sm font-medium text-gray-900">${escola.name || 'N/A'}</div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    ${escola.regiao || "sem nome"}
+                    ${escola.group.name || "sem nome"}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    ${escola.grupo || "sem grupo"}
+                    ${escola.region.name || "sem grupo"}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     ${escola.classGroups?.length || 0}

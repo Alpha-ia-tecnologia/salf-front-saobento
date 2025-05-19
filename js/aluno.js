@@ -728,7 +728,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }).then(res => res.json());
             
             // Preencher select de escolas
-            escolas.forEach(escola => {
+            escolas.data.forEach(escola => {
                 const option = document.createElement('option');
                 option.value = escola.id;
                 option.textContent = escola.name;
@@ -747,7 +747,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }).then(res => res.json());
             
             // Preencher select de turmas
-            turmas.forEach(turma => {
+            turmas.data.forEach(turma => {
                 const option = document.createElement('option');
                 option.value = turma.id;
                 option.textContent = `${turma.name} (${turma.gradeLevel})`;
@@ -760,7 +760,6 @@ document.addEventListener('DOMContentLoaded', function() {
             // Preencher outros campos
             document.getElementById('nome-aluno').value = aluno.name || '';
             document.getElementById('matricula-aluno').value = aluno.registrationNumber || '';
-            document.getElementById('serie-aluno').value = aluno.grade || '';
             
             // Modificar o botão de submit
             const btnSubmit = formAluno.querySelector('button[type="submit"]');
