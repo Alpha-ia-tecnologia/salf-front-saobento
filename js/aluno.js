@@ -625,9 +625,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     <div class="text-sm font-medium text-gray-900">${aluno.name || 'sem nome'}</div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    ${aluno.registrationNumber || 'sem matricula'}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     ${aluno.grade || aluno.classGroup?.gradeLevel || 'sem serie'}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">

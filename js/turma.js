@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Funções
     function carregarEscolas() {
-        fetch(`${API_BASE_URL}/schools?limit=30`, {
+        fetch(`${API_BASE_URL}/schools?limit=1000`, {
             headers: {
                 'Accept': 'application/json',
                 'Authorization': `Bearer ${AUTH_TOKEN}`
@@ -53,6 +53,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 return response.json();
             })
             .then(({ data }) => {
+                console.log(data.length);
                 escolas = data;
 
                 // Preencher select de escolas do filtro

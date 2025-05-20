@@ -37,6 +37,7 @@ async function carregarEscolas() {
 
     // Busca as escolas na API
     const { data } = await fetchAPI('/schools?limit=1000');
+    console.log(data.length);
 
 
     // Adiciona as opções de escolas ao select
