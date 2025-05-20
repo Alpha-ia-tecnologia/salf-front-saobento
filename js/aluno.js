@@ -350,7 +350,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const modalTitle = modalAluno.querySelector('h3');
         modalTitle.textContent = 'Novo Aluno';
 
-        const escolas = await fetch(`${API_BASE_URL}/schools`, {
+        const escolas = await fetch(`${API_BASE_URL}/schools?limit=1000`, {
             headers: {
                 'Accept': 'application/json',
                 'Authorization': `Bearer ${token}`
@@ -358,7 +358,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }).then(res => res.json()); 
 
         escolaFormSelect.innerHTML = '<option value="">Selecione uma escola</option>';
-        escolas.forEach(escola => {
+        escolas.data.forEach(escola => {
             const option = document.createElement('option');
             option.value = escola.id;
             option.textContent = escola.name;
@@ -588,7 +588,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const tbody = document.querySelector('table tbody');
         tbody.innerHTML = '';
         
-        // Filtrar alunos baseado na pesquisa
+        // Filtrar alunos baseado na 
         let alunosFiltrados = [...alunos];
         const pesquisa = document.getElementById('pesquisa')?.value?.toLowerCase() || '';
         

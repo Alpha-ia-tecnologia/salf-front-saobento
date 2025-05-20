@@ -338,16 +338,16 @@ document.addEventListener('DOMContentLoaded', function () {
                     <div class="text-sm font-medium text-gray-900">${escola.name || 'N/A'}</div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    ${escola.group.name || "sem nome"}
+                    ${escola.region.name || "sem nome"}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    ${escola.region.name || "sem grupo"}
+                    ${ escola.group.name || "sem grupo"}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    ${escola.classGroups?.length || 0}
+                    ${escola.totalClasses  || 0}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    ${escola.students?.length || 0}
+                    ${escola.totalStudents || 0}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <button class="text-blue-600 hover:text-blue-900 mr-3 btn-editar" data-id="${escola.id}">
