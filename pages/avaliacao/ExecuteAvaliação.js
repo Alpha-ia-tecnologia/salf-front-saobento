@@ -249,7 +249,7 @@ const timer = document.getElementById("timer-palavras")
 const timerText = document.getElementById("timer-texto")
 const timerPhrases = document.getElementById("timer-frases")
 const timerPseudowords = document.getElementById("timer-pseudopalavras")
-const timedafault = "00:05"
+const timedafault = "1:00"
 const btn_stage = () => {
     switch (stageBody.stage) {
         case "WORDS":
