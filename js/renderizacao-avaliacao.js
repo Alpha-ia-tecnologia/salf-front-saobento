@@ -6,7 +6,7 @@
 // Configuração global
 const AVALIACAO_CONFIG = {
   // Tempo padrão para cada etapa em segundos
-  tempoPadrao: 2,
+  tempoPadrao: 60,
   // Classes CSS para itens não selecionados
   classesItemNaoSelecionado: 'bg-yellow-100 cursor-not-allowed transition-colors',
   // Classes CSS para itens selecionados
