@@ -176,7 +176,7 @@ const renderStage = (currentStage, currentCache, currentContainer, currentTotal,
         btn.addEventListener("click", () => {
             btn.classList.toggle("bg-green-300")
             console.log(stageBody)
-            if (btn.classList.contains("bg-green-100")) {
+            if (btn.classList.contains("bg-green-300")) {
                 stageBody.itemsRead++
                 document.querySelector("#total-" + currentRead).innerHTML = stageBody.itemsRead
 
@@ -249,7 +249,7 @@ const timer = document.getElementById("timer-palavras")
 const timerText = document.getElementById("timer-texto")
 const timerPhrases = document.getElementById("timer-frases")
 const timerPseudowords = document.getElementById("timer-pseudopalavras")
-const timedafault = "1:00"
+const timedafault = "00:05"
 const btn_stage = () => {
     switch (stageBody.stage) {
         case "WORDS":
@@ -279,7 +279,7 @@ btnTimerWords.addEventListener("click", () => {
         let totalSeconds = parseInt(minutes) * 60 + parseInt(seconds)
         totalSeconds--
         timer.innerHTML = `${Math.floor(totalSeconds / 60)}:${totalSeconds % 60}`
-        if (totalSeconds === 0 && stageBody.itemsRead > 0) {
+        if (totalSeconds <= 0 && stageBody.itemsRead > 0) {
             alert("Tempo esgotado, você leu " + stageBody.itemsRead + " palavras")
             btn_stage().disabled = false
             btn_stage().classList.remove("bg-gray-400", "hover:bg-gray-400")
@@ -288,7 +288,7 @@ btnTimerWords.addEventListener("click", () => {
             btnTimerWords.classList.remove("bg-gray-400", "hover:bg-gray-400")
             clearInterval(interval);
 
-        } else if (totalSeconds === 0 && stageBody.itemsRead === 0) {
+        } else if (totalSeconds <= 0 && stageBody.itemsRead <= 0) {
             alert("Tempo esgotado, você não leu nenhuma palavra")
             forcedEnd("etapa-palavras")
             btnTimerWords.classList.remove("bg-gray-400", "hover:bg-gray-400")
