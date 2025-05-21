@@ -171,9 +171,10 @@ const renderStage = (currentStage, currentCache, currentContainer, currentTotal,
         const btn = document.createElement("button")
         let max = stages[currentStage].stage.querySelector("#total-" + currentTotal).innerHTML = cacheStage[currentCache].length
         const total = stages[currentStage].stage.querySelector("#total-" + currentRead).innerHTML = stageBody.itemsRead
-        btn.classList.add("word", "bg-blue-100", "px-2", "py-1", "rounded", "outline-none", "ml-2", "item-click-" + currentCache)
+
+        btn.classList.add("word", "bg-blue-500", "px-2", "py-1", "rounded", "outline-none", "ml-2", "item-click-" + currentCache)
         btn.addEventListener("click", () => {
-            btn.classList.toggle("bg-green-100")
+            btn.classList.toggle("bg-green-300")
             console.log(stageBody)
             if (btn.classList.contains("bg-green-100")) {
                 stageBody.itemsRead++
@@ -187,6 +188,7 @@ const renderStage = (currentStage, currentCache, currentContainer, currentTotal,
         btn.disabled = true
         btn.classList.add("bg-gray-400", "hover:bg-gray-400")
         btn.innerHTML = word
+        
         divStage.append(btn)
     })
 }
