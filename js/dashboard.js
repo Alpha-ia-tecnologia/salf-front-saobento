@@ -10,6 +10,7 @@ const ctxGraphYear = canvaGraphYear.getContext('2d');
 const filtrosRegioes = document.getElementById('regiao');
 const escola = document.getElementById('escola');
 const grupos = document.getElementById('grupo');
+const eventos = document.getElementById('evento');
 const filtrosAnoEscolar = document.getElementById('ano-escolar');
 const filtrosEvento = document.getElementById('evento');
 const cardValue = document.querySelectorAll('.card-value');
@@ -34,7 +35,7 @@ let schoolId = null;
 let eventId = null;
 let schoolYearId = null;
 aplicarFiltros.addEventListener("click", async () => {
-        const data = await fetch(path_base + `/dashboard/analytics?schoolId=${schoolId || ''}&gradeLevel=${schoolYearId || ''}&classGroupId=${groupId || ''}&assessmentEventId=${eventId || ''}`, {
+    const data = await fetch(path_base + `/dashboard/analytics?schoolId=${schoolId || ''}&gradeLevel=${schoolYearId || ''}&classGroupId=${groupId || ''}&assessmentEventId=${eventId || ''}`, {
         headers: headers
     });
     const response = await data.json();
@@ -56,15 +57,15 @@ aplicarFiltros.addEventListener("click", async () => {
         headers: headers
     });
     const response4 = await data4.json();
-    PopularGraphEvolution(response4.evolution[0]);  
-    
+    PopularGraphEvolution(response4.evolution[0]);
+
 });
 filtrosRegioes.addEventListener("change", () => {
     regionId = filtrosRegioes.value;
     if (regionId != "" && groupId != "") {
         const schools = cache.schools.filter(item => item.regionId == regionId);
         escola.innerHTML = '<option value="">Selecione a escola</option>';
-    schools.forEach(item => {
+        schools.forEach(item => {
             const option = document.createElement('option');
             option.value = item.id;
             option.textContent = item.name;
@@ -132,7 +133,7 @@ async function initialize() {
         headers: headers
     });
     const response2 = await data2.json();
-    PopularGraphSeries(response2.gradePerformance[0]);
+    // PopularGraphSeries(response2.gradePerformance[0]);
     const data3 = await fetch(path_base + '/dashboard/yearly-progression', {
         headers: headers
     });
@@ -143,16 +144,7 @@ async function initialize() {
     });
     const response4 = await data4.json();
     PopularGraphEvolution(response4.evolution[0]);
-    const data5 = await fetch(path_base + '/dashboard/filter-options', {
-        headers: headers
-    });
-    if (data5.ok) {
-
-        const response5 = await data5.json();
-        PopularFilters(response5);
-        grupos.disabled = false;
-        filtrosRegioes.disabled = false;
-    }
+    PopularFilters();
 }
 initialize();
 function PopularCards({ totalStudents, studentsAssessed, assessmentCompletion, averagePpm, participationRate, comprehensionScore }) {
@@ -205,13 +197,13 @@ function PopularGraphPizza({ readingLevelDistribution }) {
     });
 }
 let series = null;
-function PopularGraphSeries({ distribution , grade }) {
+function PopularGraphSeries({ distribution, grade }) {
     if (distribution === undefined && distribution.length === 0 && grade === null) {
-        return;
+        distribution = [];
     }
-    const labels = distribution.map(item => item.name);
-    const data = distribution.map(item => item.percentage);
-  
+    const labels = distribution.map(item => item.name) || ["não informado"];
+    const data = distribution.map(item => item.percentage) || [0];
+
     if (series) {
         series.destroy();
     }
@@ -279,38 +271,73 @@ function PopularGraphEvolution({ eventName, distribution }) {
     });
 }
 
-function PopularFilters({ schools, groups, assessmentEvents, schoolYears, regions }) {
-    cache.schools = schools;
-    cache.groups = groups;
-    cache.assessmentEvents = assessmentEvents;
-    cache.schoolYears = schoolYears;
-    cache.regions = regions;
-    grupos.innerHTML = '<option value="">Selecione o grupo</option>';
-    cache.groups.forEach(item => {
+function PopularFilters() {
+    filterRegion();
+
+}
+
+const filterGroup = async (id) => {
+    grupos.innerHTML = '<option value="">Selecione o evento</option>';
+    grupos.disabled = false
+    const data = await fetch(path_base + `/groups?regionId=${id}`, {
+        headers: headers
+    });
+    const response = await data.json();
+    response.data.forEach(item => {
         const option = document.createElement('option');
         option.value = item.id;
         option.textContent = item.name;
         grupos.appendChild(option);
     });
-    filtrosRegioes.innerHTML = '<option value="">Selecione a região</option>';
-    cache.regions.forEach(item => {
+
+}
+const filterRegion = async () => {
+    const data = await fetch(path_base + `/regions`, {
+        headers: headers
+    });
+    filtrosRegioes.disabled = false;
+    const response = await data.json();
+    filtrosEvento.innerHTML = '<option value="">Selecione o evento</option>';
+    response.data.forEach(item => {
         const option = document.createElement('option');
         option.value = item.id;
         option.textContent = item.name;
         filtrosRegioes.appendChild(option);
+    })
+}
+const filterSchool = async () => {
+    const request = await fetch(path_base + `/schools?groupId=${grupos.value}&&regionId=${filtrosRegioes.value}`, {
+        headers: headers
     });
-    // cache.schoolYears.forEach(item => {
-    //     const option = document.createElement('option');
-    //     option.value = item;
-    //     option.textContent = item;
-    //     filtrosAnoEscolar.appendChild(option);
-    // });
-    filtrosEvento.innerHTML = '<option value="">Selecione o evento</option>';
-    cache.assessmentEvents.forEach(item => {
+    const {data} = await request.json();
+    escola.innerHTML = '<option value="">Selecione o ano escolar</option>';
+    data.forEach(item => {
+        const option = document.createElement('option');
+        option.value = item.id;
+        option.textContent = item.name;
+        escola.appendChild(option);
+    }
+    );
+}
+
+filtrosRegioes.addEventListener("change", () => {
+    filterGroup(filtrosRegioes.value);
+})
+grupos.addEventListener("change", () => {
+    filterSchool();
+})
+filtrosAnoEscolar.addEventListener("change", () => {
+    filterEvent();
+})
+const filterEvent = async () => {
+    const response = await fetch(path_base + `/assessment-events`, {
+        headers: headers
+    });
+    const data = await response.json();
+    data.forEach(item => {
         const option = document.createElement('option');
         option.value = item.id;
         option.textContent = item.name;
         filtrosEvento.appendChild(option);
-    });
-
+    })
 }

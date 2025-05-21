@@ -199,12 +199,12 @@ const renderStageText = () => {
     stages["etapa-texto"].stage.querySelector("#total-linhas").innerHTML = textMap.length
     textMap.forEach(text => {
         const btn = document.createElement("button")
-        btn.classList.add("word", "bg-blue-100", "px-2", "py-1", "rounded", "outline-none", "ml-2", "item-click-text")
+        btn.classList.add("word", "bg-blue-200", "px-2", "py-1", "rounded", "outline-none", "ml-2", "item-click-text")
         btn.disabled = true
         btn.classList.add("bg-gray-400", "hover:bg-gray-400")
         btn.addEventListener("click", () => {
-            btn.classList.toggle("bg-green-100")
-            if (btn.classList.contains("bg-green-100")) {
+            btn.classList.toggle("bg-green-300")
+            if (btn.classList.contains("bg-green-300")) {
                 stageBody.itemsRead++
                 document.querySelector("#total-linhas-lidas").innerHTML = stageBody.itemsRead
             } else {

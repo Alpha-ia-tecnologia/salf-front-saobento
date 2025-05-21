@@ -172,29 +172,29 @@ document.addEventListener('DOMContentLoaded', function () {
         lista: []
     }
     console.log(filtroGrupo)
-    console.log(filtroRegiao)  
+    console.log(filtroRegiao)
     console.log(todasEscolas)
-    filtroRegiao.addEventListener('change',async function() {
+    filtroRegiao.addEventListener('change', async function () {
         cache.regiao = Number.parseInt(this.value);
 
-        if(cache.regiao){
+        if (cache.regiao) {
             console.log("FILTROU");
             cache.lista = todasEscolas.filter(escola => {
                 return escola.regionId == cache.regiao || escola.groupId == cache.grupo
             });
             renderizarTabela(cache.lista)
-        }else{
+        } else {
             console.log("NÃO FILTROU");
             renderizarTabela(todasEscolas)
         }
     });
-    filtroGrupo.addEventListener('change',async function() {       
+    filtroGrupo.addEventListener('change', async function () {
         cache.grupo = Number.parseInt(this.value);
-        if(cache.regiao){
+        if (cache.regiao) {
             console.log("FILTROU");
-            cache.lista = todasEscolas.filter(escola => escola.groupId  === cache.grupo || escola.regionId == cache.regiao);
+            cache.lista = todasEscolas.filter(escola => escola.groupId === cache.grupo || escola.regionId == cache.regiao);
             renderizarTabela(cache.lista);
-        }else{
+        } else {
             console.log("NÃO FILTROU");
             renderizarTabela(todasEscolas)
         }
@@ -205,7 +205,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const btnProximo = document.getElementById('btn-proximo');
     const btnPagina = document.getElementById('btn-pagina');
     let pagina = 1;
-    btnAnterior.addEventListener('click',async function() {
+    btnAnterior.addEventListener('click', async function () {
         pagina--;
         btnPagina.textContent = pagina;
         const response = await fetch(`${API_BASE_URL}/schools?page=${pagina}`, {
@@ -217,7 +217,7 @@ document.addEventListener('DOMContentLoaded', function () {
         cache.lista = data;
         renderizarTabela(todasEscolas);
     });
-    btnProximo.addEventListener('click',async function() {
+    btnProximo.addEventListener('click', async function () {
         pagina++;
         btnPagina.textContent = pagina;
         const response = await fetch(`${API_BASE_URL}/schools?page=${pagina}`, {
@@ -227,7 +227,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const { data } = await response.json();
         cache.lista = data;
         renderizarTabela(cache.lista);
-    }); 
+    });
     // Função para carregar escolas da API
     async function carregarEscolas() {
         try {
@@ -274,12 +274,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
             // Adicionar opções de grupo
             grupos.data
-            .forEach(grupo => {
-                const option = document.createElement('option');
-                option.value = grupo.id;
-                option.textContent = grupo.name;
-                filtroGrupo.appendChild(option);
-            });
+                .forEach(grupo => {
+
+                    const option = document.createElement('option');
+                    option.value = grupo.id;
+                    option.textContent = grupo.name;
+                    filtroGrupo.appendChild(option);
+                });
 
         } catch (error) {
             console.error('Erro ao carregar filtros:', error);
@@ -303,7 +304,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // }
 
     // Função para renderizar a tabela com dados das escolas
-   
+
     async function renderizarTabela(escolas) {
         // Limpar a tabela atual
         tabelaEscolas.innerHTML = '';
@@ -341,10 +342,10 @@ document.addEventListener('DOMContentLoaded', function () {
                     ${escola.region.name || "sem nome"}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    ${ escola.group.name || "sem grupo"}
+                    ${escola.group.name || "sem grupo"}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    ${escola.totalClasses  || 0}
+                    ${escola.totalClasses || 0}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     ${escola.totalStudents || 0}
@@ -504,22 +505,34 @@ document.addEventListener('DOMContentLoaded', function () {
         filtroRegiao.innerHTML = '';
         filtroGrupo.innerHTML = '';
 
-        const regioes = await fetch(`${API_BASE_URL}/regions`, { headers }).then(res => res.json());
-        const grupos = await fetch(`${API_BASE_URL}/groups`, { headers }).then(res => res.json());
+        const regioes = await fetch(`${API_BASE_URL}/regions`, { headers })
+            .then(res => res.json())
+            .then(({ data }) => {
+                regiaoEscolaSelect.innerHTML = '';
+                data.forEach(regiao => {
+                    const option = document.createElement('option');
+                    option.value = regiao.id;
+                    option.textContent = regiao.name;
+                    regiaoEscolaSelect.appendChild(option);
+                });
 
-        regioes.data.forEach(regiao => {
-            const option = document.createElement('option');
-            option.value = regiao.id;
-            option.textContent = regiao.name;
-            regiaoEscolaSelect.appendChild(option);
-        });
 
-        grupos.data.forEach(grupo => {
-            const option = document.createElement('option');
-            option.value = grupo.id;
-            option.textContent = grupo.name;
-            grupoEscolaSelect.appendChild(option);
-        });
+            });
+        const grupos = await fetch(`${API_BASE_URL}/groups`, { headers })
+            .then(res => res.json())
+            .then(({ data }) => {
+                grupoEscolaSelect.innerHTML = '';
+                data.forEach(grupo => {
+                    const option = document.createElement('option');
+                    option.value = grupo.id;
+                    option.textContent = grupo.name;
+                    grupoEscolaSelect.appendChild(option);
+                });
+            });
+
+        await Promise.all([regioes, grupos]);
+
+
         // Exibir o modal
         modalEscola.classList.remove('hidden');
     }
