@@ -507,14 +507,14 @@ document.addEventListener('DOMContentLoaded', function () {
         const regioes = await fetch(`${API_BASE_URL}/regions`, { headers }).then(res => res.json());
         const grupos = await fetch(`${API_BASE_URL}/groups`, { headers }).then(res => res.json());
 
-        regioes.forEach(regiao => {
+        regioes.data.forEach(regiao => {
             const option = document.createElement('option');
             option.value = regiao.id;
             option.textContent = regiao.name;
             regiaoEscolaSelect.appendChild(option);
         });
 
-        grupos.forEach(grupo => {
+        grupos.data.forEach(grupo => {
             const option = document.createElement('option');
             option.value = grupo.id;
             option.textContent = grupo.name;
