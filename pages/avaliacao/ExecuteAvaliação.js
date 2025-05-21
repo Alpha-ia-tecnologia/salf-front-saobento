@@ -317,7 +317,7 @@ btnTimerText.addEventListener("click", () => {
         let totalSeconds = parseInt(minutes) * 60 + parseInt(seconds)
         totalSeconds--
         timerText.innerHTML = `${Math.floor(totalSeconds / 60)}:${totalSeconds % 60}`
-        if (totalSeconds === 0) {
+        if (totalSeconds <= 0) {
             alert("Tempo esgotado")
             btn_stage().disabled = false
             btn_stage().classList.remove("bg-gray-400", "hover:bg-gray-400")

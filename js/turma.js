@@ -267,7 +267,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     ${turma.school ? turma.school.name : ''}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    ${turma.totalStudents || 0}
+                    ${turma.school.totalStudents || 0}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <button class="text-yellow-600 hover:text-yellow-900 mr-3 btn-editar" data-id="${turma.id}">
