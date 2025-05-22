@@ -7,7 +7,9 @@ document.addEventListener('DOMContentLoaded', function () {
     const cancelarTurma = document.getElementById('cancelar-turma');
     const formTurma = document.getElementById('form-turma');
     const filtroEscola = document.getElementById('filtro-escola');
+    const inputEscola = document.getElementById('input-escola');
     const pesquisaTurma = document.querySelector('input[placeholder="Pesquisar turmas..."]');
+    const aplicarFiltros = document.getElementById('aplicar-filtros');
 
     // Endpoint base da API
     const API_BASE_URL = 'https://salf-salf-api2.gkgtsp.easypanel.host/api';
@@ -26,13 +28,6 @@ document.addEventListener('DOMContentLoaded', function () {
     cancelarTurma.addEventListener('click', fecharModalTurma);
     formTurma.addEventListener('submit', salvarTurma);
 
-    if (filtroEscola) {
-        filtroEscola.addEventListener('change', filtrarTurmas);
-    }
-
-    if (pesquisaTurma) {
-        pesquisaTurma.addEventListener('input', filtrarTurmas);
-    }
 
     // Inicializar dados
     carregarEscolas();
@@ -216,16 +211,16 @@ document.addEventListener('DOMContentLoaded', function () {
         turmas: [],
         escolaId: null
     }
-    filtroTurma.addEventListener('change', function () {
-        const escolaId = this.value;
-        cache.escolaId = escolaId;
-        if (escolaId == "") {
-            turmas = cache.turmas;
-        } else {
-            turmas = cache.turmas.filter(turma => turma.schoolId == escolaId);
-        }
-        atualizarTabela();
-    });
+    // filtroTurma.addEventListener('change', function () {
+    //     const escolaId = this.value;
+    //     cache.escolaId = escolaId;
+    //     if (escolaId == "") {
+    //         turmas = cache.turmas;
+    //     } else {
+    //         turmas = cache.turmas.filter(turma => turma.schoolId == escolaId);
+    //     }
+    //     atualizarTabela();
+    // });
     btnPaginaAnterior.addEventListener('click', function () {
         if (page > 0) {
             page--;
@@ -293,26 +288,32 @@ document.addEventListener('DOMContentLoaded', function () {
         configurarBotoes();
     }
 
-    function filtrarTurmas() {
-        const escolaId = filtroEscola ? parseInt(filtroEscola.value) : null;
-        const textoPesquisa = pesquisaTurma ? pesquisaTurma.value.toLowerCase() : '';
-
-        let turmasFiltradas = [...turmas];
-
-        if (escolaId) {
-            turmasFiltradas = turmasFiltradas.filter(turma => turma.schoolId === escolaId);
-        }
-
-        if (textoPesquisa) {
-            turmasFiltradas = turmasFiltradas.filter(turma => {
-                const nome = (turma.name || '').toLowerCase();
-                const serie = (turma.grade || turma.gradeLevel || '').toLowerCase();
-                return nome.includes(textoPesquisa) || serie.includes(textoPesquisa);
-            });
-        }
-
+    aplicarFiltros.addEventListener('click', async () => {
+        await filtrarTurmas();
+    });
+    pesquisaTurma.addEventListener('input', async () => {
+        const texto = pesquisaTurma.value;
+        console.log(turmas);
+        let turmasFiltradas = turmas.filter(turma => turma.name.toLowerCase().includes(texto.toLowerCase()));
         atualizarTabela(turmasFiltradas);
+    });
+    async function filtrarTurmas() {
+        const escolaContent = Number.parseInt(inputEscola.value);
+        let escolaId = document.querySelector('option[value="' + escolaContent + '"]').value;
+        console.log(`${escolaId} tipo ${typeof escolaId}`);
+
+        const { data } = await fetch(`${API_BASE_URL}/class-groups?schoolId=${escolaId}&limit=1000`, {
+            headers: {
+                'Accept': 'application/json',
+                'Authorization': `Bearer ${AUTH_TOKEN}`
+            }
+        }).then(response => response.json());
+        
+
+        atualizarTabela(data);
     }
+
+    
 
     function configurarBotoes() {
         // Botões de editar
