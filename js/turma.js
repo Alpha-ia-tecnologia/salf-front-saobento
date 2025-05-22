@@ -56,7 +56,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     filtroEscola.innerHTML = '<option value="">Todas as escolas</option>';
                     escolas.forEach(escola => {
                         const option = document.createElement('option');
-                        option.value = escola.id;
+                        option.dataset.id = escola.id;
+                        option.value = escola.name;
                         option.textContent = escola.name;
                         filtroEscola.appendChild(option);
                     });
@@ -293,13 +294,12 @@ document.addEventListener('DOMContentLoaded', function () {
     });
     pesquisaTurma.addEventListener('input', async () => {
         const texto = pesquisaTurma.value;
-        console.log(turmas);
         let turmasFiltradas = turmas.filter(turma => turma.name.toLowerCase().includes(texto.toLowerCase()));
         atualizarTabela(turmasFiltradas);
     });
     async function filtrarTurmas() {
-        const escolaContent = Number.parseInt(inputEscola.value);
-        let escolaId = document.querySelector('option[value="' + escolaContent + '"]').value;
+        const escolaContent = inputEscola.value;
+        let escolaId = document.querySelector('option[value="' + escolaContent + '"]').dataset.id;
         console.log(`${escolaId} tipo ${typeof escolaId}`);
 
         const { data } = await fetch(`${API_BASE_URL}/class-groups?schoolId=${escolaId}&limit=1000`, {
