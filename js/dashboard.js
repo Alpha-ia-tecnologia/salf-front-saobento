@@ -310,7 +310,7 @@ const filterSchool = async () => {
         headers: headers
     });
     const {data} = await request.json();
-    escola.innerHTML = '<option value="">Selecione o ano escolar</option>';
+    escola.innerHTML = '<option value="">Selecione a escola</option>';
     data.forEach(item => {
         const option = document.createElement('option');
         option.value = item.id;
