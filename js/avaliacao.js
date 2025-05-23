@@ -534,7 +534,7 @@ adicionarPalavra.addEventListener('click', function () {
 });
 
 // Permitir pressionar Enter para adicionar palavras
-novaPalavra.addEventListener('keypress', function (e) {
+novaPalavra.addEventListener('keydown', function (e) {
     if (e.key === 'Enter') {
         e.preventDefault();
         adicionarPalavrasMultiplas();
@@ -547,7 +547,8 @@ adicionarPseudopalavra.addEventListener('click', function () {
 });
 
 // Permitir pressionar Enter para adicionar pseudopalavras
-novaPseudopalavra.addEventListener('keypress', function (e) {
+novaPseudopalavra.addEventListener('keydown', function (e) {
+    console.log(e.key);
     if (e.key === 'Enter') {
         e.preventDefault();
         adicionarPseudopalavrasMultiplas();
@@ -560,7 +561,7 @@ adicionarFrase.addEventListener('click', function () {
 });
 
 // Permitir pressionar Enter para adicionar frases
-novaFrase.addEventListener('keypress', function (e) {
+novaFrase.addEventListener('keydown', function (e) {
     if (e.key === 'Enter') {
         e.preventDefault();
         adicionarFrasesMultiplas();
