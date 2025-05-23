@@ -277,7 +277,7 @@ function PopularFilters() {
 }
 
 const filterGroup = async (id) => {
-    grupos.innerHTML = '<option value="">Selecione o evento</option>';
+    grupos.innerHTML = '<option value="">Selecione o grupo</option>';
     grupos.disabled = false
     const data = await fetch(path_base + `/groups?regionId=${id}`, {
         headers: headers
