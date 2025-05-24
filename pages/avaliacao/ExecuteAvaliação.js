@@ -5,6 +5,7 @@ const btnTimerWords = document.getElementById("iniciar-timer-palavras")
 const btnTimerPseudowords = document.getElementById("iniciar-timer-pseudopalavras")
 const btnTimerPhrases = document.getElementById("iniciar-timer-frases")
 const btnTimerText = document.getElementById("iniciar-timer-texto")
+const btnTimerQuestoes = document.getElementById("iniciar-timer-questoes")
 
 const stages = {
     "selecao-avaliacao": {
@@ -41,12 +42,20 @@ const stages = {
     },
     "etapa-texto": {
         stage: document.getElementById("etapa-texto"),
-        nextStage: document.getElementById("etapa-result"),
+        nextStage: document.getElementById("etapa-questoes"),
         nextEvent: () => {
-            setTimeout(endExam, 500)
 
             stages["etapa-texto"].stage.classList.toggle("hidden")
             stages["etapa-texto"].nextStage.classList.toggle("hidden")
+        }
+    },
+    "etapa-questoes": {
+        stage: document.getElementById("etapa-questoes"),
+        nextStage: document.getElementById("etapa-result"),
+        nextEvent: () => {
+            // setTimeout(endExam, 500)
+            stages["etapa-questoes"].stage.classList.toggle("hidden")
+            stages["etapa-questoes"].nextStage.classList.toggle("hidden")
         }
     },
     "etapa-result": {
@@ -66,7 +75,8 @@ const cacheStage = {
     "pseudowords": [],
     "phrases": [],
     "text_id": "",
-    "id": null
+    "id": null,
+    "questions": []
 }
 
 const examGet = async () => {
@@ -106,20 +116,21 @@ const examGet = async () => {
         }
     })
     const responseJson2 = await requestGrep.json()
-    const { name, text, gradeRange, words, pseudowords, phrases, text_id } = responseJson2.assessment
+    const { name, text, gradeRange, words, pseudowords, phrases, questions } = responseJson2.assessment
     cacheStage.name = name
     cacheStage.text = text
     cacheStage.gradeRange = gradeRange
     cacheStage.words = JSON.parse(words)
     cacheStage.pseudowords = JSON.parse(pseudowords)
-    cacheStage.phrases = phrases.map(phrase => phrase.text
-    )
+    cacheStage.phrases = phrases.map(phrase => phrase.text)
+    cacheStage.questions = questions
 
     if (requestGrep.ok) {
         renderStage("etapa-palavras", "words", "#palavras-container", "palavras", "palavras-lidas")
         renderStage("etapa-pseudopalavras", "pseudowords", "#pseudopalavras-container", "pseudopalavras", "pseudopalavras-lidas")
         renderStage("etapa-frases", "phrases", "#frases-container", "frases", "frases-lidas")
         renderStageText("etapa-texto", "text", "text", "linhas", "linhas-lidas")
+        renderStageQuestoes()
     }
 }
 
@@ -155,16 +166,7 @@ const renderStage = (currentStage, currentCache, currentContainer, currentTotal,
     divStage.innerHTML = ""
     document.getElementById("total-frases").innerHTML = cacheStage[currentCache].length
     document.getElementById("total-linhas").innerHTML = cacheStage[currentCache].length
-    const btn_stage = () => {
-        switch (stageBody.stage) {
-            case "WORDS":
-                return document.getElementById("proximo-etapa-palavras")
-            case "PSEUDOWORDS":
-                return document.getElementById("proximo-etapa-pseudopalavras")
-            case "PHRASES":
-                return document.getElementById("proximo-etapa-frases")
-        }
-    }
+
     btn_stage().disabled = true
     btn_stage().classList.add("bg-gray-400", "hover:bg-gray-400")
     cacheStage[currentCache].forEach(word => {
@@ -188,7 +190,7 @@ const renderStage = (currentStage, currentCache, currentContainer, currentTotal,
         btn.disabled = true
         btn.classList.add("bg-gray-400", "hover:bg-gray-400")
         btn.innerHTML = word
-        
+
         divStage.append(btn)
     })
 }
@@ -215,6 +217,89 @@ const renderStageText = () => {
         btn.innerHTML = text
         divStage.append(btn)
     })
+
+}
+
+let baforeId = {
+
+};
+const renderStageQuestoes = () => {
+    const divStage = stages["etapa-questoes"].stage.querySelector("#questoes-container")
+    divStage.innerHTML = ""
+    cacheStage.questions.forEach(({ id, text, options }) => {
+        const btn = document.createElement("fieldset")
+
+
+        const opcoes = options.map(option => {
+            return { idQuest: id, opcao: option }
+        })
+        const optionsNew = opcoes.map(option => {
+            return `
+                <p class="bg-blue-50 flex  grid grid-cols-3 content-center items-center justify-between px-4 py-2 rounded-lg mt-2" data-id="${option.idQuest}">
+                <span>${option.opcao}</span> 
+                <input type="radio" name="questao-${id}" class="w-4 h-4" onclick=""> 
+                <select name="correta" id="questao" class="border-1 border-blue-300 rounded-lg h-8 px-2">
+                    <option value="false">Errada</option>
+                    <option value="true">Correta</option>
+                </select>
+                </p>
+            `
+        }).join("")
+        const struct = `
+        <div class="enunciado bg-blue-50 p-2 rounded-lg" data-id="${id}">
+        <p>${text}</p>
+        </div>
+        <div class="opcoes gap-2 p-2 rounded-lg mt-2">
+        ${optionsNew}
+        </div>
+        `
+
+        btn.innerHTML = struct
+        btn.querySelectorAll("input[type='radio']").forEach(radio => {
+            radio.addEventListener("click", (e) => {
+                const idQuest = Number.parseInt(e.target.parentNode.dataset.id)
+                const Quest = e.target.parentNode
+                baforeId[idQuest] = {
+                    "readingAssessmentId": Number.parseInt(localStorage.getItem("id")),
+                    "questionId": idQuest,
+                    "answer": Quest.querySelector("span").textContent,
+                    "isCorrect": Quest.querySelector("select").value
+                }
+
+                console.log(baforeId)
+            })
+        })
+
+        btn.querySelectorAll("select").forEach(select => {
+            select.addEventListener("change", (e) => {
+                const idQuest = e.target.parentNode.dataset.id
+                const Quest = e.target.parentNode
+                baforeId[idQuest] = {
+                    "readingAssessmentId": localStorage.getItem("id"),
+                    "questionId": idQuest,
+                    "answer": Quest.querySelector("span").textContent,
+                    "isCorrect": Boolean(Quest.querySelector("select").value)
+                }
+            })
+        })
+        divStage.append(btn)
+    })
+}
+const nextStageQuestoes = async () => {
+    const endpoint = `/reading-assessments/answers`
+    baforeId = Object.values(baforeId)
+    const requestUnion = baforeId.map(async (answer) => {
+        await fetch(pathBase + endpoint, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + localStorage.getItem("token")
+            },
+            body: JSON.stringify(answer)
+        })
+        return response.json()
+    })
+    const response = await Promise.all(requestUnion)
 
 }
 const forcedEnd = async (actualStage) => {
@@ -249,6 +334,7 @@ const timer = document.getElementById("timer-palavras")
 const timerText = document.getElementById("timer-texto")
 const timerPhrases = document.getElementById("timer-frases")
 const timerPseudowords = document.getElementById("timer-pseudopalavras")
+const timerQuestoes = document.getElementById("timer-questoes")
 const timedafault = "1:00"
 const btn_stage = () => {
     switch (stageBody.stage) {
@@ -260,7 +346,16 @@ const btn_stage = () => {
             return document.getElementById("proximo-etapa-frases")
         case "TEXT":
             return document.getElementById("proximo-etapa-texto")
+        case "QUESTOES":
+            return document.getElementById("proximo-etapa-questoes")
     }
+}
+const disableStage = (stage) => {
+    const itemsClick = document.querySelectorAll(".item-click-" + stage)
+    itemsClick.forEach(item => {
+        item.disabled = true
+        item.classList.add("bg-gray-400", "hover:bg-gray-400")
+    })
 }
 btnTimerWords.addEventListener("click", () => {
     stageBody.totalItems = cacheStage.words.length
@@ -284,6 +379,8 @@ btnTimerWords.addEventListener("click", () => {
             btn_stage().disabled = false
             btn_stage().classList.remove("bg-gray-400", "hover:bg-gray-400")
             btn_stage().classList.add("bg-green-400", "hover:bg-green-700")
+            btnTimerWords.disabled = true
+            disableStage("words")
 
             btnTimerWords.classList.remove("bg-gray-400", "hover:bg-gray-400")
             clearInterval(interval);
@@ -319,12 +416,14 @@ btnTimerText.addEventListener("click", () => {
         timerText.innerHTML = `${Math.floor(totalSeconds / 60)}:${totalSeconds % 60}`
         if (totalSeconds <= 0) {
             alert("Tempo esgotado")
+            disableStage("text")
+            btnTimerText.disabled = true
             btn_stage().disabled = false
             btn_stage().classList.remove("bg-gray-400", "hover:bg-gray-400")
             btn_stage().classList.add("bg-green-400", "hover:bg-green-700")
 
             clearInterval(interval);
-        } 
+        }
 
     }, 1000)
 })
@@ -342,6 +441,7 @@ btnTimerPhrases.addEventListener("click", () => {
     btn_stage().disabled = true
     btn_stage().classList.add("bg-gray-400", "hover:bg-gray-400")
     const interval = setInterval(() => {
+        btnTimerPhrases.disabled = true
 
         const [minutes, seconds] = timerPhrases.innerHTML.split(":")
         let totalSeconds = parseInt(minutes) * 60 + parseInt(seconds)
@@ -350,17 +450,45 @@ btnTimerPhrases.addEventListener("click", () => {
         if (totalSeconds === 0) {
             alert("Tempo esgotado, você leu " + stageBody.itemsRead + " frases")
             btn_stage().disabled = false
+            disableStage("phrases")
             btn_stage().classList.remove("bg-gray-400", "hover:bg-gray-400")
             btn_stage().classList.add("bg-green-400", "hover:bg-green-400")
 
-            btnTimerPhrases.disabled = false
+            btnTimerPhrases.disabled = true
             btnTimerPhrases.classList.remove("bg-gray-400", "hover:bg-gray-400")
             clearInterval(interval);
 
-        } 
+        }
 
     }, 1000)
 })
+btnTimerQuestoes.addEventListener("click", () => {
+
+    // btn_stage().disabled = false
+    // btn_stage().classList.remove("bg-gray-400", "hover:bg-gray-400")
+    timerQuestoes.innerHTML = timedafault
+    btn_stage().disabled = true
+    btn_stage().classList.add("bg-gray-400", "hover:bg-gray-400")
+    const interval = setInterval(() => {
+
+        const [minutes, seconds] = timerQuestoes.innerHTML.split(":")
+        let totalSeconds = parseInt(minutes) * 60 + parseInt(seconds)
+        totalSeconds--
+        timerQuestoes.innerHTML = `${Math.floor(totalSeconds / 60)}:${totalSeconds % 60}`
+        btnTimerQuestoes.disabled = true
+        btnTimerQuestoes.classList.add("bg-gray-400", "hover:bg-gray-400")
+        if (totalSeconds <= 0) {
+            alert("Tempo esgotado")
+            disableStage("questoes")
+            btn_stage().disabled = false
+            console.log(btn_stage())
+            btn_stage().classList.remove("bg-gray-400", "hover:bg-gray-400")
+            btn_stage().classList.add("bg-green-400", "hover:bg-green-700")
+            clearInterval(interval);
+        }
+    }, 1000)
+})
+
 btnTimerPseudowords.addEventListener("click", () => {
     stageBody.totalItems = cacheStage.pseudowords.length
     timerPseudowords.innerHTML = timedafault
@@ -372,17 +500,9 @@ btnTimerPseudowords.addEventListener("click", () => {
         item.classList.remove("bg-gray-400", "hover:bg-gray-400")
     })
 
-    const btn_stage = () => {
-        switch (stageBody.stage) {
-            case "WORDS":
-                return document.getElementById("proximo-etapa-palavras")
-            case "PSEUDOWORDS":
-                return document.getElementById("proximo-etapa-pseudopalavras")
-            case "PHRASES":
-                return document.getElementById("proximo-etapa-frases")
-        }
-    }
+
     btn_stage().disabled = true
+    btnTimerPseudowords.disabled = true
     btn_stage().classList.add("bg-gray-400", "hover:bg-gray-400")
     const interval = setInterval(() => {
 
@@ -393,14 +513,15 @@ btnTimerPseudowords.addEventListener("click", () => {
         if (totalSeconds === 0) {
             alert("Tempo esgotado, você leu " + stageBody.itemsRead + " pseudopalavras")
             btn_stage().disabled = false
+            disableStage("pseudowords")
             btn_stage().classList.remove("bg-gray-400", "hover:bg-gray-400")
             btn_stage().classList.add("bg-green-400", "hover:bg-green-700")
 
-            btnTimerPseudowords.disabled = false
             btnTimerPseudowords.classList.remove("bg-gray-400", "hover:bg-gray-400")
+
             clearInterval(interval);
 
-        } 
+        }
     }, 1000)
 
 })
@@ -478,19 +599,28 @@ document.addEventListener("DOMContentLoaded", function () {
     })
     stages["etapa-texto"].stage.querySelectorAll("button")[1].addEventListener("click", (e) => {
         nextStage()
+        stage = "QUESTOES"
+        stageBody.stage = "QUESTOES"
         btn_stage().disabled = true
         btn_stage().classList.remove("bg-green-600", "hover:bg-green-700")
         btn_stage().classList.add("bg-gray-400", "hover:bg-gray-400")
         stageBody.itemsRead = 0
         stageBody.totalItems = 0
-        stage = "TEXT"
         btnTimerPhrases.disabled = false
         stages["etapa-texto"].nextEvent()
     })
-    stages["etapa-result"].stage.querySelectorAll("button")[0].addEventListener("click", () => {
-        stages["etapa-result"].nextEvent()
-        endExam()
+    stages["etapa-questoes"].stage.querySelectorAll("button")[1].addEventListener("click", () => {
+        stageBody.stage = "QUESTOES"
+        stage = "QUESTOES"
+        stageBody.totalItems = cacheStage.questions.length
+        stageBody.itemsRead = 0
+        btn_stage().classList.remove("bg-gray-400", "hover:bg-gray-400")
+        btn_stage().classList.add("bg-green-400", "hover:bg-green-700")
+        btnTimerQuestoes.disabled = false
+        nextStageQuestoes()
+        stages["etapa-questoes"].nextEvent()
     })
+
 
 
 })

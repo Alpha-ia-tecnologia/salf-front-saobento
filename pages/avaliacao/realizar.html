@@ -307,6 +307,44 @@
                             </div>
                         </div>
                     </div>
+                    <!-- Etapa 5: Leitura de questões -->
+                    <div id="etapa-questoes" class="hidden bg-white rounded-lg shadow-md p-6 mb-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-lg font-semibold text-gray-800">Etapa 5: Questões</h2>
+                            <div class="flex gap-4 justify-end">
+                                <button id="iniciar-timer-questoes"
+                                    class="bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition">
+                                    Iniciar
+                                </button>
+                                <div class="text-lg font-bold text-red-600" id="timer-questoes">01:00</div>
+                            </div>
+                        </div>
+
+                        <p class="text-gray-600 mb-4">Instrução: Peça para o aluno responder as questões abaixo.
+                            Marque as opções que o aluno conseguir responder. O tempo máximo para esta atividade é de 1
+                            minuto.</p>
+
+                        <div class="bg-blue-50 border-l-4 border-blue-500 text-blue-700 p-4 mb-4" role="alert">
+                            <p class="font-bold">Importante:</p>
+                            <p>As questões só poderão ser marcadas após o início do cronômetro e até o término do
+                                tempo. Após 1 minuto, as opções não marcadas serão bloqueadas automaticamente.</p>
+                        </div>
+
+                        <div class="border border-gray-200 rounded-lg p-4 mb-4">
+                            <div id="questoes-container">
+                                <!-- Questões serão geradas via JavaScript -->
+                            </div>
+                        </div>
+
+                        <div class="flex justify-between items-center">
+                            <div class="flex gap-2">
+                                <button id="proximo-etapa-questoes"
+                                    class="bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 transition" disabled>
+                                    Próxima Etapa
+                                </button>
+                            </div>
+                        </div>
+                    </div>
 
 
                     <div class="hidden fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 max-w-[500px] w-full bg-white rounded-lg border shadow-sm p-3 z-50"
