@@ -128,6 +128,7 @@ const stages = {
         nextEvent: () => {
 
 
+            completedStages.push("TEXT")
             stages["etapa-texto"].stage.classList.toggle("hidden")
             stages["etapa-texto"].nextStage.classList.toggle("hidden")
             renderStageQuestoes()
@@ -142,6 +143,8 @@ const stages = {
 
             const { WORDS , PSEUDOWORDS , TEXT } = calcAbstractPerfil
             const condicaoNivel5 = ((WORDS <= 60) || (PSEUDOWORDS <= 24)) || (TEXT !== calcAbstractPerfil.Texto) || (Object.values(baforeId).filter(e => e.isCorrect === true).length === 0)
+            completedStages.push("QUESTIONS")
+            calcAbstractPerfil.progress = completedStages.length / 6
             if (condicaoNivel5) {
                 alert("Você não atendeu algum requisito minimo, infelizmente classificaremos como leitor sem fluencia")
                 calcAbstractPerfil.perfil = niveisLeitor.nivel5
