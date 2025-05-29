@@ -175,7 +175,7 @@ function PopularGraphPizza({ readingLevelDistribution }) {
             labels: labels || [],
             datasets: [{
                 label: 'My First dataset',
-                backgroundColor: ['#06c5c8', '#6a06c8', '#06c85e', '#ffe803'],
+                backgroundColor: ['#06c5c8', '#6a06c8', '#06c85e', '#ffe803','rgb(255, 16, 16)',"rgb(255, 16, 124)","rgb(16, 255, 147)"],
                 data: data || []
             }],
         },

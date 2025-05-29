@@ -7,6 +7,35 @@ const btnTimerPhrases = document.getElementById("iniciar-timer-frases")
 const btnTimerText = document.getElementById("iniciar-timer-texto")
 const btnTimerQuestoes = document.getElementById("iniciar-timer-questoes")
 
+const body = ({ Palavras, PseudoPalavras, Frases, Texto, Questoes, WORDS, PSEUDOWORDS, PHRASES, TEXT, QUESTOES, perfil, status }) => {
+    return {
+        "studentId": cacheStage.studentId,
+        "assessmentEventId": cacheStage.eventId,
+        "assessmentId": cacheStage.avaId,
+        "wordsRead": WORDS,
+        "wordsTotal": Palavras,
+        "pseudowordsRead": PSEUDOWORDS,
+        "pseudowordsTotal": PseudoPalavras,
+        "phrasesRead": PHRASES,
+        "phrasesTotal": Frases,
+        "textLinesRead": TEXT,
+        "textLinesTotal": Texto,
+        "readingLevel": perfil || niveisLeitor.nivel0,
+        "ppm": 0,
+        "completed": status || false,
+        "completedStages": completedStages,
+        "correctAnswers": 1
+    }
+}
+const setModel = () => {
+    calcAbstractPerfil.desempenhoFrases = calcAbstractPerfil.desempenhoFrases().toFixed(2)
+    calcAbstractPerfil.desempenhoPalavras = calcAbstractPerfil.desempenhoPalavras().toFixed(2)
+    calcAbstractPerfil.desempenhoPseudopalavras = calcAbstractPerfil.desempenhoPseudopalavras().toFixed(2)
+    calcAbstractPerfil.desempenhoTextos  = calcAbstractPerfil.desempenhoTextos().toFixed(2)
+            
+    localStorage.setItem("model",JSON.stringify(calcAbstractPerfil))
+}
+const completedStages = []
 const stages = {
     "selecao-avaliacao": {
         stage: document.getElementById("selecao-avaliacao"),
@@ -20,24 +49,77 @@ const stages = {
         stage: document.getElementById("etapa-palavras"),
         nextStage: document.getElementById("etapa-pseudopalavras"),
         nextEvent: () => {
-            stages["etapa-palavras"].stage.classList.toggle("hidden")
-            stages["etapa-palavras"].nextStage.classList.toggle("hidden")
+            const condicaoNivel0 = stageBody.itemsRead === 0;
+            const condicaoNivel1 = stageBody.itemsRead > 0 && stageBody.itemsRead <= 10;
+            console.log(condicaoNivel0 + " " + condicaoNivel1)
+            completedStages.push("WORDS")
+            if (condicaoNivel0) {
+                alert("Você não leu a quantidade minimo, infelizmente classificaremos como não avaliado")
+                calcAbstractPerfil.perfil = niveisLeitor.nivel0
+                forcedEnd(stages["etapa-palavras"], body(calcAbstractPerfil))
+                setModel()
+            }
+            else if (condicaoNivel1) {
+                alert("Você não atendeu requisito minimo, infelizmente classificaremos como não leitor")
+                calcAbstractPerfil.perfil = niveisLeitor.nivel1
+                forcedEnd(stages["etapa-palavras"], body(calcAbstractPerfil))
+                setModel()
+            } else {
+                stages["etapa-palavras"].stage.classList.toggle("hidden")
+                stages["etapa-palavras"].nextStage.classList.toggle("hidden")
+            }
+            console.log(calcAbstractPerfil)
+            clear()
         }
     },
     "etapa-pseudopalavras": {
         stage: document.getElementById("etapa-pseudopalavras"),
         nextStage: document.getElementById("etapa-frases"),
-        nextEvent: () => {
-            stages["etapa-pseudopalavras"].stage.classList.toggle("hidden")
-            stages["etapa-pseudopalavras"].nextStage.classList.toggle("hidden")
+        nextEvent: (palavras, pseudopalavras, stage = "PSEUDOPALAVRAS") => {
+            const { WORDS } = calcAbstractPerfil
+            const condicaoNivel3 = (WORDS <= 35) || (stageBody.itemsRead <= 12);
+            completedStages.push("PSEUDWORDS")
+            if (condicaoNivel3) {
+                const condicaoNivel2 = (WORDS <= 25) && (stageBody.itemsRead <= 6);
+                if (condicaoNivel2) {
+                    alert("Você não atendeu requisito minimo, infelizmente classificaremos como leitor de silabas")
+                    calcAbstractPerfil.perfil = niveisLeitor.nivel2
+                    forcedEnd(stages["etapa-pseudopalavras"], body(calcAbstractPerfil))
+                    setModel()
+                } else {
+                    alert("Você não atendeu requisito minimo, infelizmente classificaremos como leitor de palavras")
+                    calcAbstractPerfil.perfil = niveisLeitor.nivel3
+                    forcedEnd(stages["etapa-pseudopalavras"], body(calcAbstractPerfil))
+                    setModel()
+                }
+            }
+            else {
+                stages["etapa-pseudopalavras"].stage.classList.toggle("hidden")
+                stages["etapa-pseudopalavras"].nextStage.classList.toggle("hidden")
+            }
+            clear()
+
         }
     },
     "etapa-frases": {
         stage: document.getElementById("etapa-frases"),
         nextStage: document.getElementById("etapa-texto"),
         nextEvent: () => {
-            stages["etapa-frases"].stage.classList.toggle("hidden")
-            stages["etapa-frases"].nextStage.classList.toggle("hidden")
+            const { WORDS, PSEUDOWORDS } = calcAbstractPerfil
+            const condicaoNivel4 = ((WORDS <= 44) || (PSEUDOWORDS <= 18)) || (stageBody.itemsRead === 0)
+            completedStages.push("PHRASES")
+            if (condicaoNivel4) {
+
+                alert("Você não atendeu algum requisito minimo, infelizmente classificaremos como leitor de frases")
+                calcAbstractPerfil.perfil = niveisLeitor.nivel4
+                forcedEnd(stages["etapa-frases"], body(calcAbstractPerfil))
+                setModel()
+            } else {
+                stages["etapa-frases"].stage.classList.toggle("hidden")
+                stages["etapa-frases"].nextStage.classList.toggle("hidden")
+            }
+            clear()
+  
         }
     },
     "etapa-texto": {
@@ -45,8 +127,11 @@ const stages = {
         nextStage: document.getElementById("etapa-questoes"),
         nextEvent: () => {
 
+
             stages["etapa-texto"].stage.classList.toggle("hidden")
             stages["etapa-texto"].nextStage.classList.toggle("hidden")
+            renderStageQuestoes()
+
         }
     },
     "etapa-questoes": {
@@ -54,14 +139,28 @@ const stages = {
         nextStage: document.getElementById("etapa-result"),
         nextEvent: () => {
             // setTimeout(endExam, 500)
-            stages["etapa-questoes"].stage.classList.toggle("hidden")
-            stages["etapa-questoes"].nextStage.classList.toggle("hidden")
+
+            const { WORDS , PSEUDOWORDS , TEXT } = calcAbstractPerfil
+            const condicaoNivel5 = ((WORDS <= 60) || (PSEUDOWORDS <= 24)) || (TEXT !== calcAbstractPerfil.Texto) || (Object.values(baforeId).filter(e => e.isCorrect === true).length === 0)
+            if (condicaoNivel5) {
+                alert("Você não atendeu algum requisito minimo, infelizmente classificaremos como leitor sem fluencia")
+                calcAbstractPerfil.perfil = niveisLeitor.nivel5
+                forcedEnd(stages["etapa-questoes"], body(calcAbstractPerfil))
+                setModel()
+            } else {
+                alert("Você atendeu os requisitos o classificaremos com leitor com fluencia")
+                calcAbstractPerfil.perfil = niveisLeitor.nivel6
+                calcAbstractPerfil.status = true
+                setModel()
+                forcedEnd(stages["etapa-questoes"],body(calcAbstractPerfil))
+            }
         }
     },
     "etapa-result": {
         stage: document.getElementById("etapa-result"),
         nextStage: document.getElementById("selecao-avaliacao"),
         nextEvent: () => {
+
             stages["etapa-result"].stage.classList.toggle("hidden")
             stages["etapa-result"].nextStage.classList.toggle("hidden")
         }
@@ -106,9 +205,14 @@ const examGet = async () => {
         return response.json()
     })
     const responseJson = await RequestSave
+    calcAbstractPerfil.ra = responseJson.student.registrationNumber
+    calcAbstractPerfil.student = responseJson.student.name
     cacheStage.id = responseJson.id
+    cacheStage.avaId = responseJson.assessment.id
+    cacheStage.studentId = responseJson.student.id
+    cacheStage.eventId = responseJson.assessmentEventId
     localStorage.setItem('id', responseJson.id)
-    const requestGrep = await fetch(pathBase + "/reading-assessments/" + localStorage.getItem('id'), {
+    const requestGrep = await fetch(pathBase + "/assessments/" + Number.parseInt(cacheStage.avaId), {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
@@ -116,14 +220,22 @@ const examGet = async () => {
         }
     })
     const responseJson2 = await requestGrep.json()
-    const { name, text, gradeRange, words, pseudowords, phrases, questions } = responseJson2.assessment
+    const { name, text, gradeRange, words, pseudowords, phrases, questions } = await responseJson2
+    cacheStage.questions = questions
     cacheStage.name = name
     cacheStage.text = text
     cacheStage.gradeRange = gradeRange
-    cacheStage.words = JSON.parse(words)
-    cacheStage.pseudowords = JSON.parse(pseudowords)
-    cacheStage.phrases = phrases.map(phrase => phrase.text)
-    cacheStage.questions = questions
+    cacheStage.words = words
+    cacheStage.pseudowords = pseudowords
+    cacheStage.phrases = phrases ? phrases.map(phrase => phrase.text) : []
+
+    calcAbstractPerfil.Palavras = cacheStage.words.length;
+    calcAbstractPerfil.PseudoPalavras = cacheStage.pseudowords.length;
+    calcAbstractPerfil.Texto = cacheStage.text.split(",").length;
+    calcAbstractPerfil.Frases = cacheStage.phrases.length;
+    calcAbstractPerfil.Questoes = cacheStage.questions.length;
+
+
 
     if (requestGrep.ok) {
         renderStage("etapa-palavras", "words", "#palavras-container", "palavras", "palavras-lidas")
@@ -220,11 +332,44 @@ const renderStageText = () => {
 
 }
 
+//perfil de leitor
+const niveisLeitor = {
+    nivel0: "NOT_EVALUATED",
+    nivel1: "NON_READER",
+    nivel2: "SYLLABLE_READER",
+    nivel3: "WORD_READER",
+    nivel4: "SENTENCE_READER",
+    nivel5: "TEXT_READER_WITHOUT_FLUENCY",
+    nivel6: "TEXT_READER_WITH_FLUENCY"
+}
+let calcPercentual = (maxima, usada, tipo) => maxima ? usada / maxima * 100 : Error("Divisão por zero : não possue perfil" + tipo)
+const calcAbstractPerfil = {
+    student : '',
+    ra : '',
+    Palavras: 0,
+    PseudoPalavras: 0,
+    Frases: 0,
+    Texto: 0,
+    Questoes: 0,
+    WORDS: 0,
+    PSEUDOWORDS: 0,
+    PHRASES: 0,
+    TEXT: 0,
+    QUESTOES: 0,
+    desempenhoPalavras: () => calcPercentual(calcAbstractPerfil.Palavras, calcAbstractPerfil.WORDS, "palavras"),
+    desempenhoPseudopalavras: () => calcPercentual(calcAbstractPerfil.PseudoPalavras, calcAbstractPerfil.PSEUDOWORDS, "pseudopalavras"),
+    desempenhoFrases: () => calcPercentual(calcAbstractPerfil.Frases, calcAbstractPerfil.PHRASES, "frases"),
+    desempenhoTextos: () => calcPercentual(calcAbstractPerfil.Texto, calcAbstractPerfil.TEXT, "textos"),
+    desempenhoQuestoes: () => calcAbstractPerfil(calcAbstractPerfil.Questoes, calcAbstractPerfil.QUESTOES, "questoes"),
+    perfil: niveisLeitor.nivel0
+
+}
 let baforeId = {
 
 };
 const renderStageQuestoes = () => {
     const divStage = stages["etapa-questoes"].stage.querySelector("#questoes-container")
+    console.log(cacheStage.questions)
     divStage.innerHTML = ""
     cacheStage.questions.forEach(({ id, text, options }) => {
         const btn = document.createElement("fieldset")
@@ -259,26 +404,30 @@ const renderStageQuestoes = () => {
             radio.addEventListener("click", (e) => {
                 const idQuest = Number.parseInt(e.target.parentNode.dataset.id)
                 const Quest = e.target.parentNode
+                const value = Quest.querySelector("#questao").value.toLowerCase()
+                console.log(typeof value)
                 baforeId[idQuest] = {
                     "readingAssessmentId": Number.parseInt(localStorage.getItem("id")),
                     "questionId": idQuest,
                     "answer": Quest.querySelector("span").textContent,
-                    "isCorrect": Quest.querySelector("select").value
+                    "isCorrect": value === "true" ? true : false
                 }
-
                 console.log(baforeId)
             })
+
         })
 
         btn.querySelectorAll("select").forEach(select => {
             select.addEventListener("change", (e) => {
                 const idQuest = e.target.parentNode.dataset.id
                 const Quest = e.target.parentNode
+                const value = Quest.querySelector("#questao").value.toLowerCase()
+                console.log(typeof value)
                 baforeId[idQuest] = {
                     "readingAssessmentId": localStorage.getItem("id"),
                     "questionId": idQuest,
                     "answer": Quest.querySelector("span").textContent,
-                    "isCorrect": Boolean(Quest.querySelector("select").value)
+                    "isCorrect": value === "true" ? true : false
                 }
             })
         })
@@ -301,41 +450,49 @@ const nextStageQuestoes = async () => {
     })
     const response = await Promise.all(requestUnion)
 
+
 }
-const forcedEnd = async (actualStage) => {
-    stages[actualStage].stage.classList.add("hidden")
-    stages["etapa-result"].stage.classList.remove("hidden")
-    const endpoint = `/reading-assessments/${cacheStage.id || 1}/finalize`
-    const RequestSave = await fetch(pathBase + endpoint, {
-        method: "PUT",
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": "Bearer " + localStorage.getItem("token")
-        },
-    })
-}
-const nextStage = async () => {
-    const endpoint = `/reading-assessments/${cacheStage.id}/stage`
+const forcedEnd = async (actualStage, bodyCase) => {
+    actualStage.stage.classList.toggle("hidden")
+    stages["etapa-result"].stage.classList.toggle("hidden")
+    const endpoint = `/reading-assessments/${cacheStage.id || 1}`
     await fetch(pathBase + endpoint, {
         method: "PUT",
         headers: {
             "Content-Type": "application/json",
             "Authorization": "Bearer " + localStorage.getItem("token")
         },
-        body: JSON.stringify({
-            "stage": stageBody.stage,
-            "itemsRead": stageBody.itemsRead,
-            "totalItems": stageBody.totalItems
-        })
+        body: JSON.stringify(bodyCase)
     })
+}
+const nextStage = async () => {
+    // const endpoint = `/reading-assessments/${cacheStage.id}/stage`
+    // await fetch(pathBase + endpoint, {
+    //     method: "PUT",
+    //     headers: {
+    //         "Content-Type": "application/json",
+    //         "Authorization": "Bearer " + localStorage.getItem("token")
+    //     },
+    //     body: JSON.stringify({
+    //         "stage": stageBody.stage,
+    //         "itemsRead": stageBody.itemsRead,
+    //         "totalItems": stageBody.totalItems
+    //     })
+    // })
+
+    calcAbstractPerfil[stageBody.stage] = stageBody.itemsRead
+    console.log(calcAbstractPerfil)
+}
+const clear = () => {
+    stageBody.itemsRead = 0
+    stageBody.totalItems = 0
 }
 let stage = stageBody.stage || "WORDS"
 const timer = document.getElementById("timer-palavras")
 const timerText = document.getElementById("timer-texto")
 const timerPhrases = document.getElementById("timer-frases")
 const timerPseudowords = document.getElementById("timer-pseudopalavras")
-const timerQuestoes = document.getElementById("timer-questoes")
-const timedafault = "1:00"
+const timedafault = "00:50"
 const btn_stage = () => {
     switch (stageBody.stage) {
         case "WORDS":
@@ -374,7 +531,7 @@ btnTimerWords.addEventListener("click", () => {
         let totalSeconds = parseInt(minutes) * 60 + parseInt(seconds)
         totalSeconds--
         timer.innerHTML = `${Math.floor(totalSeconds / 60)}:${totalSeconds % 60}`
-        if (totalSeconds <= 0 && stageBody.itemsRead > 0) {
+        if (totalSeconds <= 0) {
             alert("Tempo esgotado, você leu " + stageBody.itemsRead + " palavras")
             btn_stage().disabled = false
             btn_stage().classList.remove("bg-gray-400", "hover:bg-gray-400")
@@ -385,11 +542,6 @@ btnTimerWords.addEventListener("click", () => {
             btnTimerWords.classList.remove("bg-gray-400", "hover:bg-gray-400")
             clearInterval(interval);
 
-        } else if (totalSeconds <= 0 && stageBody.itemsRead <= 0) {
-            alert("Tempo esgotado, você não leu nenhuma palavra")
-            forcedEnd("etapa-palavras")
-            btnTimerWords.classList.remove("bg-gray-400", "hover:bg-gray-400")
-            clearInterval(interval);
         }
     }, 1000)
 
@@ -462,33 +614,6 @@ btnTimerPhrases.addEventListener("click", () => {
 
     }, 1000)
 })
-btnTimerQuestoes.addEventListener("click", () => {
-
-    // btn_stage().disabled = false
-    // btn_stage().classList.remove("bg-gray-400", "hover:bg-gray-400")
-    timerQuestoes.innerHTML = timedafault
-    btn_stage().disabled = true
-    btn_stage().classList.add("bg-gray-400", "hover:bg-gray-400")
-    const interval = setInterval(() => {
-
-        const [minutes, seconds] = timerQuestoes.innerHTML.split(":")
-        let totalSeconds = parseInt(minutes) * 60 + parseInt(seconds)
-        totalSeconds--
-        timerQuestoes.innerHTML = `${Math.floor(totalSeconds / 60)}:${totalSeconds % 60}`
-        btnTimerQuestoes.disabled = true
-        btnTimerQuestoes.classList.add("bg-gray-400", "hover:bg-gray-400")
-        if (totalSeconds <= 0) {
-            alert("Tempo esgotado")
-            disableStage("questoes")
-            btn_stage().disabled = false
-            console.log(btn_stage())
-            btn_stage().classList.remove("bg-gray-400", "hover:bg-gray-400")
-            btn_stage().classList.add("bg-green-400", "hover:bg-green-700")
-            clearInterval(interval);
-        }
-    }, 1000)
-})
-
 btnTimerPseudowords.addEventListener("click", () => {
     stageBody.totalItems = cacheStage.pseudowords.length
     timerPseudowords.innerHTML = timedafault
@@ -542,7 +667,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const btnTimerPhrases = document.getElementById("iniciar-timer-frases")
     const btnTimerText = document.getElementById("iniciar-timer-texto")
 
-
+    let palavras = 0
     stages["selecao-avaliacao"].stage.querySelector("button").addEventListener("click", (e) => {
         filterIsEmpty()
         examGet()
@@ -558,12 +683,11 @@ document.addEventListener("DOMContentLoaded", function () {
         nextStage()
         if (stageBody.itemsRead === 0 && stageBody.stage === "WORDS") {
             alert("Você não leu nenhuma palavra")
-            forcedEnd("etapa-palavras")
+            forcedEnd(stages["etapa-palavras"], body(calcAbstractPerfil))
             return
         }
-        stageBody.itemsRead = 0
+        palavras = stageBody.itemsRead
         stage = "PSEUDOWORDS"
-        stageBody.totalItems = 0
         stageBody.stage = "PSEUDOWORDS"
         btn_stage().disabled = true
         btn_stage().classList.remove("bg-green-600", "hover:bg-green-700")
@@ -574,21 +698,19 @@ document.addEventListener("DOMContentLoaded", function () {
     stages["etapa-pseudopalavras"].stage.querySelectorAll("button")[1].addEventListener("click", (e) => {
         nextStage()
         stage = "PHRASES"
-        stageBody.itemsRead = 0
-        stageBody.totalItems = 0
+
         stageBody.stage = "PHRASES"
         btnTimerWords.disabled = false
         btn_stage().disabled = true
         btn_stage().classList.remove("bg-green-600", "hover:bg-green-700")
         btn_stage().classList.add("bg-gray-400", "hover:bg-gray-400")
-        stages["etapa-pseudopalavras"].nextEvent()
+        stages["etapa-pseudopalavras"].nextEvent(palavras, stageBody.itemsRead)
     })
     stages["etapa-frases"].stage.querySelectorAll("button")[1].addEventListener("click", (e) => {
         nextStage()
 
         stage = "TEXT"
-        stageBody.itemsRead = 0
-        stageBody.totalItems = 0
+
         stageBody.stage = "TEXT"
         btn_stage().disabled = true
         btn_stage().classList.remove("bg-green-600", "hover:bg-green-700")
@@ -601,23 +723,13 @@ document.addEventListener("DOMContentLoaded", function () {
         nextStage()
         stage = "QUESTOES"
         stageBody.stage = "QUESTOES"
-        btn_stage().disabled = true
-        btn_stage().classList.remove("bg-green-600", "hover:bg-green-700")
-        btn_stage().classList.add("bg-gray-400", "hover:bg-gray-400")
-        stageBody.itemsRead = 0
-        stageBody.totalItems = 0
-        btnTimerPhrases.disabled = false
         stages["etapa-texto"].nextEvent()
     })
-    stages["etapa-questoes"].stage.querySelectorAll("button")[1].addEventListener("click", () => {
+    stages["etapa-questoes"].stage.querySelectorAll("button")[0].addEventListener("click", () => {
         stageBody.stage = "QUESTOES"
         stage = "QUESTOES"
         stageBody.totalItems = cacheStage.questions.length
         stageBody.itemsRead = 0
-        btn_stage().classList.remove("bg-gray-400", "hover:bg-gray-400")
-        btn_stage().classList.add("bg-green-400", "hover:bg-green-700")
-        btnTimerQuestoes.disabled = false
-        nextStageQuestoes()
         stages["etapa-questoes"].nextEvent()
     })
 

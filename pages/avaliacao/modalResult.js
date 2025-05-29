@@ -3,6 +3,10 @@ const resultElement = document.getElementById('etapa-result')
 const queryIdEvent = localStorage.getItem('queryId')
 const modal = document.getElementById('modalResult')
 const voltar = document.getElementById('btn-voltar-dashboard')
+const novoAvaliacao  = document.getElementById("btn-nova-avaliacao")
+novoAvaliacao.addEventListener("click",() => {
+    location.reload()
+})
 voltar.addEventListener('click',() => {
     window.location.href = location.origin + '/dashboard/dashboard.html'
 })
@@ -24,19 +28,18 @@ document.getElementById('closeModal').addEventListener('click',() => {
 })
 
 const getResult = async () => {
-console.log(localStorage.getItem('id'))
-    const url = `https://salf-salf-api2.gkgtsp.easypanel.host/api/reading-assessments/${localStorage.getItem('id')}/result`
-    const response = await fetch(url, {
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-    })
-    const data = await response.json()
-    applyResult(data)
-    cache.result = await data
+  // const url = `https://salf-salf-api2.gkgtsp.easypanel.host/api/reading-assessments/${localStorage.getItem('id')}/result`
+    // const response = await fetch(url, {
+    //     headers: {
+    //         'Content-Type': 'application/json',
+    //         'Authorization': `Bearer ${localStorage.getItem('token')}`
+    //     }
+    // })
+    const data =  localStorage.getItem("model")
+    applyResult(JSON.parse(data))
+    cache.result = data
 }
-const applyResult = ({ readingLevel, ppm, description, recommendations, progress, wordAccuracy, pseudowordAccuracy, phraseAccuracy, textAccuracy }) => {
+const applyResult = ({ perfil ,ra ,student , description, recommendations, progress, desempenhoPalavras, desempenhoPseudopalavras, desempenhoFrases,  desempenhoTextos}) => {
     const niveisLeitor = {
         NOT_EVALUATED: 'Não avaliado',
         NON_READER: 'Não leitor',
@@ -56,20 +59,20 @@ const applyResult = ({ readingLevel, ppm, description, recommendations, progress
     const studentProgressPseudopalavras = document.getElementById('nivel-progresso-pseudopalavras')
     const studentProgressFrases = document.getElementById('nivel-progresso-frases')
     const studentProgressTexto = document.getElementById('nivel-progresso-texto')
-    studentName.textContent = document.getElementById('aluno').options[document.getElementById('aluno').selectedIndex].text
-    studentGrade.textContent = document.getElementById('turma').options[document.getElementById('turma').selectedIndex].text
-    studentLevel.textContent = niveisLeitor[readingLevel]
+    studentName.textContent = student
+    studentGrade.textContent = ra
+    studentLevel.textContent = niveisLeitor[perfil]
     studentDescription.textContent = description
     studentProgress.style.width = `${progress || 0}%`
     studentRecommendations.textContent = recommendations
-    studentProgressPalavras.style.width = `${wordAccuracy || 0}%`
-    studentProgressPalavras.textContent = `${wordAccuracy || 0}%`
-    studentProgressPseudopalavras.style.width = `${pseudowordAccuracy || 0}%`
-    studentProgressPseudopalavras.textContent = `${pseudowordAccuracy || 0}%`
-    studentProgressFrases.style.width = `${phraseAccuracy || 0}%`
-    studentProgressFrases.textContent = `${phraseAccuracy || 0}%`
-    studentProgressTexto.style.width = `${textAccuracy || 0}%`
-    studentProgressTexto.textContent = `${textAccuracy || 0}%`
+    studentProgressPalavras.style.width = `${desempenhoPalavras || 0}%`
+    studentProgressPalavras.textContent = `${desempenhoPalavras || 0}%`
+    studentProgressPseudopalavras.style.width = `${desempenhoPseudopalavras || 0}%`
+    studentProgressPseudopalavras.textContent = `${desempenhoPseudopalavras || 0}%`
+    studentProgressFrases.style.width = `${desempenhoFrases || 0}%`
+    studentProgressFrases.textContent = `${desempenhoFrases || 0}%`
+    studentProgressTexto.style.width = `${desempenhoTextos || 0}%`
+    studentProgressTexto.textContent = `${desempenhoTextos || 0}%`
 }   
 
 
