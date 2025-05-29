@@ -698,7 +698,7 @@ textoAvaliacao.addEventListener('input', function () {
     contagemPalavras.textContent = palavras;
 
     // Mudar cor se estiver fora do intervalo recomendado
-    if (palavras < 150 || palavras > 180) {
+    if (palavras < 150 || palavras > 400) {
         contagemPalavras.classList.add('text-red-500');
         contagemPalavras.classList.remove('text-green-500');
     } else {
@@ -831,7 +831,7 @@ function preencherFormAvaliacao(avaliacao) {
     const palavras = texto === '' ? 0 : texto.split(/\s+/).length;
     contagemPalavras.textContent = palavras;
 
-    if (palavras < 150 || palavras > 180) {
+    if (palavras < 150 || palavras > 400) {
         contagemPalavras.classList.add('text-red-500');
         contagemPalavras.classList.remove('text-green-500');
     } else {
