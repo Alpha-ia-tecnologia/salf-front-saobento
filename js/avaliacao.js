@@ -408,11 +408,7 @@ function configurarAdicionarQuestoes() {
 
         const enunciadoQuestao = novaQuestao.querySelector('.enunciado-questao');
         const textosOpcoes = novaQuestao.querySelectorAll('.texto-opcao');
-        const respostasCorretas = novaQuestao.querySelectorAll('.resposta-correta');
-
-        respostasCorretas.forEach(radio => {
-            radio.name = `resposta-correta-${contadorQuestoes}`;
-        });
+        
 
         if (questaoData) {
             enunciadoQuestao.value = questaoData.enunciado || '';
