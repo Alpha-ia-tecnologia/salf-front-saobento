@@ -6,6 +6,7 @@ const voltar = document.getElementById('btn-voltar-dashboard')
 const novoAvaliacao  = document.getElementById("btn-nova-avaliacao")
 novoAvaliacao.addEventListener("click",() => {
     location.reload()
+    localStorage.set("model", null)
 })
 voltar.addEventListener('click',() => {
     window.location.href = location.origin + '/dashboard/dashboard.html'
