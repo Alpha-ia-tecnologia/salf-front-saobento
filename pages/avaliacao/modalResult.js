@@ -40,7 +40,7 @@ const getResult = async () => {
     applyResult(JSON.parse(data))
     cache.result = data
 }
-const applyResult = ({ perfil ,ra ,student , description, recommendations, progress, desempenhoPalavras, desempenhoPseudopalavras, desempenhoFrases,  desempenhoTextos}) => {
+const applyResult = ({ perfil ,student , desempenhoPalavras, desempenhoPseudopalavras, desempenhoFrases,  desempenhoTextos}) => {
     const niveisLeitores = {
         NOT_EVALUATED: 'Não avaliado',
         NON_READER: 'Não leitor',

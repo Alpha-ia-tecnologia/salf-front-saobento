@@ -6,6 +6,9 @@ const btnTimerPseudowords = document.getElementById("iniciar-timer-pseudopalavra
 const btnTimerPhrases = document.getElementById("iniciar-timer-frases")
 const btnTimerText = document.getElementById("iniciar-timer-texto")
 const btnTimerQuestoes = document.getElementById("iniciar-timer-questoes")
+
+
+
 // nivel de leitor
 const niveisLeitor = {
     nivel0: "NOT_EVALUATED",
@@ -30,15 +33,15 @@ let calcAbstractPerfil = {
     TEXT: 0,
     QUESTOES: 0,
     desempenhoPalavras: 0,
-    desempenhoPseudopalavras: () => calcPercentual(calcAbstractPerfil.PseudoPalavras, calcAbstractPerfil.PSEUDOWORDS, "pseudopalavras"),
-    desempenhoFrases: () => calcPercentual(calcAbstractPerfil.Frases, calcAbstractPerfil.PHRASES, "frases"),
-    desempenhoTextos: () => calcPercentual(calcAbstractPerfil.Texto, calcAbstractPerfil.TEXT, "textos"),
-    desempenhoQuestoes: () => calcAbstractPerfil(calcAbstractPerfil.Questoes, calcAbstractPerfil.QUESTOES, "questoes"),
+    desempenhoPseudopalavras: 0,
+    desempenhoFrases: 0,
+    desempenhoTextos: 0,
+    desempenhoQuestoes: 0,
     perfil: niveisLeitor.nivel0
 
 }
 
-const body = ({ Palavras, PseudoPalavras, Frases, Texto, Questoes, WORDS, PSEUDOWORDS, PHRASES, TEXT, QUESTOES, perfil, status }) => {
+const body = ({ Palavras, PseudoPalavras, Frases, Texto, WORDS, PSEUDOWORDS, PHRASES, TEXT, perfil, status }) => {
     return {
         "studentId": cacheStage.studentId,
         "assessmentEventId": cacheStage.eventId,
@@ -59,9 +62,9 @@ const body = ({ Palavras, PseudoPalavras, Frases, Texto, Questoes, WORDS, PSEUDO
     }
 }
 const setModel = (perfil) => {
-    perfil.desempenhoFrases = calcPercentual(calcAbstractPerfil.Palavras, calcAbstractPerfil.WORDS, "palavras").toFixed(2)
-    perfil.desempenhoPalavras = calcPercentual(calcAbstractPerfil.PseudoPalavras, calcAbstractPerfil.PSEUDOWORDS, "pseudopalavras").toFixed(2)
-    perfil.desempenhoPseudopalavras = calcPercentual(calcAbstractPerfil.Frases, calcAbstractPerfil.PHRASES, "frases").toFixed(2)
+    perfil.desempenhoFrases = calcPercentual(calcAbstractPerfil.Frases, calcAbstractPerfil.PHRASES, "frases").toFixed(2)
+    perfil.desempenhoPalavras = calcPercentual(calcAbstractPerfil.Palavras, calcAbstractPerfil.WORDS, "palavras").toFixed(2)
+    perfil.desempenhoPseudopalavras = calcPercentual(calcAbstractPerfil.PseudoPalavras, calcAbstractPerfil.PSEUDOWORDS, "pseudopalavras").toFixed(2)
     perfil.desempenhoTextos = calcPercentual(calcAbstractPerfil.Texto, calcAbstractPerfil.TEXT, "textos").toFixed(2)
     localStorage.setItem("model", JSON.stringify(perfil))
 
@@ -76,7 +79,7 @@ const stages = {
             stages["selecao-avaliacao"].nextStage.classList.toggle("hidden")
             calcAbstractPerfil.progress = 0
             calcAbstractPerfil.completedStages = []
-            calcAbstractPerfil.stage = "SELECAO"
+            calcAbstractPerfil.stage = ""
             calcAbstractPerfil.ra = ""
             calcAbstractPerfil.student = ""
             calcAbstractPerfil.Palavras = 0
@@ -132,7 +135,7 @@ const stages = {
             const condicaoNivel3 = (WORDS <= 35) || (stageBody.itemsRead <= 12);
             completedStages.push("PSEUDWORDS")
             if (condicaoNivel3) {
-                const condicaoNivel2 = (WORDS <= 25) && (stageBody.itemsRead <= 6);
+                const condicaoNivel2 = (WORDS <= 25) || (stageBody.itemsRead <= 6);
                 if (condicaoNivel2) {
                     alert("Você não atendeu requisito minimo, infelizmente classificaremos como leitor de silabas")
                     calcAbstractPerfil.perfil = niveisLeitor.nivel2
@@ -393,69 +396,36 @@ const renderStageQuestoes = () => {
     const divStage = stages["etapa-questoes"].stage.querySelector("#questoes-container")
     console.log(cacheStage.questions)
     divStage.innerHTML = ""
-    cacheStage.questions.forEach(({ id, text, options }) => {
-        const btn = document.createElement("fieldset")
-
-
-        const opcoes = options.map(option => {
-            return { idQuest: id, opcao: option }
-        })
-        const optionsNew = opcoes.map(option => {
-            return `
-                <p class="bg-blue-50 flex  grid grid-cols-3 content-center items-center justify-between px-4 py-2 rounded-lg mt-2" data-id="${option.idQuest}">
-                <span>${option.opcao}</span> 
-                <input type="radio" name="questao-${id}" class="w-4 h-4" onclick=""> 
-                <select name="correta" id="questao" class="border-1 border-blue-300 rounded-lg h-8 px-2">
-                    <option value="false">Errada</option>
-                    <option value="true">Correta</option>
-                </select>
-                </p>
-            `
-        }).join("")
+    cacheStage.questions.forEach(({ text }) => {
+  
         const struct = `
-        <div class="enunciado bg-blue-50 p-2 rounded-lg" data-id="${id}">
+        <div class="enunciado bg-blue-50 p-2 rounded-lg">
         <p>${text}</p>
         </div>
         <div class="opcoes gap-2 p-2 rounded-lg mt-2">
-        ${optionsNew}
+            <p>O aluno respondeu certo ?</p>
+            <input class="bg-blue-500 text-white px-4 py-2 rounded-lg" type="checkbox" onclick='addQuest()'/>
         </div>
         `
 
-        btn.innerHTML = struct
-        btn.querySelectorAll("input[type='radio']").forEach(radio => {
-            radio.addEventListener("click", (e) => {
-                const idQuest = Number.parseInt(e.target.parentNode.dataset.id)
-                const Quest = e.target.parentNode
-                const value = Quest.querySelector("#questao").value.toLowerCase()
-                console.log(typeof value)
-                baforeId[idQuest] = {
-                    "readingAssessmentId": Number.parseInt(localStorage.getItem("id")),
-                    "questionId": idQuest,
-                    "answer": Quest.querySelector("span").textContent,
-                    "isCorrect": value === "true" ? true : false
-                }
-                console.log(baforeId)
-            })
 
-        })
-
-        btn.querySelectorAll("select").forEach(select => {
-            select.addEventListener("change", (e) => {
-                const idQuest = e.target.parentNode.dataset.id
-                const Quest = e.target.parentNode
-                const value = Quest.querySelector("#questao").value.toLowerCase()
-                console.log(typeof value)
-                baforeId[idQuest] = {
-                    "readingAssessmentId": localStorage.getItem("id"),
-                    "questionId": idQuest,
-                    "answer": Quest.querySelector("span").textContent,
-                    "isCorrect": value === "true" ? true : false
-                }
-            })
-        })
-        divStage.append(btn)
+        divStage.innerHTML += struct
     })
 }
+
+let quest = true
+function addQuest(){
+    if(quest){
+        calcAbstractPerfil.Questoes++
+        quest = false
+    }
+    else{
+        calcAbstractPerfil.Questoes--
+        quest = true
+    }
+
+}
+
 const nextStageQuestoes = async () => {
     const endpoint = `/reading-assessments/answers`
     baforeId = Object.values(baforeId)
@@ -475,6 +445,7 @@ const nextStageQuestoes = async () => {
 
 }
 const forcedEnd = async (actualStage, bodyCase) => {
+    console.log(calcAbstractPerfil)
     setModel(calcAbstractPerfil)
     actualStage.stage.classList.toggle("hidden")
     stages["etapa-result"].stage.classList.toggle("hidden")
@@ -514,7 +485,7 @@ const timer = document.getElementById("timer-palavras")
 const timerText = document.getElementById("timer-texto")
 const timerPhrases = document.getElementById("timer-frases")
 const timerPseudowords = document.getElementById("timer-pseudopalavras")
-const timedafault = "00:50"
+const timedafault = "00:20"
 const btn_stage = () => {
     switch (stageBody.stage) {
         case "WORDS":
