@@ -5,8 +5,8 @@ const modal = document.getElementById('modalResult')
 const voltar = document.getElementById('btn-voltar-dashboard')
 const novoAvaliacao  = document.getElementById("btn-nova-avaliacao")
 novoAvaliacao.addEventListener("click",() => {
+
     location.reload()
-    localStorage.set("model", null)
 })
 voltar.addEventListener('click',() => {
     window.location.href = location.origin + '/dashboard/dashboard.html'
@@ -41,7 +41,7 @@ const getResult = async () => {
     cache.result = data
 }
 const applyResult = ({ perfil ,ra ,student , description, recommendations, progress, desempenhoPalavras, desempenhoPseudopalavras, desempenhoFrases,  desempenhoTextos}) => {
-    const niveisLeitor = {
+    const niveisLeitores = {
         NOT_EVALUATED: 'Não avaliado',
         NON_READER: 'Não leitor',
         SYLLABLE_READER: 'Leitor de sílabas',
@@ -51,17 +51,13 @@ const applyResult = ({ perfil ,ra ,student , description, recommendations, progr
         TEXT_READER_WITH_FLUENCY: 'Leitor de texto com fluência'
     }
     const studentName = document.getElementById('resultado-aluno-nome')
-    const studentGrade = document.getElementById('resultado-serie')
     const studentLevel = document.getElementById('nivel-leitor-sugerido')
     const studentProgressPalavras = document.getElementById('nivel-progresso-palavras')
     const studentProgressPseudopalavras = document.getElementById('nivel-progresso-pseudopalavras')
     const studentProgressFrases = document.getElementById('nivel-progresso-frases')
     const studentProgressTexto = document.getElementById('nivel-progresso-texto')
     studentName.textContent = student
-    studentGrade.textContent = ra
-    studentLevel.textContent = niveisLeitor[perfil]
-    studentDescription.textContent = description
-    studentRecommendations.textContent = recommendations
+    studentLevel.textContent = niveisLeitores[perfil]
     studentProgressPalavras.style.width = `${desempenhoPalavras || 0}%`
     studentProgressPalavras.textContent = `${desempenhoPalavras || 0}%`
     studentProgressPseudopalavras.style.width = `${desempenhoPseudopalavras || 0}%`

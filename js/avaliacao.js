@@ -5,7 +5,7 @@ const avaliacoesList = document.getElementById('avaliacoes-list');
 function getAuthToken() {
     return localStorage.getItem('token') || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IlVzdWFyaW8gU0FMRiIsImlhdCI6MTUxNjIzOTAyMn0.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c';
 }
-
+let isCreate = true;
 // Carregar avaliações e eventos na inicialização
 document.addEventListener('DOMContentLoaded', function () {
     // Carregar avaliações
@@ -37,9 +37,14 @@ document.addEventListener('DOMContentLoaded', function () {
     const btnNovaAvaliacao = document.getElementById('btn-nova-avaliacao');
     if (btnNovaAvaliacao) {
         btnNovaAvaliacao.addEventListener('click', () => {
+            isCreate = true; // Define que é uma nova avaliação
             avaliacaoIdEmEdicao = null;
             resetFormAvaliacao();
             document.querySelector('#modal-avaliacao h3').textContent = 'Nova Avaliação';
+            const btnSalvar = document.getElementById('btn-salvar-avaliacao');
+            if (btnSalvar) {
+                btnSalvar.textContent = 'Criar Avaliação';
+            }
             modalAvaliacao.classList.remove('hidden');
         });
     }
@@ -151,25 +156,34 @@ btnSalvarAvaliacao.addEventListener('click', async () => {
         totalPseudowords: pseudopalavrasAdicionadas.length,
     }
 
+    // Configurar URL baseada em isCreate
+    const baseUrl = 'https://salf-salf-api2.gkgtsp.easypanel.host/api/assessments';
+    const url = isCreate ? baseUrl : `${baseUrl}/${JSON.parse(localStorage.getItem('id'))}`;
+    
+    try {
+        const response = await fetch(url, {
+            method: isCreate ? 'POST' : 'PUT',
+            headers: {
+                "Content-Type": "application/json",
+                'Authorization': `Bearer ${getAuthToken()}`
+            },
+            body: JSON.stringify(request)
+        });
 
-
-    const response = await fetch('https://salf-salf-api2.gkgtsp.easypanel.host/api/assessments', {
-        method: 'POST',
-        headers: {
-        "Content-Type": "application/json",
-        'Authorization': `Bearer ${getAuthToken()}`
-    },
-        body: JSON.stringify(request)
-    });
-
-if (response.ok) {
-    alert('Avaliação criada com sucesso!');
-    resetFormAvaliacao();
-    modalAvaliacao.classList.add('hidden');
-    location.reload();
-} else {
-    alert('Erro ao criar avaliação. Por favor, tente novamente.');
-}
+        if (response.ok) {
+            alert(isCreate ? 'Avaliação criada com sucesso!' : 'Avaliação atualizada com sucesso!');
+            resetFormAvaliacao();
+            localStorage.setItem('id', null);
+            modalAvaliacao.classList.add('hidden');
+            location.reload();
+        } else {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Erro ao processar avaliação');
+        }
+    } catch (error) {
+        console.error('Erro:', error);
+        alert(isCreate ? 'Erro ao criar avaliação.' : 'Erro ao atualizar avaliação.');
+    }
 });
 
 // Abrir e fechar modal de avaliação
@@ -363,6 +377,7 @@ function excluirAssessment(id) {
         })
             .then(response => {
                 if (!response.ok) {
+                    alert(response.message);
                     throw new Error('Erro ao excluir avaliação');
                 }
                 return response.json();
@@ -375,7 +390,7 @@ function excluirAssessment(id) {
             })
             .catch(error => {
                 console.error('Erro ao excluir avaliação:', error);
-                alert('Erro ao excluir avaliação. Por favor, tente novamente.');
+                alert(error.message);
             });
     }
 }
@@ -444,10 +459,6 @@ function configurarAdicionarQuestoes() {
         botoesRemoverOpcao.forEach(btn => {
             btn.addEventListener('click', function () {
                 const opcoes = novaQuestao.querySelectorAll('.opcao-container');
-                if (opcoes.length <= 2) {
-                    alert('É necessário ter pelo menos 2 alternativas.');
-                    return;
-                }
 
                 this.closest('.opcao-container').remove();
             });
@@ -948,6 +959,7 @@ function adicionarEventListenersTabela() {
     // Event listeners para botões de editar (botão amarelo/laranja)
     document.querySelectorAll('.editar-avaliacao').forEach(btn => {
         btn.addEventListener('click', function () {
+            isCreate = false;
             const id = parseInt(this.getAttribute('data-id'));
             editarAvaliacao(id);
         });
@@ -972,9 +984,14 @@ function adicionarEventListenersTabela() {
 
 // Função para editar uma avaliação
 function editarAvaliacao(id) {
+    isCreate = false; // Define que é uma edição
     // Se a função existir no novo script, usar ela
     if (typeof abrirModalEditarAvaliacao === 'function') {
         abrirModalEditarAvaliacao(id);
+        const btnSalvar = document.getElementById('btn-salvar-avaliacao');
+        if (btnSalvar) {
+            btnSalvar.textContent = 'Salvar Alterações';
+        }
         return;
     }
 
@@ -1093,11 +1110,13 @@ function excluirAvaliacao(id) {
                 'Authorization': `Bearer ${getAuthToken()}`
             }
         })
-            .then(response => {
+            .then(async(response) => {
                 if (!response.ok) {
+                    const error = await response.json();
+                    alert(error.message);
                     throw new Error('Erro ao excluir avaliação');
                 }
-                return response.text();
+                return response.json();
             })
             .then(() => {
                 // Remover a avaliação da lista local

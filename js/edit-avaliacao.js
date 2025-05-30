@@ -27,16 +27,22 @@ async function abrirModalEditarAvaliacao(id) {
     window.palavrasAdicionadas = [];
     window.pseudopalavrasAdicionadas = [];
     window.frasesAdicionadas = [];
+    window.avaliacaoAtual = null; // Armazenar dados completos da avaliação
+    localStorage.setItem('id', id);
     
     // Buscar dados da avaliação
     let path_base = 'https://salf-salf-api2.gkgtsp.easypanel.host/api';
     let headers = {
-        'Authorization': `Bearer ${getAuthToken()}`
+        'Authorization': `Bearer ${getAuthToken()}`,
+        'Content-Type': 'application/json'
     };
-    const avaliacao = await fetch(path_base + `/assessment-events/${id}`, {
+    const avaliacao = await fetch(path_base + `/assessments/${id}`, {
         headers: headers
     });
     const response = await avaliacao.json();
+    
+    // Armazenar dados completos da avaliação
+    window.avaliacaoAtual = response;
     
     // Referências aos elementos do modal
     const modal = document.getElementById('modal-avaliacao');
@@ -79,25 +85,25 @@ async function abrirModalEditarAvaliacao(id) {
     listaFrases.innerHTML = '';
     
     // Adicionar palavras, se houverem
-    if (avaliacao.words && avaliacao.words.length > 0) {
-      avaliacao.words.forEach(palavra => {
+    if (response.words && response.words.length > 0) {
+      response.words.forEach(palavra => {
         adicionarPalavraAoDOM(palavra);
         window.palavrasAdicionadas.push(palavra);
       });
     }
     
     // Adicionar pseudopalavras, se houverem
-    if (avaliacao.pseudowords && avaliacao.pseudowords.length > 0) {
-      avaliacao.pseudowords.forEach(pseudopalavra => {
+    if (response.pseudowords && response.pseudowords.length > 0) {
+      response.pseudowords.forEach(pseudopalavra => {
         adicionarPseudopalavraAoDOM(pseudopalavra);
         window.pseudopalavrasAdicionadas.push(pseudopalavra);
       });
     }
     
     // Adicionar frases, se houverem
-    if (avaliacao.phrases && avaliacao.phrases.length > 0) {
-      avaliacao.phrases.forEach(frase => {
-        const texto = frase.text || frase; // Pode ser um objeto ou string
+    if (response.phrases && response.phrases.length > 0) {
+      response.phrases.forEach(frase => {
+        const texto = frase.text || frase;
         adicionarFraseAoDOM(texto);
         window.frasesAdicionadas.push(texto);
       });
@@ -111,13 +117,13 @@ async function abrirModalEditarAvaliacao(id) {
     containerQuestoes.querySelectorAll('.questao:not(.questao-template)').forEach(el => el.remove());
     
     // Mostrar "sem questões" se não houver questões
-    if (!avaliacao.questions || avaliacao.questions.length === 0) {
+    if (!response.questions || response.questions.length === 0) {
       semQuestoes.classList.remove('hidden');
     } else {
       semQuestoes.classList.add('hidden');
       
       // Adicionar questões
-      avaliacao.questions.forEach(questao => {
+      response.questions.forEach(questao => {
         adicionarQuestaoExistente(questao);
       });
     }
@@ -382,13 +388,16 @@ async function salvarEdicaoAvaliacao(id) {
       if (enunciado.trim() && opcoes.length >= 2 && respostaCorreta !== null) {
         questoes.push({
           text: enunciado,
-          options: opcoes
+          options: opcoes,
+          correctOption: respostaCorreta
         });
       }
     });
     
-    // Criar objeto de dados para a API
+    // Criar objeto de dados para a API mantendo dados existentes
+    const avaliacaoAtual = window.avaliacaoAtual || {};
     const dadosAvaliacao = {
+      ...avaliacaoAtual, // Manter outros dados existentes
       name: nomeAvaliacao,
       text: textoAvaliacao,
       words: window.palavrasAdicionadas,
@@ -396,11 +405,34 @@ async function salvarEdicaoAvaliacao(id) {
       phrases: window.frasesAdicionadas.map(texto => ({ text: texto })),
       questions: questoes,
       totalWords: window.palavrasAdicionadas.length,
-      totalPseudowords: window.pseudopalavrasAdicionadas.length
+      totalPseudowords: window.pseudopalavrasAdicionadas.length,
+      updatedAt: new Date().toISOString()
     };
-    
-    // Enviar para a API
-    await window.AssessmentAPI.updateAssessment(id, dadosAvaliacao);
+
+    // Configurar a requisição PUT
+    const path_base = 'https://salf-salf-api2.gkgtsp.easypanel.host/api';
+    const url = `${path_base}/assessments/${id}`;
+    const headers = {
+      'Authorization': `Bearer ${getAuthToken()}`,
+      'Content-Type': 'application/json'
+    };
+
+    // Fazer a requisição PUT
+    const response = await fetch(url, {
+      method: 'PUT',
+      headers: headers,
+      body: JSON.stringify(dadosAvaliacao)
+    });
+
+    // Verificar se a resposta foi bem sucedida
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Erro ao atualizar avaliação');
+    }
+
+    // Processar resposta
+    const responseData = await response.json();
+    console.log('Avaliação atualizada:', responseData);
     
     // Fechar o modal
     const modal = document.getElementById('modal-avaliacao');
