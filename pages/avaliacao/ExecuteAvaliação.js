@@ -40,7 +40,37 @@ let calcAbstractPerfil = {
     perfil: niveisLeitor.nivel0
 
 }
+const metricas = {
+    "RANGE_3_5": {
+        condicaoNivel0: (palavras) => palavras === 0,
+        condicaoNivel1: (palavras) => palavras > 0 && palavras <= 20,
+        condicaoNivel2: (palavras, pseudopalavras) => (palavras <= 25) || (pseudopalavras <= 6),
+        condicaoNivel3: (palavras, pseudopalavras) => (palavras <= 35) || (pseudopalavras <= 12),
+        condicaoNivel4: (palavras, pseudopalavras, frases) => (palavras <= 44) || (pseudopalavras <= 18) || (frases === 0),
+        condicaoNivel5: (palavras, pseudopalavras, texto, questoes) => (palavras <= 60) || (pseudopalavras <= 24) || (texto === 0) || (questoes === 0),
+        condicaoNivel6: (palavras, pseudopalavras, texto, questoes) => (palavras > 60) || (pseudopalavras > 24) || (texto > 0) || (questoes > 0)
+    },
+    "RANGE_5_6": {
+        condicaoNivel0: (palavras) => palavras === 0,
+        condicaoNivel1: (palavras) => palavras > 0 && palavras <= 20,
+        condicaoNivel2: (palavras, pseudopalavras) => (palavras <= 39) || (pseudopalavras <= 10),
+        condicaoNivel3: (palavras, pseudopalavras) => (palavras <= 69) || (pseudopalavras <= 20),
+        condicaoNivel4: (palavras, pseudopalavras, frases) => (palavras <= 89) || (pseudopalavras <= 30) || (frases <= 2),
+        condicaoNivel5: (palavras, pseudopalavras, texto, questoes) => (palavras <= 109) || (pseudopalavras <= 40) || (texto === 0) || (questoes < 1),
+        condicaoNivel6: (palavras, pseudopalavras, texto, questoes) => (palavras > 110) || (pseudopalavras > 41) || (texto > 0) || (questoes <= 1)
+    },
+    "RANGE_6_9": {
+        condicaoNivel0: (palavras) => palavras === 0,
+        condicaoNivel1: (palavras) => palavras > 0 && palavras <= 20,
+        condicaoNivel2: (palavras, pseudopalavras) => (palavras <= 39) || (pseudopalavras <= 10),
+        condicaoNivel3: (palavras, pseudopalavras) => (palavras <= 69) || (pseudopalavras <= 20),
+        condicaoNivel4: (palavras, pseudopalavras, frases) => (palavras <= 89) || (pseudopalavras <= 30) || (frases <= 2),
+        condicaoNivel5: (palavras, pseudopalavras, texto, questoes) => (palavras <= 109) || (pseudopalavras <= 40) || (texto === 0) || (questoes < 1),
+        condicaoNivel6: (palavras, pseudopalavras, texto, questoes) => (palavras > 110) || (pseudopalavras > 41) || (texto > 0) || (questoes <= 1)
 
+
+    }
+}
 const body = ({ Palavras, PseudoPalavras, Frases, Texto, WORDS, PSEUDOWORDS, PHRASES, TEXT, perfil, status }) => {
     return {
         "studentId": cacheStage.studentId,
@@ -80,7 +110,7 @@ const stages = {
             calcAbstractPerfil.progress = 0
             calcAbstractPerfil.completedStages = []
             calcAbstractPerfil.stage = ""
-            calcAbstractPerfil.ra = ""
+            calcAbstractPerfil.grade = ""
             calcAbstractPerfil.student = ""
             calcAbstractPerfil.Palavras = 0
             calcAbstractPerfil.PseudoPalavras = 0
@@ -107,9 +137,8 @@ const stages = {
         stage: document.getElementById("etapa-palavras"),
         nextStage: document.getElementById("etapa-pseudopalavras"),
         nextEvent: () => {
-            const condicaoNivel0 = stageBody.itemsRead === 0;
-            const condicaoNivel1 = stageBody.itemsRead > 0 && stageBody.itemsRead <= 10;
-            console.log(condicaoNivel0 + " " + condicaoNivel1)
+            const condicaoNivel0 = metricas.RANGE_3_5.condicaoNivel0(calcAbstractPerfil.Palavras)
+            const condicaoNivel1 = metricas.RANGE_3_5.condicaoNivel1(calcAbstractPerfil.Palavras)
             completedStages.push("WORDS")
             if (condicaoNivel0) {
                 alert("Você não leu a quantidade minimo, infelizmente classificaremos como não avaliado")
@@ -132,19 +161,18 @@ const stages = {
         nextStage: document.getElementById("etapa-frases"),
         nextEvent: (palavras, pseudopalavras, stage = "PSEUDOPALAVRAS") => {
             const { WORDS } = calcAbstractPerfil
-            const condicaoNivel3 = (WORDS <= 35) || (stageBody.itemsRead <= 12);
+            const condicaoNivel2 = metricas.RANGE_3_5.condicaoNivel2(calcAbstractPerfil.Palavras, calcAbstractPerfil.PseudoPalavras)
+            const condicaoNivel3 = metricas.RANGE_3_5.condicaoNivel3(calcAbstractPerfil.Palavras, calcAbstractPerfil.PseudoPalavras)
             completedStages.push("PSEUDWORDS")
-            if (condicaoNivel3) {
-                const condicaoNivel2 = (WORDS <= 25) || (stageBody.itemsRead <= 6);
-                if (condicaoNivel2) {
+            if (condicaoNivel2) {
+                alert("Você não atendeu requisito minimo, infelizmente classificaremos como leitor de silabas")
                     alert("Você não atendeu requisito minimo, infelizmente classificaremos como leitor de silabas")
                     calcAbstractPerfil.perfil = niveisLeitor.nivel2
-                    forcedEnd(stages["etapa-pseudopalavras"], body(calcAbstractPerfil))
-                } else {
-                    alert("Você não atendeu requisito minimo, infelizmente classificaremos como leitor de palavras")
-                    calcAbstractPerfil.perfil = niveisLeitor.nivel3
-                    forcedEnd(stages["etapa-pseudopalavras"], body(calcAbstractPerfil))
-                }
+                forcedEnd(stages["etapa-pseudopalavras"], body(calcAbstractPerfil))
+            } else if (condicaoNivel3) {
+                alert("Você não atendeu requisito minimo, infelizmente classificaremos como leitor de palavras")
+                calcAbstractPerfil.perfil = niveisLeitor.nivel3
+                forcedEnd(stages["etapa-pseudopalavras"], body(calcAbstractPerfil))
             }
             else {
                 stages["etapa-pseudopalavras"].stage.classList.toggle("hidden")
@@ -159,7 +187,7 @@ const stages = {
         nextStage: document.getElementById("etapa-texto"),
         nextEvent: () => {
             const { WORDS, PSEUDOWORDS } = calcAbstractPerfil
-            const condicaoNivel4 = ((WORDS <= 44) || (PSEUDOWORDS <= 18)) || (stageBody.itemsRead === 0)
+            const condicaoNivel4 = metricas.RANGE_3_5.condicaoNivel4(calcAbstractPerfil.Palavras, calcAbstractPerfil.PseudoPalavras, calcAbstractPerfil.Frases)
             completedStages.push("PHRASES")
             if (condicaoNivel4) {
 
@@ -194,7 +222,7 @@ const stages = {
             // setTimeout(endExam, 500)
 
             const { WORDS, PSEUDOWORDS, TEXT } = calcAbstractPerfil
-            const condicaoNivel5 = ((WORDS <= 60) || (PSEUDOWORDS <= 24)) || (TEXT !== calcAbstractPerfil.Texto) || (Object.values(baforeId).filter(e => e.isCorrect === true).length === 0)
+            const condicaoNivel5 = metricas.RANGE_3_5.condicaoNivel5(calcAbstractPerfil.Palavras, calcAbstractPerfil.PseudoPalavras, TEXT, calcAbstractPerfil.Questoes)
             completedStages.push("QUESTIONS")
             calcAbstractPerfil.progress = completedStages.length / 6
             if (condicaoNivel5) {
@@ -275,6 +303,7 @@ const examGet = async () => {
     const responseJson2 = await requestGrep.json()
     const { name, text, gradeRange, words, pseudowords, phrases, questions } = await responseJson2
     cacheStage.questions = questions
+    calcAbstractPerfil.grade = responseJson2.gradeRange
     cacheStage.name = name
     cacheStage.text = text
     cacheStage.gradeRange = gradeRange
@@ -397,7 +426,7 @@ const renderStageQuestoes = () => {
     console.log(cacheStage.questions)
     divStage.innerHTML = ""
     cacheStage.questions.forEach(({ text }) => {
-  
+
         const struct = `
         <div class="enunciado bg-blue-50 p-2 rounded-lg">
         <p>${text}</p>
@@ -414,12 +443,12 @@ const renderStageQuestoes = () => {
 }
 
 let quest = true
-function addQuest(){
-    if(quest){
+function addQuest() {
+    if (quest) {
         calcAbstractPerfil.Questoes++
         quest = false
     }
-    else{
+    else {
         calcAbstractPerfil.Questoes--
         quest = true
     }
