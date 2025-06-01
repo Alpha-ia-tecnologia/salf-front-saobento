@@ -55,7 +55,7 @@ const body = ({ Palavras, PseudoPalavras, Frases, Texto, Questoes, WORDS, PSEUDO
         "ppm": 0,
         "completed": status || false,
         "completedStages": completedStages,
-        "correctAnswers": 1
+        "correctAnswers": QUESTOES
     }
 }
 const setModel = (perfil) => {
@@ -183,8 +183,19 @@ const stages = {
 
 
             completedStages.push("TEXT")
-            stages["etapa-texto"].stage.classList.toggle("hidden")
-            stages["etapa-texto"].nextStage.classList.toggle("hidden")
+            if(stageBody.itemsRead === 0){
+                alert("Você não atendeu algum requisito minimo, tente novamente")
+                btn_stage().disabled = false
+                btn_stage().classList.remove("bg-gray-400", "hover:bg-gray-400")
+                stageBody.itemsRead = 0
+                document.querySelector("#total-linhas-lidas").innerHTML = stageBody.itemsRead
+                timedafault = "00:15"
+                timerText.innerHTML = timedafault
+            }else{
+                
+                stages["etapa-texto"].stage.classList.toggle("hidden")
+                stages["etapa-texto"].nextStage.classList.toggle("hidden")
+            }
             renderStageQuestoes()
 
         }
@@ -388,7 +399,7 @@ const renderStageText = () => {
 
 //perfil de leitor
 
-let calcPercentual = (maxima, usada, tipo) => maxima ? usada / maxima * 100 : Error("Divisão por zero : não possue perfil" + tipo)
+let calcPercentual = (maxima, usada, tipo) => maxima ? usada / maxima * 100 :  Error("Divisão por zero : não possue perfil" + tipo)
 
 let baforeId = {
 
@@ -397,68 +408,32 @@ const renderStageQuestoes = () => {
     const divStage = stages["etapa-questoes"].stage.querySelector("#questoes-container")
     console.log(cacheStage.questions)
     divStage.innerHTML = ""
-    cacheStage.questions.forEach(({ id, text, options }) => {
+    cacheStage.questions.forEach(({ id, text }) => {
         const btn = document.createElement("fieldset")
 
-
-        const opcoes = options.map(option => {
-            return { idQuest: id, opcao: option }
-        })
-        const optionsNew = opcoes.map(option => {
-            return `
-                <p class="bg-blue-50 flex  grid grid-cols-3 content-center items-center justify-between px-4 py-2 rounded-lg mt-2" data-id="${option.idQuest}">
-                <span>${option.opcao}</span> 
-                <input type="radio" name="questao-${id}" class="w-4 h-4" onclick=""> 
-                <select name="correta" id="questao" class="border-1 border-blue-300 rounded-lg h-8 px-2">
-                    <option value="false">Errada</option>
-                    <option value="true">Correta</option>
-                </select>
-                </p>
-            `
-        }).join("")
         const struct = `
-        <div class="enunciado bg-blue-50 p-2 rounded-lg" data-id="${id}">
-        <p>${text}</p>
-        </div>
-        <div class="opcoes gap-2 p-2 rounded-lg mt-2">
-        ${optionsNew}
+        <div class="enunciado flex flex-col px-3 bg-blue-100 py-1 rounded-lg mt-2" data-id="${id}">
+            <p>${text}</p>
+            <div class="flex items-center gap-2 bg-blue-50 p-2 rounded-lg">
+                <label for="questao">Esta questão é correta?</label>
+                <input type="checkbox" name="questao" class="w-4 h-4" data-id="${id}" onclick="getValues(this.dataset.id)">
+            </div>
         </div>
         `
 
         btn.innerHTML = struct
-        btn.querySelectorAll("input[type='radio']").forEach(radio => {
-            radio.addEventListener("click", (e) => {
-                const idQuest = Number.parseInt(e.target.parentNode.dataset.id)
-                const Quest = e.target.parentNode
-                const value = Quest.querySelector("#questao").value.toLowerCase()
-                console.log(typeof value)
-                baforeId[idQuest] = {
-                    "readingAssessmentId": Number.parseInt(localStorage.getItem("id")),
-                    "questionId": idQuest,
-                    "answer": Quest.querySelector("span").textContent,
-                    "isCorrect": value === "true" ? true : false
-                }
-                console.log(baforeId)
-            })
 
-        })
-
-        btn.querySelectorAll("select").forEach(select => {
-            select.addEventListener("change", (e) => {
-                const idQuest = e.target.parentNode.dataset.id
-                const Quest = e.target.parentNode
-                const value = Quest.querySelector("#questao").value.toLowerCase()
-                console.log(typeof value)
-                baforeId[idQuest] = {
-                    "readingAssessmentId": localStorage.getItem("id"),
-                    "questionId": idQuest,
-                    "answer": Quest.querySelector("span").textContent,
-                    "isCorrect": value === "true" ? true : false
-                }
-            })
-        })
         divStage.append(btn)
     })
+}
+
+let value = false
+let count = 0
+function getValues(idQuestion){
+    count ++
+    calcAbstractPerfil.QUESTOES = count
+    console.log(calcAbstractPerfil.QUESTOES)
+
 }
 const nextStageQuestoes = async () => {
     const endpoint = `/reading-assessments/answers`
@@ -518,7 +493,7 @@ const timer = document.getElementById("timer-palavras")
 const timerText = document.getElementById("timer-texto")
 const timerPhrases = document.getElementById("timer-frases")
 const timerPseudowords = document.getElementById("timer-pseudopalavras")
-const timedafault = "00:50"
+const timedafault = "00:15"
 const btn_stage = () => {
     switch (stageBody.stage) {
         case "WORDS":
