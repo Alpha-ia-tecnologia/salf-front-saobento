@@ -189,7 +189,7 @@ const stages = {
                 btn_stage().classList.remove("bg-gray-400", "hover:bg-gray-400")
                 stageBody.itemsRead = 0
                 document.querySelector("#total-linhas-lidas").innerHTML = stageBody.itemsRead
-                timedafault = "00:15"
+                timedafault = "01:00"
                 timerText.innerHTML = timedafault
             }else{
                 
