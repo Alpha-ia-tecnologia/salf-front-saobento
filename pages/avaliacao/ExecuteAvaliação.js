@@ -216,7 +216,6 @@ const stages = {
             } else {
                 alert("Você atendeu os requisitos o classificaremos com leitor com fluencia")
                 calcAbstractPerfil.perfil = niveisLeitor.nivel6
-                calcAbstractPerfil.status = true
                 forcedEnd(stages["etapa-questoes"], body(calcAbstractPerfil))
             }
         }
@@ -454,6 +453,7 @@ const nextStageQuestoes = async () => {
 
 }
 const forcedEnd = async (actualStage, bodyCase) => {
+    calcAbstractPerfil.status = true
     setModel(calcAbstractPerfil)
     actualStage.stage.classList.toggle("hidden")
     stages["etapa-result"].stage.classList.toggle("hidden")
