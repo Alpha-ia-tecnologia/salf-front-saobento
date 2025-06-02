@@ -206,8 +206,9 @@ const stages = {
         nextEvent: () => {
             // setTimeout(endExam, 500)
             const parametronivel5 = calcularParâmetros(50,calcAbstractPerfil.Questoes)
-
-            const condicaoNivel5 =  (calcAbstractPerfil.TEXT < calcAbstractPerfil.Texto) || (stageBody.itemsRead <= parametronivel5)
+            console.log(calcAbstractPerfil.TEXT,calcAbstractPerfil.Texto)
+            const condicaoNivel5 =  (calcAbstractPerfil.TEXT < calcAbstractPerfil.Texto) || (calcAbstractPerfil.QUESTOES <= parametronivel5)
+            console.log(condicaoNivel5)
             completedStages.push("QUESTIONS")
             if (condicaoNivel5) {
                 alert("Você não atendeu algum requisito minimo, infelizmente classificaremos como leitor sem fluencia")
