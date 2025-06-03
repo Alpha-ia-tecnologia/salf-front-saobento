@@ -186,6 +186,8 @@ const stages = {
                 alert("Você não atendeu algum requisito minimo, tente novamente")
                 btn_stage().disabled = false
                 btn_stage().classList.remove("bg-gray-400", "hover:bg-gray-400")
+                btnTimerText.disabled = false
+                btnTimerText.classList.remove("bg-gray-400", "hover:bg-gray-400")
                 stageBody.itemsRead = 0
                 document.querySelector("#total-linhas-lidas").innerHTML = stageBody.itemsRead
                 timedafault = "01:00"
@@ -402,39 +404,33 @@ let calcPercentual = (maxima, usada, tipo) => maxima ? usada / maxima * 100 :  E
 let baforeId = {
 
 };
-let count = 0
 const renderStageQuestoes = () => {
     const divStage = stages["etapa-questoes"].stage.querySelector("#questoes-container")
     console.log(cacheStage.questions)
     divStage.innerHTML = ""
     cacheStage.questions.forEach(({ id, text }) => {
-        const btn = document.createElement("fieldset")
+        const btn = document.createElement("div")
 
         const struct = `
         <div class="enunciado flex flex-col px-3 bg-blue-100 py-1 rounded-lg mt-2" data-id="${id}">
             <p>${text}</p>
             <div class="flex items-center gap-2 bg-blue-50 p-2 rounded-lg">
                 <label for="questao">Esta questão é correta?</label>
-                <input type="checkbox" name="questao" class="w-4 h-4" data-id="${id}" onclick="getValues(this.dataset.id)">
+                <input type="checkbox" name="questao" id="questao" class="w-4 h-4" data-id="${id}" onclick="getValues(this.dataset.id)">
             </div>
         </div>
         `
-        btn.querySelector("input[type='checkbox']").addEventListener("click", (e) => {
-            if(e.target.checked){ 
-                count ++
-            } else {
-                count --
-            }
-            console.log(calcAbstractPerfil.QUESTOES)
-            calcAbstractPerfil.QUESTOES = count
-        })
-
         btn.innerHTML = struct
 
         divStage.append(btn)
     })
 }
-
+let count = 0
+const getValues = (id) => {
+    count ++;  
+    console.log(calcAbstractPerfil.QUESTOES)
+    calcAbstractPerfil.QUESTOES = count
+}
 
 
 const nextStageQuestoes = async () => {
@@ -495,7 +491,7 @@ const timer = document.getElementById("timer-palavras")
 const timerText = document.getElementById("timer-texto")
 const timerPhrases = document.getElementById("timer-frases")
 const timerPseudowords = document.getElementById("timer-pseudopalavras")
-let timedafault = "01:00"
+let timedafault = "00:10"
 const btn_stage = () => {
     switch (stageBody.stage) {
         case "WORDS":

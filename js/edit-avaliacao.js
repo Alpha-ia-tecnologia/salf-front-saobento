@@ -413,8 +413,8 @@ async function salvarEdicaoAvaliacao(id) {
       questions: questoes,
       totalWords: window.palavrasAdicionadas.length,
       totalPseudowords: window.pseudopalavrasAdicionadas.length,
-      updatedAt: new Date().toISOString()
     };
+
 
     // Configurar a requisição PUT
     const path_base = 'https://salf-salf-api2.gkgtsp.easypanel.host/api';
@@ -460,7 +460,20 @@ async function salvarEdicaoAvaliacao(id) {
     alert(`Erro ao salvar avaliação: ${error.message}`);
   }
 }
+function mergeComplexObjects(obj1, obj2) {
+    return {
+        name: obj2.name || obj1.name,
+        text: obj2.text || obj1.text,
+        gradeRange: obj2.gradeRange || obj1.gradeRange,
+        totalWords: (obj1.totalWords || 0) + (obj2.totalWords || 0),
+        totalPseudowords: (obj1.totalPseudowords || 0) + (obj2.totalPseudowords || 0),
+        words: new Set([...(obj1.words || []), ...(obj2.words || [])]),
+        pseudowords: new Set([...(obj1.pseudowords || []), ...(obj2.pseudowords || [])]),
+        phrases: new Set([...(obj1.phrases || []), ...(obj2.phrases || [])]),
+        questions: new Set([...(obj1.questions || []), ...(obj2.questions || [])]),
 
+    };
+}
 // Função para configurar botões de adicionar novos itens
 function configurarBotoesAdicionarItens() {
   // Botão para adicionar palavra
