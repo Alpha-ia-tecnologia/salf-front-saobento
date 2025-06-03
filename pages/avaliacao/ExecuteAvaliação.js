@@ -38,7 +38,7 @@ let calcAbstractPerfil = {
 
 }
 
-const body = ({ Palavras, PseudoPalavras, Frases, Texto, Questoes, WORDS, PSEUDOWORDS, PHRASES, TEXT, QUESTOES, perfil, status }) => {
+const body = ({ Palavras, PseudoPalavras, Frases, Texto, WORDS, PSEUDOWORDS, PHRASES, TEXT, QUESTOES, perfil, status }) => {
     return {
         "studentId": cacheStage.studentId,
         "assessmentEventId": cacheStage.eventId,
@@ -53,7 +53,7 @@ const body = ({ Palavras, PseudoPalavras, Frases, Texto, Questoes, WORDS, PSEUDO
         "textLinesTotal": Texto,
         "readingLevel": perfil || niveisLeitor.nivel0,
         "ppm": 0,
-        "completed": status || false,
+        "completed": true,
         "completedStages": completedStages,
         "correctAnswers": QUESTOES
     }
@@ -162,13 +162,12 @@ const stages = {
         nextEvent: () => {
             const parametronivel4 = calcularParâmetros(25,calcAbstractPerfil.Frases)
             const condicaoNivel4 = (stageBody.itemsRead <= parametronivel4)
-            completedStages.push("PHRASES")
             if (condicaoNivel4) {
-
                 alert("Você não atendeu algum requisito minimo, infelizmente classificaremos como leitor de frases")
                 calcAbstractPerfil.perfil = niveisLeitor.nivel4
                 forcedEnd(stages["etapa-frases"], body(calcAbstractPerfil))
             } else {
+                completedStages.push("PHRASES")
                 stages["etapa-frases"].stage.classList.toggle("hidden")
                 stages["etapa-frases"].nextStage.classList.toggle("hidden")
             }
@@ -183,7 +182,7 @@ const stages = {
 
 
             completedStages.push("TEXT")
-            if(stageBody.itemsRead === 0){
+            if(stageBody.itemsRead <= calcAbstractPerfil.Texto){
                 alert("Você não atendeu algum requisito minimo, tente novamente")
                 btn_stage().disabled = false
                 btn_stage().classList.remove("bg-gray-400", "hover:bg-gray-400")
@@ -404,6 +403,7 @@ let calcPercentual = (maxima, usada, tipo) => maxima ? usada / maxima * 100 :  E
 let baforeId = {
 
 };
+let count = 0
 const renderStageQuestoes = () => {
     const divStage = stages["etapa-questoes"].stage.querySelector("#questoes-container")
     console.log(cacheStage.questions)
@@ -420,6 +420,15 @@ const renderStageQuestoes = () => {
             </div>
         </div>
         `
+        btn.querySelector("input[type='checkbox']").addEventListener("click", (e) => {
+            if(e.target.checked){ 
+                count ++
+            } else {
+                count --
+            }
+            console.log(calcAbstractPerfil.QUESTOES)
+            calcAbstractPerfil.QUESTOES = count
+        })
 
         btn.innerHTML = struct
 
@@ -427,14 +436,8 @@ const renderStageQuestoes = () => {
     })
 }
 
-let value = false
-let count = 0
-function getValues(idQuestion){
-    count ++
-    calcAbstractPerfil.QUESTOES = count
-    console.log(calcAbstractPerfil.QUESTOES)
 
-}
+
 const nextStageQuestoes = async () => {
     const endpoint = `/reading-assessments/answers`
     baforeId = Object.values(baforeId)
@@ -454,7 +457,6 @@ const nextStageQuestoes = async () => {
 
 }
 const forcedEnd = async (actualStage, bodyCase) => {
-    calcAbstractPerfil.status = true
     setModel(calcAbstractPerfil)
     actualStage.stage.classList.toggle("hidden")
     stages["etapa-result"].stage.classList.toggle("hidden")
@@ -494,7 +496,7 @@ const timer = document.getElementById("timer-palavras")
 const timerText = document.getElementById("timer-texto")
 const timerPhrases = document.getElementById("timer-frases")
 const timerPseudowords = document.getElementById("timer-pseudopalavras")
-const timedafault = "01:00"
+let timedafault = "00:20"
 const btn_stage = () => {
     switch (stageBody.stage) {
         case "WORDS":

@@ -5,7 +5,7 @@ const avaliacoesList = document.getElementById('avaliacoes-list');
 function getAuthToken() {
     return localStorage.getItem('token') || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IlVzdWFyaW8gU0FMRiIsImlhdCI6MTUxNjIzOTAyMn0.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c';
 }
-let isCreate = true;
+let isCreate = localStorage.getItem('isCreate') === 'true';
 // Carregar avaliações e eventos na inicialização
 document.addEventListener('DOMContentLoaded', function () {
     // Carregar avaliações
@@ -37,7 +37,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const btnNovaAvaliacao = document.getElementById('btn-nova-avaliacao');
     if (btnNovaAvaliacao) {
         btnNovaAvaliacao.addEventListener('click', () => {
-            isCreate = true; // Define que é uma nova avaliação
+            isCreate = true;
+            console.log(isCreate);
             avaliacaoIdEmEdicao = null;
             resetFormAvaliacao();
             document.querySelector('#modal-avaliacao h3').textContent = 'Nova Avaliação';
@@ -122,7 +123,19 @@ let frasesAdicionadas = [];
 // Variáveis para as questões
 let questoesAdicionadas = [];
 let contadorQuestoes = 0;
-
+function mergeComplexObjects(obj1, obj2) {
+    return {
+      name: obj2.name || obj1.name,
+      text: obj2.text || obj1.text,
+      gradeRange: obj2.gradeRange || obj1.gradeRange,
+      totalWords: (obj1.totalWords || 0) + (obj2.totalWords || 0),
+      totalPseudowords: (obj1.totalPseudowords || 0) + (obj2.totalPseudowords || 0),
+      words: new Set([...(obj1.words || []), ...(obj2.words || [])]),
+      pseudowords: new Set([...(obj1.pseudowords || []), ...(obj2.pseudowords || [])]),
+      phrases: new Set([...(obj1.phrases || []), ...(obj2.phrases || [])]),
+      questions: new Set([...(obj1.questions || []), ...(obj2.questions || [])]),
+    };
+  }
 btnSalvarAvaliacao.addEventListener('click', async () => {
     const nomeAvaliacao = document.getElementById('nome-avaliacao').value;
     const texto = textoAvaliacao.value;
@@ -159,7 +172,8 @@ btnSalvarAvaliacao.addEventListener('click', async () => {
     // Configurar URL baseada em isCreate
     const baseUrl = 'https://salf-salf-api2.gkgtsp.easypanel.host/api/assessments';
     const url = isCreate ? baseUrl : `${baseUrl}/${JSON.parse(localStorage.getItem('id'))}`;
-    
+    const mergedObject = mergeComplexObjects(window.avaliacaoAtual, request);
+    let body = isCreate ? JSON.stringify(request) : JSON.stringify(mergedObject);
     try {
         const response = await fetch(url, {
             method: isCreate ? 'POST' : 'PUT',
@@ -167,7 +181,7 @@ btnSalvarAvaliacao.addEventListener('click', async () => {
                 "Content-Type": "application/json",
                 'Authorization': `Bearer ${getAuthToken()}`
             },
-            body: JSON.stringify(request)
+            body: body
         });
 
         if (response.ok) {
@@ -960,6 +974,8 @@ function adicionarEventListenersTabela() {
     document.querySelectorAll('.editar-avaliacao').forEach(btn => {
         btn.addEventListener('click', function () {
             isCreate = false;
+            console.log(isCreate);
+            localStorage.setItem('isCreate', JSON.stringify(isCreate));
             const id = parseInt(this.getAttribute('data-id'));
             editarAvaliacao(id);
         });
@@ -1152,55 +1168,7 @@ if (cancelarEnvioSimples) {
     });
 }
 
-// Submissão do formulário simples
-if (formEnvioSimples) {
-    formEnvioSimples.addEventListener('submit', function (e) {
-        e.preventDefault();
 
-        const nomeProva = document.getElementById('nome-prova').value;
-        const descricaoProva = document.getElementById('descricao-prova').value;
-
-        if (nomeProva.trim() === '') {
-            alert('Por favor, informe o nome da prova.');
-            return;
-        }
-
-        // Criar objeto de dados conforme o formato da API
-        const dadosEnvio = {
-            name: nomeProva,
-            description: descricaoProva
-        };
-
-        // Enviar para a API
-        fetch('https://salf-salf-api2.gkgtsp.easypanel.host/api/assessments', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${getAuthToken()}`
-            },
-            body: JSON.stringify(dadosEnvio)
-        })
-            .then(response => {
-                if (!response.ok) {
-                }
-                console.log(response)
-            })
-            .then(data => {
-                alert('Avaliação criada com sucesso!');
-                modalEnvioSimples.classList.add('hidden');
-
-                // Limpar formulário
-                document.getElementById('nome-prova').value = '';
-                document.getElementById('descricao-prova').value = '';
-
-                // Atualizar lista de avaliações
-                carregarAvaliacoes();
-            })
-            .catch(error => {
-                console.error('Erro ao enviar avaliação:', error);
-            });
-    });
-}
 
 var associarEvento = async () => {
     try {

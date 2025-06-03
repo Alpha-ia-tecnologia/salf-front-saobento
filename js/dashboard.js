@@ -334,6 +334,7 @@ const filterEvent = async () => {
         headers: headers
     });
     const data = await response.json();
+    filtrosEvento.innerHTML = '<option value="">Selecione o evento</option>';
     data.forEach(item => {
         const option = document.createElement('option');
         option.value = item.id;

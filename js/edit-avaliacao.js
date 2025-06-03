@@ -40,9 +40,16 @@ async function abrirModalEditarAvaliacao(id) {
         headers: headers
     });
     const response = await avaliacao.json();
+    window.palavrasAdicionadas = response.words;
+    window.pseudopalavrasAdicionadas = response.pseudowords;
+    window.frasesAdicionadas = response.phrases.map(frase => frase.text);
+    window.questoesAdicionadas = response.questions;
+    window.nomeAvaliacao = response.name;
+    window.textoAvaliacao = response.text;
     
     // Armazenar dados completos da avaliação
     window.avaliacaoAtual = response;
+    console.log(window.avaliacaoAtual)
     
     // Referências aos elementos do modal
     const modal = document.getElementById('modal-avaliacao');
