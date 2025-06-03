@@ -174,7 +174,6 @@ function PopularGraphPizza({ readingLevelDistribution }) {
         data: {
             labels: labels || [],
             datasets: [{
-                label: 'My First dataset',
                 backgroundColor: ['#06c5c8', '#6a06c8', '#06c85e', '#ffe803','rgb(255, 16, 16)',"rgb(255, 16, 124)","rgb(16, 255, 147)"],
                 data: data || []
             }],
@@ -201,7 +200,7 @@ function PopularGraphSeries({ distribution, grade }) {
     if (distribution === undefined && distribution.length === 0 && grade === null) {
         distribution = [];
     }
-    const labels = distribution.map(item => item.name) || ["não informado"];
+    const labels = distribution.map(item => item.total) || ["não informado"];
     const data = distribution.map(item => item.percentage) || [0];
 
     if (series) {
@@ -236,7 +235,7 @@ function PopularGraphYear({ previousYear, currentYear }) {
     }
     year = new Chart(canvaGraphBar, {
         type: 'bar',
-        data: { labels, datasets: [{ label: 'Total', data }] },
+        data: { labels, datasets: [{ label: 'Total', data : [10] }] },
         options: {
             responsive: true,
             maintainAspectRatio: false,

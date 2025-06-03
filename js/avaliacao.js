@@ -149,7 +149,6 @@ const requestUpdate= async (url, isCreate, obj) => {
         if (response.ok) {
             alert(isCreate ? 'Avaliação criada com sucesso!' : 'Avaliação atualizada com sucesso!');
             resetFormAvaliacao();
-            localStorage.setItem('isCreate', JSON.stringify(true));
             localStorage.setItem('id', null);
             modalAvaliacao.classList.add('hidden');
             location.reload();
@@ -195,7 +194,7 @@ btnSalvarAvaliacao.addEventListener('click', async () => {
     const baseUrl = 'https://salf-salf-api2.gkgtsp.easypanel.host/api/assessments';
     const url = localStorage.getItem("isCreate") === "true" ? baseUrl : `${baseUrl}/${JSON.parse(localStorage.getItem('id'))}`;
     const mergedObject = mergeComplexObjects(window.avaliacaoAtual, request);
-    let updatedata = localStorage.getItem("isCreate") === "true" ? JSON.stringify(request) : JSON.stringify(mergedObject)
+    let updatedata = true ? JSON.stringify(request) : JSON.stringify(mergedObject)
 
     try {
         requestUpdate(url, isCreate, updatedata);

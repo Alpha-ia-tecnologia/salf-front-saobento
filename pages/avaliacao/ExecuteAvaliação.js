@@ -52,7 +52,7 @@ const body = ({ Palavras, PseudoPalavras, Frases, Texto, WORDS, PSEUDOWORDS, PHR
         "textLinesRead": TEXT,
         "textLinesTotal": Texto,
         "readingLevel": perfil || niveisLeitor.nivel0,
-        "ppm": 0,
+        "ppm": (WORDS/Palavras)*100,
         "completed": true,
         "completedStages": completedStages,
         "correctAnswers": QUESTOES
@@ -182,7 +182,7 @@ const stages = {
 
 
             completedStages.push("TEXT")
-            if(stageBody.itemsRead <= calcAbstractPerfil.Texto){
+            if(stageBody.itemsRead < calcAbstractPerfil.Texto){
                 alert("Você não atendeu algum requisito minimo, tente novamente")
                 btn_stage().disabled = false
                 btn_stage().classList.remove("bg-gray-400", "hover:bg-gray-400")
