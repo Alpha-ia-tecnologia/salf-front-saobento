@@ -12,7 +12,7 @@ const niveisLeitor = {
     nivel1: "NON_READER",
     nivel2: "SYLLABLE_READER",
     nivel3: "WORD_READER",
-    nivel4: "SENTENCE_READER",
+    nivel4: "PHRASE_READER",
     nivel5: "TEXT_READER_WITHOUT_FLUENCY",
     nivel6: "TEXT_READER_WITH_FLUENCY"
 }

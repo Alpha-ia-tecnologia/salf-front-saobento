@@ -125,17 +125,38 @@ let questoesAdicionadas = [];
 let contadorQuestoes = 0;
 function mergeComplexObjects(obj1, obj2) {
     return {
-      name: obj2.name || obj1.name,
-      text: obj2.text || obj1.text,
-      gradeRange: obj2.gradeRange || obj1.gradeRange,
-      totalWords: (obj1.totalWords || 0) + (obj2.totalWords || 0),
-      totalPseudowords: (obj1.totalPseudowords || 0) + (obj2.totalPseudowords || 0),
-      words: new Set([...(obj1.words || []), ...(obj2.words || [])]),
-      pseudowords: new Set([...(obj1.pseudowords || []), ...(obj2.pseudowords || [])]),
-      phrases: new Set([...(obj1.phrases || []), ...(obj2.phrases || [])]),
-      questions: new Set([...(obj1.questions || []), ...(obj2.questions || [])]),
+        name: obj2.name || obj1.name,
+        text: obj2.text || obj1.text,
+        gradeRange: obj2.gradeRange || obj1.gradeRange,
+        totalWords: (obj1.totalWords || 0) + (obj2.totalWords || 0),
+        totalPseudowords: (obj1.totalPseudowords || 0) + (obj2.totalPseudowords || 0),
+        words: new Set([...(obj1.words || []), ...(obj2.words || [])]),
+        pseudowords: new Set([...(obj1.pseudowords || []), ...(obj2.pseudowords || [])]),
+        phrases: new Set([...(obj1.phrases || []), ...(obj2.phrases || [])]),
+        questions: new Set([...(obj1.questions || []), ...(obj2.questions || [])]),
     };
-  }
+}
+const requestUpdate= async (url, isCreate, obj) => {
+    await fetch(url, {
+        method: isCreate ? 'POST' : 'PUT',
+        headers: {
+            "Content-Type": "application/json",
+            'Authorization': `Bearer ${getAuthToken()}`
+        },
+        body: obj
+    }).then( async(response) => {
+        if (response.ok) {
+            alert(isCreate ? 'Avaliação criada com sucesso!' : 'Avaliação atualizada com sucesso!');
+            resetFormAvaliacao();
+            localStorage.setItem('isCreate', JSON.stringify(true));
+            localStorage.setItem('id', null);
+            modalAvaliacao.classList.add('hidden');
+            location.reload();
+    } else {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Erro ao processar avaliação');
+    }})
+}
 btnSalvarAvaliacao.addEventListener('click', async () => {
     const nomeAvaliacao = document.getElementById('nome-avaliacao').value;
     const texto = textoAvaliacao.value;
@@ -157,43 +178,27 @@ btnSalvarAvaliacao.addEventListener('click', async () => {
         return;
     }
 
-    const request = {
-        name: nomeAvaliacao,
-        text: texto,
-        words: palavrasAdicionadas,
-        pseudowords: pseudopalavrasAdicionadas,
-        phrases: frasesAdicionadas,
-        questions: questoesAdicionadas,
-        gradeRange: document.getElementById('faixa-serie').value,
-        totalWords: palavrasAdicionadas.length,
-        totalPseudowords: pseudopalavrasAdicionadas.length,
-    }
+    // const request = {
+    //     name: nomeAvaliacao,
+    //     text: texto,
+    //     words: palavrasAdicionadas,
+    //     pseudowords: pseudopalavrasAdicionadas,
+    //     phrases: frasesAdicionadas,
+    //     questions: questoesAdicionadas,
+    //     gradeRange: document.getElementById('faixa-serie').value,
+    //     totalWords: palavrasAdicionadas.length,
+    //     totalPseudowords: pseudopalavrasAdicionadas.length,
+    // }
 
     // Configurar URL baseada em isCreate
     const baseUrl = 'https://salf-salf-api2.gkgtsp.easypanel.host/api/assessments';
-    const url = isCreate ? baseUrl : `${baseUrl}/${JSON.parse(localStorage.getItem('id'))}`;
+    const url = localStorage.getItem("isCreate") === "true" ? baseUrl : `${baseUrl}/${JSON.parse(localStorage.getItem('id'))}`;
     const mergedObject = mergeComplexObjects(window.avaliacaoAtual, request);
-    let body = isCreate ? JSON.stringify(request) : JSON.stringify(mergedObject);
-    try {
-        const response = await fetch(url, {
-            method: isCreate ? 'POST' : 'PUT',
-            headers: {
-                "Content-Type": "application/json",
-                'Authorization': `Bearer ${getAuthToken()}`
-            },
-            body: body
-        });
+    let updatedata = localStorage.getItem("isCreate") === "true" ? JSON.stringify(request) : JSON.stringify(mergedObject)
+    console.log(JSON.parse(updatedata));
 
-        if (response.ok) {
-            alert(isCreate ? 'Avaliação criada com sucesso!' : 'Avaliação atualizada com sucesso!');
-            resetFormAvaliacao();
-            localStorage.setItem('id', null);
-            modalAvaliacao.classList.add('hidden');
-            location.reload();
-        } else {
-            const errorData = await response.json();
-            throw new Error(errorData.message || 'Erro ao processar avaliação');
-        }
+    try {
+        requestUpdate(url, isCreate, updatedata);
     } catch (error) {
         console.error('Erro:', error);
         alert(isCreate ? 'Erro ao criar avaliação.' : 'Erro ao atualizar avaliação.');
@@ -237,26 +242,26 @@ cancelarEvento.addEventListener('click', function () {
 
 const btnPagina = document.getElementById('btn-page');
 const btnPaginaAnterior = document.getElementById('btn-page-anterior');
-const btnPaginaProximo = document.getElementById('btn-page-proximo');  
+const btnPaginaProximo = document.getElementById('btn-page-proximo');
 const btnPaginaAvaliacao = document.getElementById('btn-page-avaliacao');
 const btnPaginaAnteriorAvaliacao = document.getElementById('btn-page-anterior-avaliacao');
-const btnPaginaProximoAvaliacao = document.getElementById('btn-page-proximo-avaliacao');    
+const btnPaginaProximoAvaliacao = document.getElementById('btn-page-proximo-avaliacao');
 
-btnPaginaAvaliacao.addEventListener('click', function() {
+btnPaginaAvaliacao.addEventListener('click', function () {
     btnPagina.textContent = paginaAtual - 1;
     carregarEventos();
 });
 
-btnPaginaProximoAvaliacao.addEventListener('click', function() {
+btnPaginaProximoAvaliacao.addEventListener('click', function () {
     btnPaginaAvaliacao.textContent = paginaAtual + 1;
     carregarEventos();
 });
 
-btnPaginaAnterior.addEventListener('click', function() {
+btnPaginaAnterior.addEventListener('click', function () {
     btnPagina.textContent = paginaAtual - 1;
     carregarEventos();
 });
-btnPaginaProximo.addEventListener('click', function() {
+btnPaginaProximo.addEventListener('click', function () {
     btnPagina.textContent = paginaAtual + 1;
     carregarEventos();
 });
@@ -396,7 +401,7 @@ function excluirAssessment(id) {
                 }
                 return response.json();
             })
-            .then(({data}) => {
+            .then(({ data }) => {
                 alert('Avaliação excluída com sucesso!');
                 // Recarregar as avaliações e eventos após a exclusão
                 carregarAvaliacoes();
@@ -437,7 +442,7 @@ function configurarAdicionarQuestoes() {
 
         const enunciadoQuestao = novaQuestao.querySelector('.enunciado-questao');
         const textosOpcoes = novaQuestao.querySelectorAll('.texto-opcao');
-        
+
 
         if (questaoData) {
             enunciadoQuestao.value = questaoData.enunciado || '';
@@ -900,25 +905,25 @@ function preencherFormEvento(evento) {
 function carregarAvaliacoes() {
     fetch('https://salf-salf-api2.gkgtsp.easypanel.host/api/assessments', {
         headers: {
-        'Authorization': `Bearer ${getAuthToken()}`
-    }
+            'Authorization': `Bearer ${getAuthToken()}`
+        }
     })
         .then(response => {
-        if (!response.ok) {
-            throw new Error('Erro ao buscar avaliações');
-        }
-        return response.json();
-    })
-    .then(({data}) => {
-        // Atualizar a variável de avaliações
-        avaliacoes = data;
-        // Atualizar a exibição na tabela
-        mostrarAvaliacoesNaTabela(avaliacoes);
-    })
-    .catch(error => {
-        console.error('Erro ao carregar avaliações:', error);
-        alert('Erro ao carregar avaliações. Por favor, tente novamente.');
-    });
+            if (!response.ok) {
+                throw new Error('Erro ao buscar avaliações');
+            }
+            return response.json();
+        })
+        .then(({ data }) => {
+            // Atualizar a variável de avaliações
+            avaliacoes = data;
+            // Atualizar a exibição na tabela
+            mostrarAvaliacoesNaTabela(avaliacoes);
+        })
+        .catch(error => {
+            console.error('Erro ao carregar avaliações:', error);
+            alert('Erro ao carregar avaliações. Por favor, tente novamente.');
+        });
 }
 
 // Função para mostrar as avaliações na tabela
@@ -1126,7 +1131,7 @@ function excluirAvaliacao(id) {
                 'Authorization': `Bearer ${getAuthToken()}`
             }
         })
-            .then(async(response) => {
+            .then(async (response) => {
                 if (!response.ok) {
                     const error = await response.json();
                     alert(error.message);
@@ -1226,7 +1231,7 @@ formEvento.addEventListener('submit', function (e) {
 
     if (eventoIdEmEdicao === null) {
         // Adicionar novo evento
-            fetch('https://salf-salf-api2.gkgtsp.easypanel.host/api/assessment-events', {
+        fetch('https://salf-salf-api2.gkgtsp.easypanel.host/api/assessment-events', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -1315,34 +1320,34 @@ async function carregarAvaliacoesParaSelect() {
 
     return fetch('https://salf-salf-api2.gkgtsp.easypanel.host/api/assessments', {
         headers: {
-        'Authorization': `Bearer ${getAuthToken()}`
-    }
+            'Authorization': `Bearer ${getAuthToken()}`
+        }
     })
         .then(response => {
-        if (!response.ok) {
-            throw new Error('Erro ao buscar avaliações');
-        }
-        return response.json();
-    })
-    .then(data => {
-        // Limpar opção de carregamento
-        avaliacaoSelect.innerHTML = '<option value="">Selecione uma avaliação</option>';
+            if (!response.ok) {
+                throw new Error('Erro ao buscar avaliações');
+            }
+            return response.json();
+        })
+        .then(data => {
+            // Limpar opção de carregamento
+            avaliacaoSelect.innerHTML = '<option value="">Selecione uma avaliação</option>';
 
-        // Adicionar as avaliações ao select
-        data.forEach(avaliacao => {
-            const option = document.createElement('option');
-            option.value = avaliacao.id;
-            option.textContent = avaliacao.name || avaliacao.nome;
-            avaliacaoSelect.appendChild(option);
+            // Adicionar as avaliações ao select
+            data.forEach(avaliacao => {
+                const option = document.createElement('option');
+                option.value = avaliacao.id;
+                option.textContent = avaliacao.name || avaliacao.nome;
+                avaliacaoSelect.appendChild(option);
+            });
+
+            return data; // Retornar os dados para encadeamento de promises
+        })
+        .catch(error => {
+            console.error('Erro ao carregar avaliações para o select:', error);
+            avaliacaoSelect.innerHTML = '<option value="">Erro ao carregar avaliações</option>';
+            throw error; // Propagar o erro para que o .catch de quem chamou trate
         });
-
-        return data; // Retornar os dados para encadeamento de promises
-    })
-    .catch(error => {
-        console.error('Erro ao carregar avaliações para o select:', error);
-        avaliacaoSelect.innerHTML = '<option value="">Erro ao carregar avaliações</option>';
-        throw error; // Propagar o erro para que o .catch de quem chamou trate
-    });
 }
 
 // Função para editar um evento
