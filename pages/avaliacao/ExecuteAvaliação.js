@@ -224,7 +224,6 @@ const stages = {
         stage: document.getElementById("etapa-result"),
         nextStage: document.getElementById("selecao-avaliacao"),
         nextEvent: () => {
-
             stages["etapa-result"].stage.classList.toggle("hidden")
             stages["etapa-result"].nextStage.classList.toggle("hidden")
         }
@@ -496,7 +495,7 @@ const timer = document.getElementById("timer-palavras")
 const timerText = document.getElementById("timer-texto")
 const timerPhrases = document.getElementById("timer-frases")
 const timerPseudowords = document.getElementById("timer-pseudopalavras")
-let timedafault = "00:20"
+let timedafault = "01:00"
 const btn_stage = () => {
     switch (stageBody.stage) {
         case "WORDS":

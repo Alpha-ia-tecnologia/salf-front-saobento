@@ -137,6 +137,7 @@ function mergeComplexObjects(obj1, obj2) {
     };
 }
 const requestUpdate= async (url, isCreate, obj) => {
+    console.log(obj);
     await fetch(url, {
         method: isCreate ? 'POST' : 'PUT',
         headers: {
@@ -178,24 +179,23 @@ btnSalvarAvaliacao.addEventListener('click', async () => {
         return;
     }
 
-    // const request = {
-    //     name: nomeAvaliacao,
-    //     text: texto,
-    //     words: palavrasAdicionadas,
-    //     pseudowords: pseudopalavrasAdicionadas,
-    //     phrases: frasesAdicionadas,
-    //     questions: questoesAdicionadas,
-    //     gradeRange: document.getElementById('faixa-serie').value,
-    //     totalWords: palavrasAdicionadas.length,
-    //     totalPseudowords: pseudopalavrasAdicionadas.length,
-    // }
+    const request = {
+        name: nomeAvaliacao,
+        text: texto,
+        words: palavrasAdicionadas,
+        pseudowords: pseudopalavrasAdicionadas,
+        phrases: frasesAdicionadas,
+        questions: questoesAdicionadas,
+        gradeRange: document.getElementById('faixa-serie').value,
+        totalWords: palavrasAdicionadas.length,
+        totalPseudowords: pseudopalavrasAdicionadas.length,
+    }
 
     // Configurar URL baseada em isCreate
     const baseUrl = 'https://salf-salf-api2.gkgtsp.easypanel.host/api/assessments';
     const url = localStorage.getItem("isCreate") === "true" ? baseUrl : `${baseUrl}/${JSON.parse(localStorage.getItem('id'))}`;
     const mergedObject = mergeComplexObjects(window.avaliacaoAtual, request);
     let updatedata = localStorage.getItem("isCreate") === "true" ? JSON.stringify(request) : JSON.stringify(mergedObject)
-    console.log(JSON.parse(updatedata));
 
     try {
         requestUpdate(url, isCreate, updatedata);
