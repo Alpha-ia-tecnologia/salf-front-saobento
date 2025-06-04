@@ -9,7 +9,7 @@ novoAvaliacao.addEventListener("click",() => {
     location.reload()
 })
 voltar.addEventListener('click',() => {
-    window.location.href = location.origin + 'pages/dashboard/dashboard.html'
+    window.location.href = location.origin + '/pages/dashboard/index.html'
 })
 
 modalResult.addEventListener('click',async () => {
