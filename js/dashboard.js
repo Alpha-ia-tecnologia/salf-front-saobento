@@ -149,7 +149,7 @@ async function initialize() {
 }
 initialize();
 function PopularCards({ totalStudents, studentsAssessed, assessmentCompletion, averagePpm, participationRate, comprehensionScore }) {
-    const values = [totalStudents, studentsAssessed, assessmentCompletion, averagePpm, participationRate, comprehensionScore];
+    const values = [totalStudents, studentsAssessed,participationRate , averagePpm, assessmentCompletion, comprehensionScore];
     cardValue.forEach((card, index) => {
         if (index === 2 || index === 3 || index === 4) {
             card.innerHTML = values[index] + "%";
@@ -205,7 +205,6 @@ function PopularGraphSeries(obj) {
         return {
             label: item.grade,
             data: item.distribution.map(({percentage}) => percentage),
-            borderColor: '#' + Math.floor(Math.random()*16777215).toString(16),
             backgroundColor: '#' + Math.floor(Math.random()*16777215).toString(16),
             yAxisID: 'y',
           }
