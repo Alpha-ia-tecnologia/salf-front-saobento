@@ -205,7 +205,7 @@ function PopularGraphSeries(obj) {
         return {
             label: item.grade,
             data: item.distribution.map(({percentage}) => percentage),
-            backgroundColor: '#' + Math.floor(Math.random()*16777215).toString(16),
+            color: '#' + Math.floor(Math.random()*16777215).toString(16),
             yAxisID: 'y',
           }
     } ) || [0];
