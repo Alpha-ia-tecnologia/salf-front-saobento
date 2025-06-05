@@ -237,8 +237,8 @@ function PopularGraphSeries(obj) {
 }
 let year = null;
 function PopularGraphYear({ previousYear, currentYear }) {
-    const labels = [previousYear.year, currentYear.year];
-    const data = [previousYear.total, currentYear.total];
+    const labels = [ currentYear.year , previousYear.year];
+    const data = [currentYear.total,previousYear.total];
     if (data.length === 0) {
         return;
     }
