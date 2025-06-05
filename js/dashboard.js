@@ -237,8 +237,8 @@ function PopularGraphSeries(obj) {
 }
 let year = null;
 function PopularGraphYear({ previousYear, currentYear }) {
-    const labels = [ currentYear.year , previousYear.year];
-    const data = [currentYear.total,previousYear.total];
+    const labels = [previousYear.year ,currentYear.year ];
+    const data = [ previousYear.total , currentYear.total];
     if (data.length === 0) {
         return;
     }
@@ -247,7 +247,7 @@ function PopularGraphYear({ previousYear, currentYear }) {
     }
     year = new Chart(canvaGraphBar, {
         type: 'bar',
-        data: { labels, datasets: [{ label: 'Total', data : [10] }] },
+        data: { labels, datasets: [{ label: 'Total', data : data }] },
         options: {
             responsive: true,
             maintainAspectRatio: false,
