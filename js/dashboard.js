@@ -45,8 +45,9 @@ aplicarFiltros.addEventListener("click", async () => {
         headers: headers
     });
     const response2 = await data2.json();
+    console.log(response2);
     if (response2.gradePerformance.length > 0) {
-        PopularGraphSeries(response2.gradePerformance[0]);
+        PopularGraphSeries(response2.gradePerformance);
     }
     const data3 = await fetch(path_base + `/dashboard/yearly-progression?schoolId=${schoolId || ''}&classGroupId=${groupId || ''}&gradeLevel=${schoolYearId || ''}`, {
         headers: headers
@@ -133,7 +134,7 @@ async function initialize() {
         headers: headers
     });
     const response2 = await data2.json();
-    // PopularGraphSeries(response2.gradePerformance[0]);
+    PopularGraphSeries(response2.gradePerformance);
     const data3 = await fetch(path_base + '/dashboard/yearly-progression', {
         headers: headers
     });
@@ -196,30 +197,42 @@ function PopularGraphPizza({ readingLevelDistribution }) {
     });
 }
 let series = null;
-function PopularGraphSeries({ distribution, grade }) {
-    if (distribution === undefined && distribution.length === 0 && grade === null) {
-        distribution = [];
-    }
-    const labels = distribution.map(item => item.total) || ["não informado"];
-    const data = distribution.map(item => item.percentage) || [0];
+function PopularGraphSeries(obj) {
+    console.log(obj);
+
+    const labelPerformDefault = obj.map(item => item.grade);
+    const data = obj.map(item => {
+        return {
+            label: item.grade,
+            data: item.distribution.map(({percentage}) => percentage),
+            borderColor: '#' + Math.floor(Math.random()*16777215).toString(16),
+            backgroundColor: '#' + Math.floor(Math.random()*16777215).toString(16),
+            yAxisID: 'y',
+          }
+    } ) || [0];
+    console.log(data);
+
+
+    
 
     if (series) {
         series.destroy();
     }
     series = new Chart(canvarGraphSeries, {
-        type: 'bar',
+        type: 'line',
         data: {
-            labels,
-            datasets: [{
-                label: grade,
-                data,
-                backgroundColor: 'rgba(255, 99, 133, 0.93)',
-                borderColor: 'rgba(255, 99, 132, 1)',
-            }]
+            labels : labelPerformDefault,
+            datasets : data,
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
+            scales: {
+                y: {
+                    id: 'y',
+                    type: 'linear',
+                }
+            }
         }
     });
 }
