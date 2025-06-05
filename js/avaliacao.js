@@ -178,7 +178,7 @@ const handleUpdateAssessment = async (id, request) => {
         location.reload();
     } catch (error) {
         console.error('Erro:', error);
-        alert('Erro ao atualizar avaliação.');
+        throw error; // Propagar o erro para ser tratado pelo chamador
     }
 };
 
@@ -1092,6 +1092,7 @@ function editarAvaliacao(id) {
         document.getElementById('lista-palavras-edit').innerHTML = '';
         document.getElementById('lista-pseudopalavras-edit').innerHTML = '';
         document.getElementById('lista-frases-edit').innerHTML = '';
+        document.getElementById('container-questoes-edit').innerHTML = '';
         
         // Carregar palavras
         if (avaliacao.words && Array.isArray(avaliacao.words)) {
@@ -1136,6 +1137,92 @@ function editarAvaliacao(id) {
                     </button>
                 `;
                 document.getElementById('lista-frases-edit').appendChild(div);
+            });
+        }
+
+        // Carregar questões
+        const containerQuestoesEdit = document.getElementById('container-questoes-edit');
+        const semQuestoesEdit = document.getElementById('sem-questoes-edit');
+
+        if (!avaliacao.questions || avaliacao.questions.length === 0) {
+            semQuestoesEdit.classList.remove('hidden');
+        } else {
+            semQuestoesEdit.classList.add('hidden');
+            avaliacao.questions.forEach(questao => {
+                const questaoDiv = document.createElement('div');
+                questaoDiv.className = 'questao border rounded-md p-4 bg-gray-50 relative';
+                questaoDiv.innerHTML = `
+                    <button type="button" class="btn-remover-questao absolute top-2 right-2 text-red-500 hover:text-red-700">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                    
+                    <div class="mb-3">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Enunciado da Questão</label>
+                        <textarea class="enunciado-questao w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                            rows="2" placeholder="Digite o enunciado da questão">${questao.text}</textarea>
+                    </div>
+                    
+                    <div class="space-y-2 mb-3">
+                        <label class="block text-sm font-medium text-gray-700">Alternativas</label>
+                        ${questao.options.map((opcao, index) => `
+                            <div class="opcao-container flex items-center">
+                                <input type="text" class="texto-opcao flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                                    value="${opcao}" placeholder="Alternativa ${String.fromCharCode(65 + index)}">
+                                <button type="button" class="btn-remover-opcao ml-2 text-red-500 hover:text-red-700">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        `).join('')}
+                    </div>
+                    
+                    <button type="button" class="btn-adicionar-opcao text-sm text-blue-600 hover:text-blue-800">
+                        <i class="fas fa-plus mr-1"></i> Adicionar alternativa
+                    </button>
+                `;
+
+                // Adicionar event listeners para os botões
+                questaoDiv.querySelector('.btn-remover-questao').addEventListener('click', function() {
+                    questaoDiv.remove();
+                    if (containerQuestoesEdit.querySelectorAll('.questao').length === 0) {
+                        semQuestoesEdit.classList.remove('hidden');
+                    }
+                });
+
+                questaoDiv.querySelectorAll('.btn-remover-opcao').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const opcoesContainer = this.closest('.space-y-2');
+                        if (opcoesContainer.querySelectorAll('.opcao-container').length > 2) {
+                            this.closest('.opcao-container').remove();
+                        } else {
+                            alert('É necessário ter pelo menos 2 alternativas.');
+                        }
+                    });
+                });
+
+                questaoDiv.querySelector('.btn-adicionar-opcao').addEventListener('click', function() {
+                    const opcoesContainer = questaoDiv.querySelector('.space-y-2');
+                    const novaOpcao = document.createElement('div');
+                    novaOpcao.className = 'opcao-container flex items-center mt-2';
+                    novaOpcao.innerHTML = `
+                        <input type="text" class="texto-opcao flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                            placeholder="Nova alternativa">
+                        <button type="button" class="btn-remover-opcao ml-2 text-red-500 hover:text-red-700">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    `;
+
+                    novaOpcao.querySelector('.btn-remover-opcao').addEventListener('click', function() {
+                        if (opcoesContainer.querySelectorAll('.opcao-container').length > 2) {
+                            novaOpcao.remove();
+                        } else {
+                            alert('É necessário ter pelo menos 2 alternativas.');
+                        }
+                    });
+
+                    opcoesContainer.appendChild(novaOpcao);
+                });
+
+                containerQuestoesEdit.appendChild(questaoDiv);
             });
         }
 
@@ -1847,8 +1934,9 @@ document.getElementById('adicionar-questao-edit').addEventListener('click', func
     });
     
     questaoDiv.querySelector('.btn-adicionar-opcao').addEventListener('click', function() {
+        const opcoesContainer = questaoDiv.querySelector('.space-y-2');
         const novaOpcao = document.createElement('div');
-        novaOpcao.className = 'opcao-container flex items-center';
+        novaOpcao.className = 'opcao-container flex items-center mt-2';
         novaOpcao.innerHTML = `
             <input type="text" class="texto-opcao flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" 
                 placeholder="Nova alternativa">
@@ -1857,8 +1945,6 @@ document.getElementById('adicionar-questao-edit').addEventListener('click', func
             </button>
         `;
         
-        opcoesContainer.appendChild(novaOpcao);
-        
         novaOpcao.querySelector('.btn-remover-opcao').addEventListener('click', function() {
             if (opcoesContainer.querySelectorAll('.opcao-container').length > 2) {
                 novaOpcao.remove();
@@ -1866,6 +1952,8 @@ document.getElementById('adicionar-questao-edit').addEventListener('click', func
                 alert('É necessário ter pelo menos 2 alternativas.');
             }
         });
+        
+        opcoesContainer.appendChild(novaOpcao);
     });
 });
 
@@ -1878,13 +1966,13 @@ btnSalvarEditarAvaliacao.addEventListener('click', async () => {
         const enunciado = questaoEl.querySelector('.enunciado-questao').value;
         const opcoes = Array.from(questaoEl.querySelectorAll('.opcao-container')).map(opt =>
             opt.querySelector('.texto-opcao').value
-        );
+        ).filter(texto => texto.trim() !== ''); // Filtrar opções vazias
 
         return {
             text: enunciado,
             options: opcoes,
         };
-    });
+    }).filter(questao => questao.text.trim() !== '' && questao.options.length >= 2); // Filtrar questões inválidas
 
     if (nomeAvaliacao.trim() === '') {
         alert('Por favor, informe o nome da avaliação.');
