@@ -46,7 +46,6 @@ async function abrirModalEditarAvaliacao(id) {
     window.questoesAdicionadas = response.questions;
     window.nomeAvaliacao = response.name;
     window.textoAvaliacao = response.text;
-    console.log(window.questoesAdicionadas);
     
     // Armazenar dados completos da avaliação
     window.avaliacaoAtual = response;
