@@ -317,7 +317,7 @@ const filterRegion = async () => {
     })
 }
 const filterSchool = async () => {
-    const request = await fetch(path_base + `/schools?groupId=${grupos.value}&&regionId=${filtrosRegioes.value}`, {
+    const request = await fetch(path_base + `/schools?groupId=${grupos.value}&&regionId=${filtrosRegioes.value}&limit=1000`, {
         headers: headers
     });
     const {data} = await request.json();
@@ -341,7 +341,7 @@ filtrosAnoEscolar.addEventListener("change", () => {
     filterEvent();
 })
 const filterEvent = async () => {
-    const response = await fetch(path_base + `/assessment-events`, {
+    const response = await fetch(path_base + `/assessment-events?limit=1000`, {
         headers: headers
     });
     const data = await response.json();

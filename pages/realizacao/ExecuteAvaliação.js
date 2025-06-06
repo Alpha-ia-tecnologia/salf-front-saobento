@@ -63,6 +63,7 @@ const setModel = (perfil) => {
     perfil.desempenhoPseudopalavras = calcPercentual(calcAbstractPerfil.PseudoPalavras, calcAbstractPerfil.PSEUDOWORDS, "pseudopalavras").toFixed(2)
     perfil.desempenhoFrases = calcPercentual(calcAbstractPerfil.Frases, calcAbstractPerfil.PHRASES, "frases").toFixed(2)
     perfil.desempenhoTextos = calcPercentual(calcAbstractPerfil.Texto, calcAbstractPerfil.TEXT, "textos").toFixed(2)
+    perfil.desempenhoQuestoes = calcPercentual(calcAbstractPerfil.Questoes, calcAbstractPerfil.QUESTOES, "questoes").toFixed(2)
     localStorage.setItem("model", JSON.stringify(perfil))
 
 }

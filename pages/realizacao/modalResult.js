@@ -40,7 +40,7 @@ const getResult = async () => {
     applyResult(JSON.parse(data))
     cache.result = data
 }
-const applyResult = ({ perfil ,student , desempenhoPalavras, desempenhoPseudopalavras, desempenhoFrases,  desempenhoTextos}) => {
+const applyResult = ({ perfil ,student , desempenhoQuestoes   , desempenhoPalavras, desempenhoPseudopalavras, desempenhoFrases,  desempenhoTextos, desempenhoQuestoes}) => {
     const niveisLeitores = {
         NOT_EVALUATED: 'Não avaliado',
         NON_READER: 'Não leitor',
@@ -56,6 +56,7 @@ const applyResult = ({ perfil ,student , desempenhoPalavras, desempenhoPseudopal
     const studentProgressPseudopalavras = document.getElementById('nivel-progresso-pseudopalavras')
     const studentProgressFrases = document.getElementById('nivel-progresso-frases')
     const studentProgressTexto = document.getElementById('nivel-progresso-texto')
+    const studentProgressQuestoes = document.getElementById('nivel-progresso-questoes')
     studentName.textContent = student
     studentLevel.textContent = niveisLeitores[perfil]
     studentProgressPalavras.style.width = `${desempenhoPalavras || 0}%`
@@ -66,6 +67,8 @@ const applyResult = ({ perfil ,student , desempenhoPalavras, desempenhoPseudopal
     studentProgressFrases.textContent = `${desempenhoFrases || 0}%`
     studentProgressTexto.style.width = `${desempenhoTextos || 0}%`
     studentProgressTexto.textContent = `${desempenhoTextos || 0}%`
+    studentProgressQuestoes.style.width = `${desempenhoQuestoes || 0}%`
+    studentProgressQuestoes.textContent = `${desempenhoQuestoes || 0}%`
 }   
 
 

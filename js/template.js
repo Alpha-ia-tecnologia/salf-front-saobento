@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const token = localStorage.getItem('token');
     if (!token) {
         // Redirecionar para a página de login se não houver token
-        window.location.href = 'login.html';
+        window.location.href =this.location.origin +'/login.html';
         return;
     }
 
@@ -104,40 +104,49 @@ function loadTemplate() {
     
     // Menus específicos por papel - garantir que esses menus apareçam durante o desenvolvimento
     //if (['ADMIN', 'COORDINATOR', 'MANAGER'].includes(userRole)) {
-        menuItems += `            <a href="${basePath}pages/escola/listar.html" class="flex items-center px-4 py-3 hover:bg-blue-700 transition ${currentPage.includes('/escola/') ? 'bg-blue-700' : ''}">
-                <i class="fas fa-school w-6"></i>
-                <span>Escolas</span>
-            </a>
-            <a href="${basePath}pages/turma/listar.html" class="flex items-center px-4 py-3 hover:bg-blue-700 transition ${currentPage.includes('/turma/') ? 'bg-blue-700' : ''}">
-                <i class="fas fa-users w-6"></i>
-                <span>Turmas</span>
-            </a>
-            <a href="${basePath}pages/aluno/listar.html" class="flex items-center px-4 py-3 hover:bg-blue-700 transition ${currentPage.includes('/aluno/') ? 'bg-blue-700' : ''}">
-                <i class="fas fa-user-graduate w-6"></i>
-                <span>Alunos</span>
-            </a>
-            <a href="${basePath}pages/avaliacao/listar.html" class="flex items-center px-4 py-3 hover:bg-blue-700 transition ${currentPage.includes('/avaliacao/listar') ? 'bg-blue-700' : ''}">
-                <i class="fas fa-clipboard-check w-6"></i>
-                <span>Avaliações</span>
-            </a>
-        `;
-    //}
-    
-    //if (userRole === 'ADMIN') {
-        menuItems += `            <a href="${basePath}pages/usuario/listar.html" class="flex items-center px-4 py-3 hover:bg-blue-700 transition ${currentPage.includes('/usuario/') ? 'bg-blue-700' : ''}">
-                <i class="fas fa-user-cog w-6"></i>
-                <span>Usuários</span>
-            </a>
-        `;
-    //}
-    
-    //if (['APPLICATOR', 'ADMIN', 'COORDINATOR'].includes(userRole)) {
-        menuItems += `            <a href="${basePath}pages/avaliacao/realizar.html" class="flex items-center px-4 py-3 hover:bg-blue-700 transition ${currentPage.includes('/avaliacao/realizar') ? 'bg-blue-700' : ''}">
-                <i class="fas fa-tasks w-6"></i>
-                <span>Realizar Avaliação</span>
-            </a>
-        `;
-    //}
+        const rolesPanel = {
+            'ADMIN': ["Escolas", "Turmas", "Alunos", "Avaliações", "Usuários"],
+            'COORDINATOR': ["Escolas", "Turmas", "Alunos", "Avaliações"],
+            'APPLICATOR': ["Realizar"],
+            'MANAGER': ["Dashboard"]
+        }
+        const redirectUrls = {
+            "ADMIN": {
+                "Escolas": "escola",
+                "Turmas": "turma",
+                "Alunos": "aluno",
+                "Avaliações": "avaliacao",
+                "Usuários": "usuario"
+            },
+            "COORDINATOR": {
+                "Escolas": "escola",
+                "Turmas": "turma",
+                "Alunos": "aluno",
+                "Avaliações": "avaliacao"
+            },
+            "APPLICATOR": {
+                "Realizar": "realizacao"
+            },
+        }
+        const icons = {
+            "Escolas": "fas fa-school",
+            "Turmas": "fas fa-users",
+            "Alunos": "fas fa-user-graduate",
+            "Avaliações": "fas fa-clipboard-check",
+            "Usuários": "fas fa-user",
+            "Realizar": "fas fa-clipboard-check"
+        }
+        rolesPanel[userRole].forEach(item => {
+            const redirectUrl = redirectUrls[userRole][item];
+            menuItems += `
+                <a href="${location.origin}/pages/${redirectUrl.toLowerCase()}/${redirectUrl === "realizacao" ? "realizar" : "listar"}.html" class="flex items-center px-4 py-3 hover:bg-blue-700 transition ${currentPage.includes('/${redirectUrl.toLowerCase()}/') ? 'bg-blue-700' : ''}">
+                    <i class="${icons[item]} w-6"></i>
+                    <span>${item === "Realizar" ? "Realizar Avaliação" : item}</span>
+                </a>
+            `;
+        });
+
+
     
     const sidebar = `
         <div id="sidebar" class="h-screen bg-blue-800 text-white w-64 space-y-1 py-4 fixed inset-y-0 left-0 transform lg:relative lg:translate-x-0 -translate-x-full transition duration-200 ease-in-out z-10">

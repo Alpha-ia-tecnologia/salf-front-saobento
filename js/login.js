@@ -139,7 +139,9 @@ document.addEventListener('DOMContentLoaded', function() {
         setTimeout(() => {
             if (window.location.pathname.includes('login.html')) {
                 console.log("Redirecionamento alternativo...");
-                window.location.replace('pages/dashboard/index.html');
+                // window.location.href = window.origin + '/pages/dashboard/index.html';
+                
+                redirectRole(user.role);
             }
         }, 1000);
     }
