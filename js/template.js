@@ -105,7 +105,7 @@ function loadTemplate() {
     // Menus específicos por papel - garantir que esses menus apareçam durante o desenvolvimento
     //if (['ADMIN', 'COORDINATOR', 'MANAGER'].includes(userRole)) {
         const rolesPanel = {
-            'ADMIN': ["Escolas", "Turmas", "Alunos", "Avaliações", "Usuários"],
+            'ADMIN': ["Escolas", "Turmas", "Alunos", "Avaliações", "Realizar","Usuários"],
             'COORDINATOR': ["Escolas", "Turmas", "Alunos", "Avaliações"],
             'APPLICATOR': ["Realizar"],
             'MANAGER': ["Dashboard"]
@@ -115,6 +115,7 @@ function loadTemplate() {
                 "Escolas": "escola",
                 "Turmas": "turma",
                 "Alunos": "aluno",
+                "Realizar": "realizacao",
                 "Avaliações": "avaliacao",
                 "Usuários": "usuario"
             },
