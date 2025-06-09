@@ -183,7 +183,11 @@ const stages = {
 
 
             completedStages.push("TEXT")
-            if(stageBody.itemsRead < calcAbstractPerfil.Texto){
+            if(stageBody.itemsRead === 0){
+                alert("Você não atendeu algum requisito minimo, classificaremos como leitor sem fluencia")
+                calcAbstractPerfil.perfil = niveisLeitor.nivel5
+                forcedEnd(stages["etapa-texto"], body(calcAbstractPerfil))
+            }  else if(stageBody.itemsRead < calcAbstractPerfil.Texto){
                 alert("Você não atendeu algum requisito minimo, tente novamente")
                 btn_stage().disabled = false
                 btn_stage().classList.remove("bg-gray-400", "hover:bg-gray-400")
