@@ -30,10 +30,10 @@ let calcAbstractPerfil = {
     TEXT: 0,
     QUESTOES: 0,
     desempenhoPalavras: 0,
-    desempenhoPseudopalavras: () => calcPercentual(calcAbstractPerfil.PseudoPalavras, calcAbstractPerfil.PSEUDOWORDS, "pseudopalavras"),
-    desempenhoFrases: () => calcPercentual(calcAbstractPerfil.Frases, calcAbstractPerfil.PHRASES, "frases"),
-    desempenhoTextos: () => calcPercentual(calcAbstractPerfil.Texto, calcAbstractPerfil.TEXT, "textos"),
-    desempenhoQuestoes: () => calcAbstractPerfil(calcAbstractPerfil.Questoes, calcAbstractPerfil.QUESTOES, "questoes"),
+    desempenhoPseudopalavras: 0,
+    desempenhoFrases:0,
+    desempenhoTextos: 0,
+    desempenhoQuestoes:0,
     perfil: niveisLeitor.nivel0
 
 }
@@ -59,11 +59,11 @@ const body = ({ Palavras, PseudoPalavras, Frases, Texto, WORDS, PSEUDOWORDS, PHR
     }
 }
 const setModel = (perfil) => {
-    perfil.desempenhoPalavras = calcPercentual(calcAbstractPerfil.Palavras, calcAbstractPerfil.WORDS, "palavras").toFixed(2)
-    perfil.desempenhoPseudopalavras = calcPercentual(calcAbstractPerfil.PseudoPalavras, calcAbstractPerfil.PSEUDOWORDS, "pseudopalavras").toFixed(2)
-    perfil.desempenhoFrases = calcPercentual(calcAbstractPerfil.Frases, calcAbstractPerfil.PHRASES, "frases").toFixed(2)
-    perfil.desempenhoTextos = calcPercentual(calcAbstractPerfil.Texto, calcAbstractPerfil.TEXT, "textos").toFixed(2)
-    perfil.desempenhoQuestoes = calcPercentual(calcAbstractPerfil.Questoes, calcAbstractPerfil.QUESTOES, "questoes").toFixed(2)
+    perfil.desempenhoPalavras = Number(calcPercentual(calcAbstractPerfil.Palavras, calcAbstractPerfil.WORDS, "palavras").toFixed(2)) || 0
+    perfil.desempenhoPseudopalavras = Number(calcPercentual(calcAbstractPerfil.PseudoPalavras, calcAbstractPerfil.PSEUDOWORDS, "pseudopalavras").toFixed(2)) || 0
+    perfil.desempenhoFrases = Number(calcPercentual(calcAbstractPerfil.Frases, calcAbstractPerfil.PHRASES, "frases").toFixed(2)) || 0
+    perfil.desempenhoTextos = Number(calcPercentual(calcAbstractPerfil.Texto, calcAbstractPerfil.TEXT, "textos").toFixed(2)) || 0
+    perfil.desempenhoQuestoes = Number(calcPercentual(calcAbstractPerfil.Questoes, calcAbstractPerfil.QUESTOES, "questoes").toFixed(2)) || 0    
     localStorage.setItem("model", JSON.stringify(perfil))
 
 }
@@ -299,11 +299,11 @@ const examGet = async () => {
     cacheStage.pseudowords = pseudowords
     cacheStage.phrases = phrases ? phrases.map(phrase => phrase.text) : []
 
-    calcAbstractPerfil.Palavras = cacheStage.words.length;
-    calcAbstractPerfil.PseudoPalavras = cacheStage.pseudowords.length;
-    calcAbstractPerfil.Texto = cacheStage.text.split(",").length;
-    calcAbstractPerfil.Frases = cacheStage.phrases.length;
-    calcAbstractPerfil.Questoes = cacheStage.questions.length;
+    calcAbstractPerfil.Palavras = cacheStage.words.length || 0;
+    calcAbstractPerfil.PseudoPalavras = cacheStage.pseudowords.length || 0;
+    calcAbstractPerfil.Texto = cacheStage.text.split(",").length || 0;
+    calcAbstractPerfil.Frases = cacheStage.phrases.length || 0;
+    calcAbstractPerfil.Questoes = cacheStage.questions.length || 0;
 
 
 
@@ -404,7 +404,7 @@ const renderStageText = () => {
 
 //perfil de leitor
 
-let calcPercentual = (maxima, usada, tipo) => maxima ? usada / maxima * 100 :  Error("Divisão por zero : não possue perfil" + tipo)
+let calcPercentual = (maxima, usada, tipo) => maxima ? usada / maxima * 100 :  0
 
 let baforeId = {
 
