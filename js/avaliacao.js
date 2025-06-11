@@ -2010,3 +2010,14 @@ btnSalvarEditarAvaliacao.addEventListener('click', async () => {
         alert(`Erro ao salvar avaliação: ${error.message}`);
     }
 });
+
+// Função para adicionar event listener de remoção aos elementos
+function adicionarEventListenerRemover(elemento) {
+    const btnRemover = elemento.querySelector('button');
+    if (btnRemover) {
+        btnRemover.addEventListener('click', function() {
+            elemento.remove();
+            atualizarContadoresEdit();
+        });
+    }
+}
