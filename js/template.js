@@ -106,7 +106,7 @@ function loadTemplate() {
     //if (['ADMIN', 'COORDINATOR', 'MANAGER'].includes(userRole)) {
         const rolesPanel = {
             'ADMIN': ["Escolas", "Turmas", "Alunos", "Avaliações", "Realizar","Usuários"],
-            'COORDINATOR': ["Escolas", "Turmas", "Alunos", "Avaliações"],
+            'COORDINATOR': ["Escolas", "Turmas", "Alunos", "Avaliações","RankingsA","RankingsE"],
             'APPLICATOR': ["Realizar"],
             'MANAGER': ["Dashboard"]
         }
@@ -123,7 +123,9 @@ function loadTemplate() {
                 "Escolas": "escola",
                 "Turmas": "turma",
                 "Alunos": "aluno",
-                "Avaliações": "avaliacao"
+                "Avaliações": "avaliacao",
+                "RankingsA": "rankingsA",
+                "RankingsE": "rankingsE"
             },
             "APPLICATOR": {
                 "Realizar": "realizacao"
