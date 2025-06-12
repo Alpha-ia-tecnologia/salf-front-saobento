@@ -105,8 +105,8 @@ function loadTemplate() {
     // Menus específicos por papel - garantir que esses menus apareçam durante o desenvolvimento
     //if (['ADMIN', 'COORDINATOR', 'MANAGER'].includes(userRole)) {
         const rolesPanel = {
-            'ADMIN': ["Escolas", "Turmas", "Alunos", "Avaliações", "Realizar","Usuários"],
-            'COORDINATOR': ["Escolas", "Turmas", "Alunos", "Avaliações","RankingsA","RankingsE"],
+            'ADMIN': ["Escolas", "Turmas", "Alunos", "Avaliações", "Realizar","Usuários","Ranking de Alunos","Ranking de Escolas"],
+            'COORDINATOR': ["Escolas", "Turmas", "Alunos", "Avaliações","Ranking de Alunos","Ranking de Escolas"],
             'APPLICATOR': ["Realizar"],
             'MANAGER': ["Dashboard"]
         }
@@ -117,15 +117,17 @@ function loadTemplate() {
                 "Alunos": "aluno",
                 "Realizar": "realizacao",
                 "Avaliações": "avaliacao",
-                "Usuários": "usuario"
+                "Usuários": "usuario",
+                "Ranking de Alunos": "rankingsA",
+                "Ranking de Escolas": "rankingsE"
             },
             "COORDINATOR": {
                 "Escolas": "escola",
                 "Turmas": "turma",
                 "Alunos": "aluno",
                 "Avaliações": "avaliacao",
-                "RankingsA": "rankingsA",
-                "RankingsE": "rankingsE"
+                "Ranking de Alunos": "rankingsA",
+                "Ranking de Escolas": "rankingsE"
             },
             "APPLICATOR": {
                 "Realizar": "realizacao"
@@ -137,7 +139,9 @@ function loadTemplate() {
             "Alunos": "fas fa-user-graduate",
             "Avaliações": "fas fa-clipboard-check",
             "Usuários": "fas fa-user",
-            "Realizar": "fas fa-clipboard-check"
+            "Realizar": "fas fa-clipboard-check",
+            "Ranking de Alunos": "fas fa-user-graduate",
+            "Ranking de Escolas": "fas fa-school"
         }
         rolesPanel[userRole].forEach(item => {
             const redirectUrl = redirectUrls[userRole][item];
