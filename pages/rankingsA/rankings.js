@@ -34,7 +34,15 @@ btnFiltrar.addEventListener('click', async (e) => {
         randerRanking(data);
     }
 });
-
+const niveisLeitores = {
+    NOT_EVALUATED: 'Não avaliado',
+    NON_READER: 'Não leitor',
+    SYLLABLE_READER: 'Leitor de sílabas',
+    WORD_READER: 'Leitor de palavras',
+    SENTENCE_READER: 'Leitor de frases',
+    TEXT_READER_WITHOUT_FLUENCY: 'Leitor de texto sem fluência',
+    TEXT_READER_WITH_FLUENCY: 'Leitor de texto com fluência'
+}
 const randerRanking = (data) => {
     const body = document.getElementById('tbody');
     body.innerHTML = '';
@@ -53,7 +61,7 @@ const randerRanking = (data) => {
             <td class="px-6 py-4 whitespace-nowrap">${item.school}</td>
             <td class="px-6 py-4 whitespace-nowrap">${item.region}</td>
             <td class="px-6 py-4 whitespace-nowrap">${item.group}</td>
-            <td class="px-6 py-4 whitespace-nowrap">${item.readingLevel}</td>
+            <td class="px-6 py-4 whitespace-nowrap">${niveisLeitores[item.readingLevel]}</td>
         `;
         body.appendChild(tr);
     });
