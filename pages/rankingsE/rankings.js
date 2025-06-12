@@ -22,28 +22,23 @@ document.addEventListener('DOMContentLoaded', async () => {
 // });
 
 const randerRankingsEscola = (data) => {
-    const labels = data.map(item => item.school)
-    const datas = data.map(item => item.count)
-    console.log(data)
-    const config = {
-        type: 'bar',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'Ranking das escolas',
-                data: datas,
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                borderColor: 'rgba(75, 192, 192, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            }
-        }
-    }
-    new Chart(chartSeries, config)
+    const body = document.getElementById('tbody');
+    body.innerHTML = '';
+    data.forEach(item => {
+        const tr = document.createElement('tr');
+        tr.classList.add('bg-white',
+            'divide-y',
+            'divide-gray-200',
+            'text-gray-900',
+            'text-sm',
+            'font-medium',
+            "text-center");
+        tr.innerHTML = `
+            <td class="px-6 py-4 whitespace-nowrap text-left">${item.school}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-left">${item.count}</td>
+ 
+        `;
+        body.appendChild(tr);
+    });
+
 }
