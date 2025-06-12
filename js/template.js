@@ -118,16 +118,16 @@ function loadTemplate() {
                 "Realizar": "realizacao",
                 "Avaliações": "avaliacao",
                 "Usuários": "usuario",
-                "Ranking de Alunos": "rankingsA",
-                "Ranking de Escolas": "rankingsE"
+                "Ranking de Alunos": "rankingsa",
+                "Ranking de Escolas": "rankingse"
             },
             "COORDINATOR": {
                 "Escolas": "escola",
                 "Turmas": "turma",
                 "Alunos": "aluno",
                 "Avaliações": "avaliacao",
-                "Ranking de Alunos": "rankingsA",
-                "Ranking de Escolas": "rankingsE"
+                "Ranking de Alunos": "rankingsa",
+                "Ranking de Escolas": "rankingse"
             },
             "APPLICATOR": {
                 "Realizar": "realizacao"
