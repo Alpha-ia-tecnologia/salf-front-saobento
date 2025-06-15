@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     });
     const data = await response.json();
-    randerRankingsEscola(data);
+    randerRankingsEscola(data.data);
 })
 // btnFiltrar.addEventListener('click', async (e) => {
 //     e.preventDefault();

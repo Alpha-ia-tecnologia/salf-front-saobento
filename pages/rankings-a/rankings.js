@@ -11,7 +11,7 @@ onload = async() => {
         }
     });
     const data = await response.json();
-    randerRanking(data);
+    randerRanking(data.data);
 }
 btnFiltrar.addEventListener('click', async (e) => {
     e.preventDefault();
@@ -31,7 +31,7 @@ btnFiltrar.addEventListener('click', async (e) => {
         });
 
         const data = await response.json() ;
-        randerRanking(data);
+        randerRanking(data.data);
     }
 });
 const niveisLeitores = {
@@ -56,7 +56,6 @@ const randerRanking = (data) => {
             'font-medium',
             "text-center");
         tr.innerHTML = `
-            <td class="px-6 py-4 whitespace-nowrap">${item.studentId}</td>
             <td class="px-6 py-4 whitespace-nowrap">${item.student}</td>
             <td class="px-6 py-4 whitespace-nowrap">${item.school}</td>
             <td class="px-6 py-4 whitespace-nowrap">${item.region}</td>
@@ -67,3 +66,4 @@ const randerRanking = (data) => {
     });
 
 }
+
