@@ -71,7 +71,7 @@ const randerChartProgressao = (object) => {
         data: {
             labels: labelsExternos,
             datasets: [{
-                label: 'Regiões com escolas com maior numêro de alunos com fluência',
+                label: 'Ranking das regiões com maior número de leitores fluentes',
                 data: datasetsInterno.map(item => item.data),
                 backgroundColor: 'rgba(75, 192, 192, 0.2)',
                 borderColor: 'rgba(75, 192, 192, 1)',
