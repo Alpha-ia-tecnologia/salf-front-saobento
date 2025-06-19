@@ -260,10 +260,10 @@ cancelarEvento.addEventListener('click', function () {
 
 const btnPagina = document.getElementById('btn-page');
 const btnPaginaAnterior = document.getElementById('btn-page-anterior');
-const btnPaginaProximo = document.getElementById('btn-page-proximo');  
+const btnPaginaProximo = document.getElementById('btn-page-proximo');
 const btnPaginaAvaliacao = document.getElementById('btn-page-avaliacao');
 const btnPaginaAnteriorAvaliacao = document.getElementById('btn-page-anterior-avaliacao');
-const btnPaginaProximoAvaliacao = document.getElementById('btn-page-proximo-avaliacao');    
+const btnPaginaProximoAvaliacao = document.getElementById('btn-page-proximo-avaliacao');
 
 btnPaginaAvaliacao.addEventListener('click', function () {
     btnPagina.textContent = paginaAtual - 1;
@@ -459,7 +459,7 @@ function configurarAdicionarQuestoes() {
 
         const enunciadoQuestao = novaQuestao.querySelector('.enunciado-questao');
         const textosOpcoes = novaQuestao.querySelectorAll('.texto-opcao');
-        
+
 
         if (questaoData) {
             enunciadoQuestao.value = questaoData.enunciado || '';
@@ -816,7 +816,7 @@ function adicionarPalavraAoDOM(palavra, isEdit = false) {
         if (isEdit) {
             palavrasAdicionadasEdit = palavrasAdicionadasEdit.filter(p => p !== palavraParaRemover);
         } else {
-        palavrasAdicionadas = palavrasAdicionadas.filter(p => p !== palavraParaRemover);
+            palavrasAdicionadas = palavrasAdicionadas.filter(p => p !== palavraParaRemover);
         }
         div.remove();
     });
@@ -840,7 +840,7 @@ function adicionarPseudopalavraAoDOM(pseudopalavra, isEdit = false) {
         if (isEdit) {
             pseudopalavrasAdicionadasEdit = pseudopalavrasAdicionadasEdit.filter(p => p !== pseudopalavraParaRemover);
         } else {
-        pseudopalavrasAdicionadas = pseudopalavrasAdicionadas.filter(p => p !== pseudopalavraParaRemover);
+            pseudopalavrasAdicionadas = pseudopalavrasAdicionadas.filter(p => p !== pseudopalavraParaRemover);
         }
         div.remove();
     });
@@ -864,7 +864,7 @@ function adicionarFraseAoDOM(frase, isEdit = false) {
         if (isEdit) {
             frasesAdicionadasEdit = frasesAdicionadasEdit.filter(f => f !== fraseParaRemover);
         } else {
-        frasesAdicionadas = frasesAdicionadas.filter(f => f !== fraseParaRemover);
+            frasesAdicionadas = frasesAdicionadas.filter(f => f !== fraseParaRemover);
         }
         div.remove();
     });
@@ -937,25 +937,25 @@ function preencherFormEvento(evento) {
 function carregarAvaliacoes() {
     fetch('https://salf-salf-api2.gkgtsp.easypanel.host/api/assessments', {
         headers: {
-        'Authorization': `Bearer ${getAuthToken()}`
-    }
+            'Authorization': `Bearer ${getAuthToken()}`
+        }
     })
         .then(response => {
-        if (!response.ok) {
-            throw new Error('Erro ao buscar avaliações');
-        }
-        return response.json();
-    })
+            if (!response.ok) {
+                throw new Error('Erro ao buscar avaliações');
+            }
+            return response.json();
+        })
         .then(({ data }) => {
-        // Atualizar a variável de avaliações
-        avaliacoes = data;
-        // Atualizar a exibição na tabela
-        mostrarAvaliacoesNaTabela(avaliacoes);
-    })
-    .catch(error => {
-        console.error('Erro ao carregar avaliações:', error);
-        alert('Erro ao carregar avaliações. Por favor, tente novamente.');
-    });
+            // Atualizar a variável de avaliações
+            avaliacoes = data;
+            // Atualizar a exibição na tabela
+            mostrarAvaliacoesNaTabela(avaliacoes);
+        })
+        .catch(error => {
+            console.error('Erro ao carregar avaliações:', error);
+            alert('Erro ao carregar avaliações. Por favor, tente novamente.');
+        });
 }
 
 // Função para mostrar as avaliações na tabela
@@ -1074,84 +1074,84 @@ function editarAvaliacao(id) {
             'Authorization': `Bearer ${getAuthToken()}`
         }
     })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Erro ao buscar avaliação');
-        }
-        return response.json();
-    })
-    .then(avaliacao => {
-        console.log('Dados recebidos:', avaliacao);
-        
-        // Preencher campos básicos
-        document.getElementById('nome-avaliacao-edit').value = avaliacao.name || '';
-        document.getElementById('faixa-serie-edit').value = avaliacao.gradeRange || '';
-        document.getElementById('texto-avaliacao-edit').value = avaliacao.text || '';
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Erro ao buscar avaliação');
+            }
+            return response.json();
+        })
+        .then(avaliacao => {
+            console.log('Dados recebidos:', avaliacao);
 
-        // Limpar listas existentes
-        document.getElementById('lista-palavras-edit').innerHTML = '';
-        document.getElementById('lista-pseudopalavras-edit').innerHTML = '';
-        document.getElementById('lista-frases-edit').innerHTML = '';
-        document.getElementById('container-questoes-edit').innerHTML = '';
-        
-        // Carregar palavras
-        if (avaliacao.words && Array.isArray(avaliacao.words)) {
-            avaliacao.words.forEach(palavra => {
-                const div = document.createElement('div');
-                div.className = 'bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm flex items-center';
-                div.innerHTML = `
+            // Preencher campos básicos
+            document.getElementById('nome-avaliacao-edit').value = avaliacao.name || '';
+            document.getElementById('faixa-serie-edit').value = avaliacao.gradeRange || '';
+            document.getElementById('texto-avaliacao-edit').value = avaliacao.text || '';
+
+            // Limpar listas existentes
+            document.getElementById('lista-palavras-edit').innerHTML = '';
+            document.getElementById('lista-pseudopalavras-edit').innerHTML = '';
+            document.getElementById('lista-frases-edit').innerHTML = '';
+            document.getElementById('container-questoes-edit').innerHTML = '';
+
+            // Carregar palavras
+            if (avaliacao.words && Array.isArray(avaliacao.words)) {
+                avaliacao.words.forEach(palavra => {
+                    const div = document.createElement('div');
+                    div.className = 'bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm flex items-center';
+                    div.innerHTML = `
                     ${palavra}
                     <button type="button" class="ml-2 text-blue-600 hover:text-blue-800">
                         <i class="fas fa-times-circle"></i>
                     </button>
                 `;
-                document.getElementById('lista-palavras-edit').appendChild(div);
-            });
-        }
+                    document.getElementById('lista-palavras-edit').appendChild(div);
+                });
+            }
 
-        // Carregar pseudopalavras
-        if (avaliacao.pseudowords && Array.isArray(avaliacao.pseudowords)) {
-            avaliacao.pseudowords.forEach(pseudopalavra => {
-                const div = document.createElement('div');
-                div.className = 'bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm flex items-center';
-                div.innerHTML = `
+            // Carregar pseudopalavras
+            if (avaliacao.pseudowords && Array.isArray(avaliacao.pseudowords)) {
+                avaliacao.pseudowords.forEach(pseudopalavra => {
+                    const div = document.createElement('div');
+                    div.className = 'bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm flex items-center';
+                    div.innerHTML = `
                     ${pseudopalavra}
                     <button type="button" class="ml-2 text-purple-600 hover:text-purple-800">
                         <i class="fas fa-times-circle"></i>
                     </button>
                 `;
-                document.getElementById('lista-pseudopalavras-edit').appendChild(div);
-            });
-        }
+                    document.getElementById('lista-pseudopalavras-edit').appendChild(div);
+                });
+            }
 
-        // Carregar frases
-        if (avaliacao.phrases && Array.isArray(avaliacao.phrases)) {
-            avaliacao.phrases.forEach(frase => {
-                const texto = typeof frase === 'string' ? frase : (frase.text || '');
-                const div = document.createElement('div');
-                div.className = 'bg-green-100 text-green-800 px-3 py-2 rounded-md text-sm flex items-center justify-between';
-                div.innerHTML = `
+            // Carregar frases
+            if (avaliacao.phrases && Array.isArray(avaliacao.phrases)) {
+                avaliacao.phrases.forEach(frase => {
+                    const texto = typeof frase === 'string' ? frase : (frase.text || '');
+                    const div = document.createElement('div');
+                    div.className = 'bg-green-100 text-green-800 px-3 py-2 rounded-md text-sm flex items-center justify-between';
+                    div.innerHTML = `
                     <span class="flex-1">${texto}</span>
                     <button type="button" class="ml-2 text-green-600 hover:text-green-800">
                         <i class="fas fa-times-circle"></i>
                     </button>
                 `;
-                document.getElementById('lista-frases-edit').appendChild(div);
-            });
-        }
+                    document.getElementById('lista-frases-edit').appendChild(div);
+                });
+            }
 
-        // Carregar questões
-        const containerQuestoesEdit = document.getElementById('container-questoes-edit');
-        const semQuestoesEdit = document.getElementById('sem-questoes-edit');
+            // Carregar questões
+            const containerQuestoesEdit = document.getElementById('container-questoes-edit');
+            const semQuestoesEdit = document.getElementById('sem-questoes-edit');
 
-        if (!avaliacao.questions || avaliacao.questions.length === 0) {
-            semQuestoesEdit.classList.remove('hidden');
-        } else {
-            semQuestoesEdit.classList.add('hidden');
-            avaliacao.questions.forEach(questao => {
-                const questaoDiv = document.createElement('div');
-                questaoDiv.className = 'questao border rounded-md p-4 bg-gray-50 relative';
-                questaoDiv.innerHTML = `
+            if (!avaliacao.questions || avaliacao.questions.length === 0) {
+                semQuestoesEdit.classList.remove('hidden');
+            } else {
+                semQuestoesEdit.classList.add('hidden');
+                avaliacao.questions.forEach(questao => {
+                    const questaoDiv = document.createElement('div');
+                    questaoDiv.className = 'questao border rounded-md p-4 bg-gray-50 relative';
+                    questaoDiv.innerHTML = `
                     <button type="button" class="btn-remover-questao absolute top-2 right-2 text-red-500 hover:text-red-700">
                         <i class="fas fa-trash"></i>
                     </button>
@@ -1180,30 +1180,30 @@ function editarAvaliacao(id) {
                     </button>
                 `;
 
-                // Adicionar event listeners para os botões
-                questaoDiv.querySelector('.btn-remover-questao').addEventListener('click', function() {
-                    questaoDiv.remove();
-                    if (containerQuestoesEdit.querySelectorAll('.questao').length === 0) {
-                        semQuestoesEdit.classList.remove('hidden');
-                    }
-                });
-
-                questaoDiv.querySelectorAll('.btn-remover-opcao').forEach(btn => {
-                    btn.addEventListener('click', function() {
-                        const opcoesContainer = this.closest('.space-y-2');
-                        if (opcoesContainer.querySelectorAll('.opcao-container').length > 2) {
-                            this.closest('.opcao-container').remove();
-                        } else {
-                            alert('É necessário ter pelo menos 2 alternativas.');
+                    // Adicionar event listeners para os botões
+                    questaoDiv.querySelector('.btn-remover-questao').addEventListener('click', function () {
+                        questaoDiv.remove();
+                        if (containerQuestoesEdit.querySelectorAll('.questao').length === 0) {
+                            semQuestoesEdit.classList.remove('hidden');
                         }
                     });
-                });
 
-                questaoDiv.querySelector('.btn-adicionar-opcao').addEventListener('click', function() {
-                    const opcoesContainer = questaoDiv.querySelector('.space-y-2');
-                    const novaOpcao = document.createElement('div');
-                    novaOpcao.className = 'opcao-container flex items-center mt-2';
-                    novaOpcao.innerHTML = `
+                    questaoDiv.querySelectorAll('.btn-remover-opcao').forEach(btn => {
+                        btn.addEventListener('click', function () {
+                            const opcoesContainer = this.closest('.space-y-2');
+                            if (opcoesContainer.querySelectorAll('.opcao-container').length > 2) {
+                                this.closest('.opcao-container').remove();
+                            } else {
+                                alert('É necessário ter pelo menos 2 alternativas.');
+                            }
+                        });
+                    });
+
+                    questaoDiv.querySelector('.btn-adicionar-opcao').addEventListener('click', function () {
+                        const opcoesContainer = questaoDiv.querySelector('.space-y-2');
+                        const novaOpcao = document.createElement('div');
+                        novaOpcao.className = 'opcao-container flex items-center mt-2';
+                        novaOpcao.innerHTML = `
                         <input type="text" class="texto-opcao flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" 
                             placeholder="Nova alternativa">
                         <button type="button" class="btn-remover-opcao ml-2 text-red-500 hover:text-red-700">
@@ -1211,41 +1211,41 @@ function editarAvaliacao(id) {
                         </button>
                     `;
 
-                    novaOpcao.querySelector('.btn-remover-opcao').addEventListener('click', function() {
-                        if (opcoesContainer.querySelectorAll('.opcao-container').length > 2) {
-                            novaOpcao.remove();
-                        } else {
-                            alert('É necessário ter pelo menos 2 alternativas.');
-                        }
+                        novaOpcao.querySelector('.btn-remover-opcao').addEventListener('click', function () {
+                            if (opcoesContainer.querySelectorAll('.opcao-container').length > 2) {
+                                novaOpcao.remove();
+                            } else {
+                                alert('É necessário ter pelo menos 2 alternativas.');
+                            }
+                        });
+
+                        opcoesContainer.appendChild(novaOpcao);
                     });
 
-                    opcoesContainer.appendChild(novaOpcao);
+                    containerQuestoesEdit.appendChild(questaoDiv);
                 });
+            }
 
-                containerQuestoesEdit.appendChild(questaoDiv);
-            });
-        }
+            // Configurar os botões de remover após carregar todos os elementos
+            configurarBotoesRemoverEdit();
 
-        // Configurar os botões de remover após carregar todos os elementos
-        configurarBotoesRemoverEdit();
+            // Atualizar contadores
+            atualizarContadoresEdit();
 
-        // Atualizar contadores
-        atualizarContadoresEdit();
-
-        // Mostrar o modal de edição
-        modalEditarAvaliacao.classList.remove('hidden');
-    })
-    .catch(error => {
-        console.error('Erro ao carregar avaliação:', error);
-        alert('Erro ao carregar dados da avaliação. Por favor, tente novamente.');
-    });
+            // Mostrar o modal de edição
+            modalEditarAvaliacao.classList.remove('hidden');
+        })
+        .catch(error => {
+            console.error('Erro ao carregar avaliação:', error);
+            alert('Erro ao carregar dados da avaliação. Por favor, tente novamente.');
+        });
 }
 
 // Modificar a função configurarBotoesRemoverEdit para atualizar contadores
 const configurarBotoesRemoverEdit = () => {
     // Configurar botões de remover palavras
     document.querySelectorAll('#lista-palavras-edit .bg-blue-100 button').forEach(btn => {
-        btn.addEventListener('click', function() {
+        btn.addEventListener('click', function () {
             this.closest('.bg-blue-100').remove();
             atualizarContadoresEdit();
         });
@@ -1253,7 +1253,7 @@ const configurarBotoesRemoverEdit = () => {
 
     // Configurar botões de remover pseudopalavras
     document.querySelectorAll('#lista-pseudopalavras-edit .bg-purple-100 button').forEach(btn => {
-        btn.addEventListener('click', function() {
+        btn.addEventListener('click', function () {
             this.closest('.bg-purple-100').remove();
             atualizarContadoresEdit();
         });
@@ -1261,7 +1261,7 @@ const configurarBotoesRemoverEdit = () => {
 
     // Configurar botões de remover frases
     document.querySelectorAll('#lista-frases-edit .bg-green-100 button').forEach(btn => {
-        btn.addEventListener('click', function() {
+        btn.addEventListener('click', function () {
             this.closest('.bg-green-100').remove();
             atualizarContadoresEdit();
         });
@@ -1272,7 +1272,7 @@ const configurarBotoesRemoverEdit = () => {
 const adicionarPalavraEdit = () => {
     const novaPalavraEdit = document.getElementById('nova-palavra-edit');
     const texto = novaPalavraEdit.value.trim();
-    
+
     if (texto === '') {
         alert('Por favor, digite uma palavra para adicionar.');
         return;
@@ -1282,10 +1282,10 @@ const adicionarPalavraEdit = () => {
     const listaPalavrasEdit = document.getElementById('lista-palavras-edit');
 
     palavras.forEach(palavra => {
-        const palavrasExistentes = Array.from(listaPalavrasEdit.children).map(el => 
+        const palavrasExistentes = Array.from(listaPalavrasEdit.children).map(el =>
             el.textContent.trim().replace(/[×✕]$/, '').trim()
         );
-        
+
         if (!palavrasExistentes.includes(palavra)) {
             const div = document.createElement('div');
             div.className = 'bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm flex items-center';
@@ -1308,7 +1308,7 @@ const adicionarPalavraEdit = () => {
 const adicionarPseudopalavraEdit = () => {
     const novaPseudopalavraEdit = document.getElementById('nova-pseudopalavra-edit');
     const texto = novaPseudopalavraEdit.value.trim();
-    
+
     if (texto === '') {
         alert('Por favor, digite uma pseudopalavra para adicionar.');
         return;
@@ -1318,10 +1318,10 @@ const adicionarPseudopalavraEdit = () => {
     const listaPseudopalavrasEdit = document.getElementById('lista-pseudopalavras-edit');
 
     pseudopalavras.forEach(pseudopalavra => {
-        const pseudopalavrasExistentes = Array.from(listaPseudopalavrasEdit.children).map(el => 
+        const pseudopalavrasExistentes = Array.from(listaPseudopalavrasEdit.children).map(el =>
             el.textContent.trim().replace(/[×✕]$/, '').trim()
         );
-        
+
         if (!pseudopalavrasExistentes.includes(pseudopalavra)) {
             const div = document.createElement('div');
             div.className = 'bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm flex items-center';
@@ -1344,7 +1344,7 @@ const adicionarPseudopalavraEdit = () => {
 const adicionarFraseEdit = () => {
     const novaFraseEdit = document.getElementById('nova-frase-edit');
     const texto = novaFraseEdit.value.trim();
-    
+
     if (texto === '') {
         alert('Por favor, digite uma frase para adicionar.');
         return;
@@ -1354,10 +1354,10 @@ const adicionarFraseEdit = () => {
     const listaFrasesEdit = document.getElementById('lista-frases-edit');
 
     frases.forEach(frase => {
-        const frasesExistentes = Array.from(listaFrasesEdit.children).map(el => 
+        const frasesExistentes = Array.from(listaFrasesEdit.children).map(el =>
             el.textContent.trim().replace(/[×✕]$/, '').trim()
         );
-        
+
         if (!frasesExistentes.includes(frase)) {
             const div = document.createElement('div');
             div.className = 'bg-green-100 text-green-800 px-3 py-2 rounded-md text-sm flex items-center justify-between';
@@ -1486,7 +1486,7 @@ formEvento.addEventListener('submit', function (e) {
 
     if (eventoIdEmEdicao === null) {
         // Adicionar novo evento
-            fetch('https://salf-salf-api2.gkgtsp.easypanel.host/api/assessment-events', {
+        fetch('https://salf-salf-api2.gkgtsp.easypanel.host/api/assessment-events', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -1575,34 +1575,34 @@ async function carregarAvaliacoesParaSelect() {
 
     return fetch('https://salf-salf-api2.gkgtsp.easypanel.host/api/assessments', {
         headers: {
-        'Authorization': `Bearer ${getAuthToken()}`
-    }
+            'Authorization': `Bearer ${getAuthToken()}`
+        }
     })
         .then(response => {
-        if (!response.ok) {
-            throw new Error('Erro ao buscar avaliações');
-        }
-        return response.json();
-    })
-    .then(data => {
-        // Limpar opção de carregamento
-        avaliacaoSelect.innerHTML = '<option value="">Selecione uma avaliação</option>';
+            if (!response.ok) {
+                throw new Error('Erro ao buscar avaliações');
+            }
+            return response.json();
+        })
+        .then(data => {
+            // Limpar opção de carregamento
+            avaliacaoSelect.innerHTML = '<option value="">Selecione uma avaliação</option>';
 
-        // Adicionar as avaliações ao select
-        data.forEach(avaliacao => {
-            const option = document.createElement('option');
-            option.value = avaliacao.id;
-            option.textContent = avaliacao.name || avaliacao.nome;
-            avaliacaoSelect.appendChild(option);
+            // Adicionar as avaliações ao select
+            data.forEach(avaliacao => {
+                const option = document.createElement('option');
+                option.value = avaliacao.id;
+                option.textContent = avaliacao.name || avaliacao.nome;
+                avaliacaoSelect.appendChild(option);
+            });
+
+            return data; // Retornar os dados para encadeamento de promises
+        })
+        .catch(error => {
+            console.error('Erro ao carregar avaliações para o select:', error);
+            avaliacaoSelect.innerHTML = '<option value="">Erro ao carregar avaliações</option>';
+            throw error; // Propagar o erro para que o .catch de quem chamou trate
         });
-
-        return data; // Retornar os dados para encadeamento de promises
-    })
-    .catch(error => {
-        console.error('Erro ao carregar avaliações para o select:', error);
-        avaliacaoSelect.innerHTML = '<option value="">Erro ao carregar avaliações</option>';
-        throw error; // Propagar o erro para que o .catch de quem chamou trate
-    });
 }
 
 // Função para editar um evento
@@ -1755,17 +1755,17 @@ cancelarEditarAvaliacao.addEventListener('click', () => {
 function adicionarQuestaoExistente(questao, isEdit = false) {
     const containerQuestoes = isEdit ? document.getElementById('container-questoes-edit') : document.getElementById('container-questoes');
     const template = isEdit ? document.getElementById('template-questao-edit') : document.getElementById('template-questao');
-    
+
     const novaQuestao = template.cloneNode(true);
     novaQuestao.classList.remove('questao-template', 'hidden');
     novaQuestao.classList.add('questao');
-    
+
     const enunciado = novaQuestao.querySelector('.enunciado-questao');
     enunciado.value = questao.text;
-    
+
     const opcoesContainer = novaQuestao.querySelector('.space-y-2');
     opcoesContainer.innerHTML = '';
-    
+
     questao.options.forEach((opcao, index) => {
         const divOpcao = document.createElement('div');
         divOpcao.className = 'opcao-container flex items-center';
@@ -1778,9 +1778,9 @@ function adicionarQuestaoExistente(questao, isEdit = false) {
         `;
         opcoesContainer.appendChild(divOpcao);
     });
-    
+
     containerQuestoes.appendChild(novaQuestao);
-    
+
     // Configurar eventos dos botões
     novaQuestao.querySelector('.btn-remover-questao').addEventListener('click', () => {
         novaQuestao.remove();
@@ -1790,9 +1790,9 @@ function adicionarQuestaoExistente(questao, isEdit = false) {
             semQuestoes.classList.remove('hidden');
         }
     });
-    
+
     novaQuestao.querySelectorAll('.btn-remover-opcao').forEach(btn => {
-        btn.addEventListener('click', function() {
+        btn.addEventListener('click', function () {
             const opcoesContainer = this.closest('.space-y-2');
             if (opcoesContainer.querySelectorAll('.opcao-container').length > 2) {
                 this.closest('.opcao-container').remove();
@@ -1801,7 +1801,7 @@ function adicionarQuestaoExistente(questao, isEdit = false) {
             }
         });
     });
-    
+
     novaQuestao.querySelector('.btn-adicionar-opcao').addEventListener('click', () => {
         const novaOpcao = document.createElement('div');
         novaOpcao.className = 'opcao-container flex items-center';
@@ -1812,10 +1812,10 @@ function adicionarQuestaoExistente(questao, isEdit = false) {
                 <i class="fas fa-times"></i>
             </button>
         `;
-        
+
         opcoesContainer.appendChild(novaOpcao);
-        
-        novaOpcao.querySelector('.btn-remover-opcao').addEventListener('click', function() {
+
+        novaOpcao.querySelector('.btn-remover-opcao').addEventListener('click', function () {
             if (opcoesContainer.querySelectorAll('.opcao-container').length > 2) {
                 novaOpcao.remove();
             } else {
@@ -1831,21 +1831,21 @@ document.getElementById('adicionar-pseudopalavra-edit').addEventListener('click'
 document.getElementById('adicionar-frase-edit').addEventListener('click', adicionarFraseEdit);
 
 // Adicionar event listeners para tecla Enter nos campos de input do modal de edição
-document.getElementById('nova-palavra-edit').addEventListener('keydown', function(e) {
+document.getElementById('nova-palavra-edit').addEventListener('keydown', function (e) {
     if (e.key === 'Enter') {
         e.preventDefault();
         adicionarPalavraEdit();
     }
 });
 
-document.getElementById('nova-pseudopalavra-edit').addEventListener('keydown', function(e) {
+document.getElementById('nova-pseudopalavra-edit').addEventListener('keydown', function (e) {
     if (e.key === 'Enter') {
         e.preventDefault();
         adicionarPseudopalavraEdit();
     }
 });
 
-document.getElementById('nova-frase-edit').addEventListener('keydown', function(e) {
+document.getElementById('nova-frase-edit').addEventListener('keydown', function (e) {
     if (e.key === 'Enter') {
         e.preventDefault();
         adicionarFraseEdit();
@@ -1853,11 +1853,11 @@ document.getElementById('nova-frase-edit').addEventListener('keydown', function(
 });
 
 // Adicionar event listener para contagem de palavras no texto de edição
-document.getElementById('texto-avaliacao-edit').addEventListener('input', function() {
+document.getElementById('texto-avaliacao-edit').addEventListener('input', function () {
     const texto = this.value.trim();
     const palavras = texto === '' ? 0 : texto.split(/\s+/).length;
     const contagemPalavrasEdit = document.getElementById('contagem-palavras-edit');
-    
+
     contagemPalavrasEdit.textContent = palavras;
 
     if (palavras < 150 || palavras > 400) {
@@ -1870,10 +1870,10 @@ document.getElementById('texto-avaliacao-edit').addEventListener('input', functi
 });
 
 // Função para adicionar nova questão no modal de edição
-document.getElementById('adicionar-questao-edit').addEventListener('click', function() {
+document.getElementById('adicionar-questao-edit').addEventListener('click', function () {
     const containerQuestoesEdit = document.getElementById('container-questoes-edit');
     const semQuestoesEdit = document.getElementById('sem-questoes-edit');
-    
+
     const questaoDiv = document.createElement('div');
     questaoDiv.className = 'questao border rounded-md p-4 bg-gray-50 relative';
     questaoDiv.innerHTML = `
@@ -1914,26 +1914,23 @@ document.getElementById('adicionar-questao-edit').addEventListener('click', func
     semQuestoesEdit.classList.add('hidden');
 
     // Adicionar eventos aos botões da nova questão
-    questaoDiv.querySelector('.btn-remover-questao').addEventListener('click', function() {
+    questaoDiv.querySelector('.btn-remover-questao').addEventListener('click', function () {
         questaoDiv.remove();
         const questoes = containerQuestoesEdit.querySelectorAll('.questao:not(.questao-template)');
         if (questoes.length === 0) {
             semQuestoesEdit.classList.remove('hidden');
         }
     });
-    
+
     questaoDiv.querySelectorAll('.btn-remover-opcao').forEach(btn => {
-        btn.addEventListener('click', function() {
+        btn.addEventListener('click', function () {
             const opcoesContainer = this.closest('.space-y-2');
-            if (opcoesContainer.querySelectorAll('.opcao-container').length > 2) {
-                this.closest('.opcao-container').remove();
-            } else {
-                alert('É necessário ter pelo menos 2 alternativas.');
-            }
+            this.closest('.opcao-container').remove();
+
         });
     });
-    
-    questaoDiv.querySelector('.btn-adicionar-opcao').addEventListener('click', function() {
+
+    questaoDiv.querySelector('.btn-adicionar-opcao').addEventListener('click', function () {
         const opcoesContainer = questaoDiv.querySelector('.space-y-2');
         const novaOpcao = document.createElement('div');
         novaOpcao.className = 'opcao-container flex items-center mt-2';
@@ -1944,15 +1941,15 @@ document.getElementById('adicionar-questao-edit').addEventListener('click', func
                 <i class="fas fa-times"></i>
             </button>
         `;
-        
-        novaOpcao.querySelector('.btn-remover-opcao').addEventListener('click', function() {
+
+        novaOpcao.querySelector('.btn-remover-opcao').addEventListener('click', function () {
             if (opcoesContainer.querySelectorAll('.opcao-container').length > 2) {
                 novaOpcao.remove();
             } else {
                 alert('É necessário ter pelo menos 2 alternativas.');
             }
         });
-        
+
         opcoesContainer.appendChild(novaOpcao);
     });
 });
@@ -1972,7 +1969,7 @@ btnSalvarEditarAvaliacao.addEventListener('click', async () => {
             text: enunciado,
             options: opcoes,
         };
-    }).filter(questao => questao.text.trim() !== '' && questao.options.length >= 2); // Filtrar questões inválidas
+    }).filter(questao => questao.text.trim() !== ''); // Filtrar questões inválidas
 
     if (nomeAvaliacao.trim() === '') {
         alert('Por favor, informe o nome da avaliação.');
@@ -1982,14 +1979,14 @@ btnSalvarEditarAvaliacao.addEventListener('click', async () => {
     const request = {
         name: nomeAvaliacao,
         text: texto,
-        words: Array.from(document.getElementById('lista-palavras-edit').children).map(el => 
+        words: Array.from(document.getElementById('lista-palavras-edit').children).map(el =>
             el.textContent.trim().replace(/[×✕]$/, '').trim()
         ),
-        pseudowords: Array.from(document.getElementById('lista-pseudopalavras-edit').children).map(el => 
+        pseudowords: Array.from(document.getElementById('lista-pseudopalavras-edit').children).map(el =>
             el.textContent.trim().replace(/[×✕]$/, '').trim()
         ),
-        phrases: Array.from(document.getElementById('lista-frases-edit').children).map(el => ({ 
-            text: el.querySelector('span').textContent.trim() 
+        phrases: Array.from(document.getElementById('lista-frases-edit').children).map(el => ({
+            text: el.querySelector('span').textContent.trim()
         })),
         questions: questoesAdicionadas,
         gradeRange: document.getElementById('faixa-serie-edit').value,
@@ -2015,7 +2012,7 @@ btnSalvarEditarAvaliacao.addEventListener('click', async () => {
 function adicionarEventListenerRemover(elemento) {
     const btnRemover = elemento.querySelector('button');
     if (btnRemover) {
-        btnRemover.addEventListener('click', function() {
+        btnRemover.addEventListener('click', function () {
             elemento.remove();
             atualizarContadoresEdit();
         });
