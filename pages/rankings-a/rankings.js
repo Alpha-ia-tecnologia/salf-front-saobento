@@ -19,7 +19,7 @@ btnFiltrar.addEventListener('click', async (e) => {
     const grupo = document.getElementById('filtro-grupo').value;
     const escola = document.getElementById('filtro-escola').value;
     const evento = document.getElementById('evento').value;
-    if (regiao && grupo && escola && evento) {
+    // if (regiao && grupo && escola && evento) {
         console.log(regiao, grupo, escola, evento);
         console.log(typeof regiao, typeof grupo, typeof escola, typeof evento);
         const response = await fetch(`https://salf-salf-api2.gkgtsp.easypanel.host/api/dashboard/student-ranking?region=${regiao}&group=${grupo}&school_id=${escola}&assessmentEventId=${evento}`, {
@@ -32,7 +32,7 @@ btnFiltrar.addEventListener('click', async (e) => {
 
         const data = await response.json() ;
         randerRanking(data.data);
-    }
+    // }
 });
 const niveisLeitores = {
     NOT_EVALUATED: 'Não avaliado',
