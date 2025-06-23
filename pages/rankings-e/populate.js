@@ -1,5 +1,4 @@
 const filterGrupo = document.getElementById('grupo');
-const filterEscola = document.getElementById('escola');
 const filterRegiao = document.getElementById('regiao');
 
 onload = async () => {
@@ -13,12 +12,6 @@ filterRegiao.addEventListener('change', (e) => {
     } 
 });
 
-filterGrupo.addEventListener('change', (e) => {
-    if(e.target.value) {
-        filterEscola.disabled = false;
-        loadEscolas(e.target.value);
-    }
-});
 
 const loadGrupos = async (id) => {    
     const response = await fetch(`https://salf-salf-api2.gkgtsp.easypanel.host/api/groups?region_id=${id}&limit=1000`);
