@@ -86,6 +86,11 @@
                                 </select>
                             </div>
                         </div>
+                        <div class="flex justify-end">
+                            <button data-url="https://salf-salf-api2.gkgtsp.easypanel.host/api/dashboard" data-typeExternDash="dashboard" id="btn-exportar-1" class="mt-4 bg-green-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition">
+                                Exportar
+                            </button>
+                        </div>
                         <div class="mt-4">
                             <button id="aplicar-filtros"
                                 class="bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition">
@@ -210,7 +215,9 @@
     </div>
 
     <script src="../../js/template.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="../../js/dashboard.js"></script>
+    <script src="../../js/ExportFile.js"></script>
 </body>
 
 </html>
