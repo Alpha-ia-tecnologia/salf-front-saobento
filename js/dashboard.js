@@ -77,37 +77,41 @@ filtrosRegioes.addEventListener("change", () => {
 grupos.addEventListener("change", () => {
     regionId = filtrosRegioes.value;
     groupId = grupos.value;
-    if (regionId != "" && groupId != "") {
-        escola.disabled = false;
-        escola.innerHTML = '<option value="">Selecione a escola</option>';
-        cache.schools.forEach(item => {
-            const option = document.createElement('option');
-            option.value = item.id;
-            option.textContent = item.name;
-            escola.appendChild(option);
-        });
-    }
+    escola.disabled = false;
+    escola.innerHTML = '<option value="">Selecione a escola</option>';
+    const schools = cache.schools.filter(item => item.groupId == groupId);
+    schools.forEach(item => {
+        const option = document.createElement('option');
+        option.value = item.id;
+        option.textContent = item.name;
+        escola.appendChild(option);
+    });
+
 })
 escola.addEventListener("change", () => {
     groupId = grupos.value;
     regionId = filtrosRegioes.value;
-    if (groupId != "" && regionId != "") {
-        filtrosAnoEscolar.disabled = false;
-    }
+    filtrosAnoEscolar.disabled = false;
+    filtrosAnoEscolar.innerHTML = '<option value="">Selecione o ano escolar</option>';
+    const schoolYears = cache.schoolYears.filter(item => item.schoolId == escola.value);
+    schoolYears.forEach(item => {
+        const option = document.createElement('option');
+        option.value = item.id;
+        option.textContent = item.name;
+        filtrosAnoEscolar.appendChild(option);
+    });
 })
 filtrosAnoEscolar.addEventListener("change", () => {
     schoolId = escola.value;
     schoolYearId = filtrosAnoEscolar.value;
-    if (schoolId != "" && groupId != "" && regionId != "" && schoolYearId != "") {
-        filtrosEvento.disabled = false;
-    }
+    filtrosEvento.disabled = false;
+
 })
 
 filtrosEvento.addEventListener("change", () => {
     eventId = filtrosEvento.value;
-    if (eventId != "" && schoolId != "" && groupId != "" && regionId != "" && schoolYearId != "") {
-        filtrosEvento.disabled = false;
-    }
+    filtrosEvento.disabled = false;
+
 })
 
 const cache = {
@@ -149,7 +153,7 @@ async function initialize() {
 }
 initialize();
 function PopularCards({ totalStudents, studentsAssessed, assessmentCompletion, averagePpm, participationRate, comprehensionScore }) {
-    const values = [totalStudents, studentsAssessed,participationRate , averagePpm, assessmentCompletion, comprehensionScore];
+    const values = [totalStudents, studentsAssessed, participationRate, averagePpm, assessmentCompletion, comprehensionScore];
     cardValue.forEach((card, index) => {
         if (index === 2 || index === 3 || index === 4) {
             card.innerHTML = values[index] + "%";
@@ -175,7 +179,7 @@ function PopularGraphPizza({ readingLevelDistribution }) {
         data: {
             labels: labels || [],
             datasets: [{
-                backgroundColor: ['#06c5c8', '#6a06c8', '#06c85e', '#ffe803','rgb(255, 16, 16)',"rgb(255, 16, 124)","rgb(16, 255, 147)"],
+                backgroundColor: ['#06c5c8', '#6a06c8', '#06c85e', '#ffe803', 'rgb(255, 16, 16)', "rgb(255, 16, 124)", "rgb(16, 255, 147)"],
                 data: data || []
             }],
         },
@@ -204,15 +208,15 @@ function PopularGraphSeries(obj) {
     const data = obj.map(item => {
         return {
             label: item.grade,
-            data: item.distribution.map(({percentage}) => percentage),
-            color: Math.floor(Math.random()*16777215).toString(16),
+            data: item.distribution.map(({ percentage }) => percentage),
+            color: Math.floor(Math.random() * 16777215).toString(16),
             yAxisID: 'y',
-          }
-    } ) || [0];
+        }
+    }) || [0];
     console.log(data);
 
 
-    
+
 
     if (series) {
         series.destroy();
@@ -220,8 +224,8 @@ function PopularGraphSeries(obj) {
     series = new Chart(canvarGraphSeries, {
         type: 'line',
         data: {
-            labels : labelPerformDefault,
-            datasets : data,
+            labels: labelPerformDefault,
+            datasets: data,
         },
         options: {
             responsive: true,
@@ -237,8 +241,8 @@ function PopularGraphSeries(obj) {
 }
 let year = null;
 function PopularGraphYear({ previousYear, currentYear }) {
-    const labels = [previousYear.year ,currentYear.year ];
-    const data = [ previousYear.total , currentYear.total];
+    const labels = [previousYear.year, currentYear.year];
+    const data = [previousYear.total, currentYear.total];
     if (data.length === 0) {
         return;
     }
@@ -247,7 +251,7 @@ function PopularGraphYear({ previousYear, currentYear }) {
     }
     year = new Chart(canvaGraphBar, {
         type: 'bar',
-        data: { labels, datasets: [{ label: 'Total', data : data }] },
+        data: { labels, datasets: [{ label: 'Total', data: data }] },
         options: {
             responsive: true,
             maintainAspectRatio: false,
@@ -320,7 +324,7 @@ const filterSchool = async () => {
     const request = await fetch(path_base + `/schools?groupId=${grupos.value}&&regionId=${filtrosRegioes.value}&limit=1000`, {
         headers: headers
     });
-    const {data} = await request.json();
+    const { data } = await request.json();
     escola.innerHTML = '<option value="">Selecione a escola</option>';
     data.forEach(item => {
         const option = document.createElement('option');
