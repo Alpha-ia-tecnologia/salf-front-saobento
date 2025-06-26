@@ -23,11 +23,11 @@ limparFiltros.addEventListener("click", () => {
     filtrosEvento.value = "";
     escola.value = "";
 });
-grupos.disabled = true;
-filtrosAnoEscolar.disabled = true;
-filtrosEvento.disabled = true;
-filtrosRegioes.disabled = true;
-escola.disabled = true;
+// grupos.disabled = true;
+// filtrosAnoEscolar.disabled = true;
+// filtrosEvento.disabled = true;
+// filtrosRegioes.disabled = true;
+// escola.disabled = true;
 
 let groupId = null;
 let regionId = null;
@@ -326,6 +326,7 @@ const filterSchool = async () => {
     });
     const { data } = await request.json();
     escola.innerHTML = '<option value="">Selecione a escola</option>';
+    filtrosAnoEscolar.disabled = true
     data.forEach(item => {
         const option = document.createElement('option');
         option.value = item.id;
