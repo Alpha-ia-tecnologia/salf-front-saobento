@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const requestPageRanking = async () => {
-        const response = await fetch(`https://salf-salf-api2.gkgtsp.easypanel.host/api/dashboard/school-ranking?page=${page}`, {
+        const response = await fetch(`${window.API_BASE_URL}/dashboard/school-ranking?page=${page}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',

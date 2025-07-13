@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const isListPage = window.location.href.includes('listar.html');
     
     // Endpoint base da API
-    const API_BASE_URL = 'https://salf-salf-api2.gkgtsp.easypanel.host/api';
+    // const API_BASE_URL = 'https://salf-salf-api2.gkgtsp.easypanel.host/api'; // Removido - usando configuração global
     
     // Token de autenticação (mock)
     const AUTH_TOKEN = localStorage.getItem('token');
@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Funções
     function carregarUsuarios() {
-        fetch(`${API_BASE_URL}/users`, {
+        fetch(`${window.API_BASE_URL}/users`, {
             headers: {
                 'Accept': 'application/json',
                 'Authorization': `Bearer ${AUTH_TOKEN}`
@@ -119,7 +119,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         if (idEditing) {
             // Editando um usuário existente
-            fetch(`${API_BASE_URL}/users/${idEditing}`, {
+            fetch(`${window.API_BASE_URL}/users/${idEditing}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -144,7 +144,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         } else {
             // Criando um novo usuário
-            fetch(`${API_BASE_URL}/users`, {
+            fetch(`${window.API_BASE_URL}/users`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -299,7 +299,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     function editarUsuario(id) {
         // Buscar detalhes do usuário da API
-        fetch(`${API_BASE_URL}/users/${id}`, {
+        fetch(`${window.API_BASE_URL}/users/${id}`, {
             headers: {
                 'Accept': 'application/json',
                 'Authorization': `Bearer ${AUTH_TOKEN}`
@@ -341,7 +341,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     function excluirUsuario(id) {
         if (confirm('Tem certeza que deseja excluir este usuário?')) {
-            fetch(`${API_BASE_URL}/users/${id}`, {
+            fetch(`${window.API_BASE_URL}/users/${id}`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${AUTH_TOKEN}`

@@ -69,14 +69,14 @@ const randerRankingsEscola = (data) => {
 
 document.addEventListener('DOMContentLoaded', async () => {
     const btnFiltrar = document.getElementById('aplicar-filtros');
-    const response = await fetch(`https://salf-salf-api2.gkgtsp.easypanel.host/api/dashboard/school-ranking`, {
+    const response = await fetch(`${window.API_BASE_URL}/dashboard/school-ranking`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
     });
-    const response2 = await fetch(`https://salf-salf-api2.gkgtsp.easypanel.host/api/dashboard/ranking-by-region`, {
+    const response2 = await fetch(`${window.API_BASE_URL}/dashboard/ranking-by-region`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -93,7 +93,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const regiao = document.getElementById('regiao').value;
         const grupo = document.getElementById('grupo').value;
         console.log(regiao, grupo); 
-        const response = await fetch(`https://salf-salf-api2.gkgtsp.easypanel.host/api/dashboard/school-ranking?region=${regiao}&group=${grupo}`, {
+        const response = await fetch(`${window.API_BASE_URL}/dashboard/school-ranking?region=${regiao}&group=${grupo}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -102,7 +102,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }); 
         const data = await response.json();
         randerRankingsEscola(data.data);
-        const response2 = await fetch(`https://salf-salf-api2.gkgtsp.easypanel.host/api/dashboard/ranking-by-region?region=${regiao}`, {
+        const response2 = await fetch(`${window.API_BASE_URL}/dashboard/ranking-by-region?region=${regiao}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',

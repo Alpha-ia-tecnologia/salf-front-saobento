@@ -35,13 +35,13 @@ let schoolId = null;
 let eventId = null;
 let schoolYearId = null;
 aplicarFiltros.addEventListener("click", async () => {
-    const data = await fetch(path_base + `/dashboard/analytics?schoolId=${schoolId || ''}&gradeLevel=${schoolYearId || ''}&classGroupId=${groupId || ''}&assessmentEventId=${eventId || ''}`, {
+    const data = await fetch(window.API_BASE_URL + `/dashboard/analytics?schoolId=${schoolId || ''}&gradeLevel=${schoolYearId || ''}&classGroupId=${groupId || ''}&assessmentEventId=${eventId || ''}`, {
         headers: headers
     });
     const response = await data.json();
     PopularCards(response);
     PopularGraphPizza(response);
-    const data2 = await fetch(path_base + `/dashboard/performance-by-grade?schoolId=${schoolId || ''}&assessmentEventId=${eventId || ''}`, {
+    const data2 = await fetch(window.API_BASE_URL + `/dashboard/performance-by-grade?schoolId=${schoolId || ''}&assessmentEventId=${eventId || ''}`, {
         headers: headers
     });
     const response2 = await data2.json();
@@ -49,12 +49,12 @@ aplicarFiltros.addEventListener("click", async () => {
     if (response2.gradePerformance.length > 0) {
         PopularGraphSeries(response2.gradePerformance);
     }
-    const data3 = await fetch(path_base + `/dashboard/yearly-progression?schoolId=${schoolId || ''}&classGroupId=${groupId || ''}&gradeLevel=${schoolYearId || ''}`, {
+    const data3 = await fetch(window.API_BASE_URL + `/dashboard/yearly-progression?schoolId=${schoolId || ''}&classGroupId=${groupId || ''}&gradeLevel=${schoolYearId || ''}`, {
         headers: headers
     });
     const response3 = await data3.json();
     PopularGraphYear(response3.yearly);
-    const data4 = await fetch(path_base + `/dashboard/reading-level-evolution?schoolId=${schoolId || ''}&gradeLevel=${schoolYearId || ''}&classGroupId=${groupId || ''}`, {
+    const data4 = await fetch(window.API_BASE_URL + `/dashboard/reading-level-evolution?schoolId=${schoolId || ''}&gradeLevel=${schoolYearId || ''}&classGroupId=${groupId || ''}`, {
         headers: headers
     });
     const response4 = await data4.json();
@@ -126,25 +126,25 @@ const headers = {
     'Content-Type': 'application/json',
     'Authorization': `Bearer ${localStorage.getItem('token')}`
 }
-const path_base = "https://salf-salf-api2.gkgtsp.easypanel.host/api"
+// const path_base = "https://salf-salf-api2.gkgtsp.easypanel.host/api" // Removido - usando configuração global
 async function initialize() {
-    const data = await fetch(path_base + '/dashboard/analytics', {
+    const data = await fetch(window.API_BASE_URL + '/dashboard/analytics', {
         headers: headers
     });
     const response = await data.json();
     PopularCards(response);
     PopularGraphPizza(response);
-    const data2 = await fetch(path_base + '/dashboard/performance-by-grade', {
+    const data2 = await fetch(window.API_BASE_URL + '/dashboard/performance-by-grade', {
         headers: headers
     });
     const response2 = await data2.json();
     PopularGraphSeries(response2.gradePerformance);
-    const data3 = await fetch(path_base + '/dashboard/yearly-progression', {
+    const data3 = await fetch(window.API_BASE_URL + '/dashboard/yearly-progression', {
         headers: headers
     });
     const response3 = await data3.json();
     PopularGraphYear(response3.yearly);
-    const data4 = await fetch(path_base + '/dashboard/reading-level-evolution', {
+    const data4 = await fetch(window.API_BASE_URL + '/dashboard/reading-level-evolution', {
         headers: headers
     });
     const response4 = await data4.json();
@@ -294,7 +294,7 @@ function PopularFilters() {
 const filterGroup = async (id) => {
     grupos.innerHTML = '<option value="">Selecione um grupo</option>';
     grupos.disabled = false
-    const data = await fetch(path_base + `/groups?regionId=${id}`, {
+    const data = await fetch(window.API_BASE_URL + `/groups?regionId=${id}`, {
         headers: headers
     });
     const response = await data.json();
@@ -307,7 +307,7 @@ const filterGroup = async (id) => {
 
 }
 const filterRegion = async () => {
-    const data = await fetch(path_base + `/regions`, {
+    const data = await fetch(window.API_BASE_URL + `/regions`, {
         headers: headers
     });
     filtrosRegioes.disabled = false;
@@ -321,7 +321,7 @@ const filterRegion = async () => {
     })
 }
 const filterSchool = async () => {
-    const request = await fetch(path_base + `/schools?groupId=${grupos.value}&&regionId=${filtrosRegioes.value}&limit=1000`, {
+    const request = await fetch(window.API_BASE_URL + `/schools?groupId=${grupos.value}&&regionId=${filtrosRegioes.value}&limit=1000`, {
         headers: headers
     });
     const { data } = await request.json();
@@ -346,7 +346,7 @@ filtrosAnoEscolar.addEventListener("change", () => {
     filterEvent();
 })
 const filterEvent = async () => {
-    const response = await fetch(path_base + `/assessment-events?limit=1000`, {
+    const response = await fetch(window.API_BASE_URL + `/assessment-events?limit=1000`, {
         headers: headers
     });
     const data = await response.json();

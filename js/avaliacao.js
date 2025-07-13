@@ -304,7 +304,7 @@ function carregarEventos() {
             });
     } else {
         // Fallback para o método antigo
-        fetch('https://salf-salf-api2.gkgtsp.easypanel.host/api/assessment-events', {
+        fetch(`${window.API_BASE_URL}/assessment-events`, {
             headers: {
                 'Authorization': `Bearer ${getAuthToken()}`
             }
@@ -405,7 +405,7 @@ function adicionarEventListenersTabelaEventos() {
 // Função para excluir um assessment
 function excluirAssessment(id) {
     if (confirm('Tem certeza que deseja excluir esta avaliação?')) {
-        fetch(`https://salf-salf-api2.gkgtsp.easypanel.host/api/assessments/${id}`, {
+        fetch(`${window.API_BASE_URL}/assessments/${id}`, {
             method: 'DELETE',
             headers: {
                 'Authorization': `Bearer ${getAuthToken()}`
@@ -934,28 +934,45 @@ function preencherFormEvento(evento) {
 }
 
 // Função para carregar as avaliações da API
-function carregarAvaliacoes() {
-    fetch('https://salf-salf-api2.gkgtsp.easypanel.host/api/assessments', {
-        headers: {
-            'Authorization': `Bearer ${getAuthToken()}`
-        }
-    })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Erro ao buscar avaliações');
+async function carregarAvaliacoes() {
+    try {
+        const response = await fetch(`${window.API_BASE_URL}/assessments`, {
+            headers: {
+                'Authorization': `Bearer ${getAuthToken()}`
             }
-            return response.json();
-        })
-        .then(({ data }) => {
-            // Atualizar a variável de avaliações
-            avaliacoes = data;
-            // Atualizar a exibição na tabela
-            mostrarAvaliacoesNaTabela(avaliacoes);
-        })
-        .catch(error => {
-            console.error('Erro ao carregar avaliações:', error);
-            alert('Erro ao carregar avaliações. Por favor, tente novamente.');
         });
+        
+        if (!response.ok) {
+            throw new Error('Erro ao carregar avaliações');
+        }
+        
+        const data = await response.json();
+        avaliacoes = data;
+        atualizarTabelaAvaliacoes();
+    } catch (error) {
+        console.error('Erro ao carregar avaliações:', error);
+        alert('Erro ao carregar avaliações. Por favor, tente novamente.');
+    }
+}
+
+// Função para buscar uma avaliação específica
+async function buscarAvaliacao(id) {
+    try {
+        const response = await fetch(`${window.API_BASE_URL}/assessments/${id}`, {
+            headers: {
+                'Authorization': `Bearer ${getAuthToken()}`
+            }
+        });
+        
+        if (!response.ok) {
+            throw new Error('Erro ao buscar avaliação');
+        }
+        
+        return await response.json();
+    } catch (error) {
+        console.error('Erro ao buscar avaliação:', error);
+        throw error;
+    }
 }
 
 // Função para mostrar as avaliações na tabela
@@ -2016,5 +2033,25 @@ function adicionarEventListenerRemover(elemento) {
             elemento.remove();
             atualizarContadoresEdit();
         });
+    }
+}
+
+// Função para carregar uma avaliação específica
+async function carregarAvaliacao(id) {
+    try {
+        const response = await fetch(`${window.API_BASE_URL}/assessments/${id}`, {
+            headers: {
+                'Authorization': `Bearer ${getAuthToken()}`
+            }
+        });
+        
+        if (!response.ok) {
+            throw new Error('Erro ao buscar avaliação');
+        }
+        
+        return await response.json();
+    } catch (error) {
+        console.error('Erro ao carregar avaliação:', error);
+        throw error;
     }
 }

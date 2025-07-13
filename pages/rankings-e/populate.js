@@ -2,48 +2,52 @@ const filterGrupo = document.getElementById('grupo');
 const filterRegiao = document.getElementById('regiao');
 
 onload = async () => {
-    loadRegioes();
+    renderRegionsSelect();
 }
 
 filterRegiao.addEventListener('change', (e) => {
     if(e.target.value) {
         filterGrupo.disabled = false;
-        loadGrupos(e.target.value);
+        renderRegion(e.target.value);
     } 
 });
 
 
-const loadGrupos = async (id) => {    
-    const response = await fetch(`https://salf-salf-api2.gkgtsp.easypanel.host/api/groups?region_id=${id}&limit=1000`);
-    const data = await response.json()
+const renderRegion = async (id) => {
+    const response = await fetch(`${window.API_BASE_URL}/groups?region_id=${id}&limit=1000`);
+    const data = await response.json();
+    
     filterGrupo.innerHTML = '<option value="">Todos os grupos</option>';
-    data.data.forEach(item => {
+    data.data.forEach(grupo => {
         const option = document.createElement('option');
-        option.value = item.id;
-        option.textContent = item.name;
+        option.value = grupo.id;
+        option.textContent = grupo.name;
         filterGrupo.appendChild(option);
-    }); 
+    });
 }
 
-const loadEscolas = async (id) => {
-    const response = await fetch(`https://salf-salf-api2.gkgtsp.easypanel.host/api/schools?group_id=${id}&limit=1000`);
+const renderGroup = async (id) => {
+    const response = await fetch(`${window.API_BASE_URL}/schools?group_id=${id}&limit=1000`);
     const data = await response.json();
+    
     filterEscola.innerHTML = '<option value="">Todas as escolas</option>';
-    data.data.forEach(item => {
+    data.data.forEach(escola => {
         const option = document.createElement('option');
-        option.value = item.id;
-        option.textContent = item.name;     
+        option.value = escola.id;
+        option.textContent = escola.name;     
         filterEscola.appendChild(option);
     });
 }
 
-const loadRegioes = async () => {
-    const response = await fetch('https://salf-salf-api2.gkgtsp.easypanel.host/api/regions?limit=1000');
+const renderRegionsSelect = async () => {
+    const response = await fetch(`${window.API_BASE_URL}/regions?limit=1000`);
     const data = await response.json();
-    data.data.forEach(item => {
+    
+    filterRegiao.innerHTML = '<option value="">Selecione uma região</option>';
+    data.data.forEach(regiao => {
         const option = document.createElement('option');
-        option.value = item.id;
-        option.textContent = item.name;     
+        option.value = regiao.id;
+        option.textContent = regiao.name;
         filterRegiao.appendChild(option);
     });
 }

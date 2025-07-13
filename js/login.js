@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // URL base da API
-    const API_BASE_URL = "https://salf-salf-api2.gkgtsp.easypanel.host/api";
+    // URL base da API - agora vem da configuração global
+// const API_BASE_URL = "https://salf-salf-api2.gkgtsp.easypanel.host/api"; // Removido - usando configuração global
     
     // Referências aos elementos do DOM
     const loginForm = document.getElementById('login-form');
@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Função para realizar o login
     async function realizarLogin(email, password) {
         try {
-            const response = await fetch(`${API_BASE_URL}/auth/login`, {
+                            const response = await fetch(`${window.API_BASE_URL}/auth/login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

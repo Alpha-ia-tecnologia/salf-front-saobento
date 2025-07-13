@@ -6,7 +6,7 @@
  */
 async function getAllRegions() {
   const token = localStorage.getItem('token') || '';
-  const url = 'https://salf-salf-api2.gkgtsp.easypanel.host/regions';
+  const url = `${window.API_BASE_URL_NO_API}/regions`;
   
   const response = await fetch(url, {
     headers: {
@@ -23,25 +23,24 @@ async function getAllRegions() {
 
 /**
  * Cria uma nova região
- * @param {Object} data - Dados da nova região
+ * @param {Object} regionData - Dados da região
  * @returns {Promise<Object>} Região criada
  */
-async function createRegion(data) {
+async function createRegion(regionData) {
   const token = localStorage.getItem('token') || '';
-  const url = 'https://salf-salf-api2.gkgtsp.easypanel.host/regions';
+  const url = `${window.API_BASE_URL_NO_API}/regions`;
   
   const response = await fetch(url, {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
     },
-    body: JSON.stringify(data)
+    body: JSON.stringify(regionData)
   });
   
   if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.message || 'Falha ao criar região');
+    throw new Error('Falha ao criar região');
   }
   
   return response.json();
@@ -53,7 +52,7 @@ async function createRegion(data) {
  */
 async function getAllGroups() {
   const token = localStorage.getItem('token') || '';
-  const url = 'https://salf-salf-api2.gkgtsp.easypanel.host/groups';
+  const url = `${window.API_BASE_URL_NO_API}/groups`;
   
   const response = await fetch(url, {
     headers: {
@@ -70,25 +69,24 @@ async function getAllGroups() {
 
 /**
  * Cria um novo grupo
- * @param {Object} data - Dados do novo grupo
+ * @param {Object} groupData - Dados do grupo
  * @returns {Promise<Object>} Grupo criado
  */
-async function createGroup(data) {
+async function createGroup(groupData) {
   const token = localStorage.getItem('token') || '';
-  const url = 'https://salf-salf-api2.gkgtsp.easypanel.host/groups';
+  const url = `${window.API_BASE_URL_NO_API}/groups`;
   
   const response = await fetch(url, {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
     },
-    body: JSON.stringify(data)
+    body: JSON.stringify(groupData)
   });
   
   if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.message || 'Falha ao criar grupo');
+    throw new Error('Falha ao criar grupo');
   }
   
   return response.json();

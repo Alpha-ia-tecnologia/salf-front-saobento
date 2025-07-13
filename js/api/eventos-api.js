@@ -6,7 +6,7 @@
  */
 async function getAllAssessmentEvents() {
   const token = localStorage.getItem('token') || '';
-  const url = 'https://salf-salf-api2.gkgtsp.easypanel.host/assessment-events';
+  const url = `${window.API_BASE_URL_NO_API}/assessment-events`;
   
   const response = await fetch(url, {
     headers: {
@@ -22,13 +22,13 @@ async function getAllAssessmentEvents() {
 }
 
 /**
- * Obtém um evento de avaliação específico por ID
+ * Obtém um evento específico
  * @param {number} id - ID do evento
- * @returns {Promise<Object>} Dados do evento
+ * @returns {Promise<Object>} Evento encontrado
  */
-async function getAssessmentEventById(id) {
+async function getAssessmentEvent(id) {
   const token = localStorage.getItem('token') || '';
-  const url = `https://salf-salf-api2.gkgtsp.easypanel.host/assessment-events/${id}`;
+  const url = `${window.API_BASE_URL_NO_API}/assessment-events/${id}`;
   
   const response = await fetch(url, {
     headers: {
@@ -37,34 +37,33 @@ async function getAssessmentEventById(id) {
   });
   
   if (!response.ok) {
-    throw new Error('Evento de avaliação não encontrado');
+    throw new Error('Falha ao buscar evento de avaliação');
   }
   
   return response.json();
 }
 
 /**
- * Atualiza um evento de avaliação existente
- * @param {number} id - ID do evento a ser atualizado
- * @param {Object} data - Dados atualizados do evento
+ * Atualiza um evento de avaliação
+ * @param {number} id - ID do evento
+ * @param {Object} eventData - Dados do evento
  * @returns {Promise<Object>} Evento atualizado
  */
-async function updateAssessmentEvent(id, data) {
+async function updateAssessmentEvent(id, eventData) {
   const token = localStorage.getItem('token') || '';
-  const url = `https://salf-salf-api2.gkgtsp.easypanel.host/assessment-events/${id}`;
+  const url = `${window.API_BASE_URL_NO_API}/assessment-events/${id}`;
   
   const response = await fetch(url, {
     method: 'PUT',
     headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
     },
-    body: JSON.stringify(data)
+    body: JSON.stringify(eventData)
   });
   
   if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.message || 'Falha ao atualizar evento de avaliação');
+    throw new Error('Falha ao atualizar evento de avaliação');
   }
   
   return response.json();
@@ -72,25 +71,24 @@ async function updateAssessmentEvent(id, data) {
 
 /**
  * Cria um novo evento de avaliação
- * @param {Object} data - Dados do novo evento
+ * @param {Object} eventData - Dados do evento
  * @returns {Promise<Object>} Evento criado
  */
-async function createAssessmentEvent(data) {
+async function createAssessmentEvent(eventData) {
   const token = localStorage.getItem('token') || '';
-  const url = 'https://salf-salf-api2.gkgtsp.easypanel.host/assessment-events';
+  const url = `${window.API_BASE_URL_NO_API}/assessment-events`;
   
   const response = await fetch(url, {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
     },
-    body: JSON.stringify(data)
+    body: JSON.stringify(eventData)
   });
   
   if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.message || 'Falha ao criar evento de avaliação');
+    throw new Error('Falha ao criar evento de avaliação');
   }
   
   return response.json();
@@ -98,12 +96,12 @@ async function createAssessmentEvent(data) {
 
 /**
  * Exclui um evento de avaliação
- * @param {number} id - ID do evento a ser excluído
- * @returns {Promise<Object>} Resultado da exclusão
+ * @param {number} id - ID do evento
+ * @returns {Promise<void>}
  */
 async function deleteAssessmentEvent(id) {
   const token = localStorage.getItem('token') || '';
-  const url = `https://salf-salf-api2.gkgtsp.easypanel.host/assessment-events/${id}`;
+  const url = `${window.API_BASE_URL_NO_API}/assessment-events/${id}`;
   
   const response = await fetch(url, {
     method: 'DELETE',
@@ -115,14 +113,12 @@ async function deleteAssessmentEvent(id) {
   if (!response.ok) {
     throw new Error('Falha ao excluir evento de avaliação');
   }
-  
-  return response.json();
 }
 
 // Exportar funções para uso global
 window.EventosAPI = {
   getAllAssessmentEvents,
-  getAssessmentEventById,
+  getAssessmentEvent,
   updateAssessmentEvent,
   createAssessmentEvent,
   deleteAssessmentEvent

@@ -3,8 +3,8 @@
  * Centraliza todas as chamadas de API em um único local
  */
 const ApiService = (function() {
-    // URL base da API
-    const API_BASE_URL = 'https://salf-salf-api2.gkgtsp.easypanel.host/api';
+    // URL base da API - agora vem da configuração global
+    // const API_BASE_URL = 'https://salf-salf-api2.gkgtsp.easypanel.host/api'; // Removido - usando configuração global
     
     /**
      * Obtém um token de autenticação do localStorage
@@ -33,7 +33,7 @@ const ApiService = (function() {
      */
     async function get(endpoint) {
         try {
-            const response = await fetch(`${API_BASE_URL}/${endpoint}`, {
+            const response = await fetch(`${window.API_BASE_URL}/${endpoint}`, {
                 method: 'GET',
                 headers: getHeaders()
             });
@@ -57,7 +57,7 @@ const ApiService = (function() {
      */
     async function post(endpoint, data) {
         try {
-            const response = await fetch(`${API_BASE_URL}/${endpoint}`, {
+            const response = await fetch(`${window.API_BASE_URL}/${endpoint}`, {
                 method: 'POST',
                 headers: getHeaders(),
                 body: JSON.stringify(data)
@@ -82,7 +82,7 @@ const ApiService = (function() {
      */
     async function put(endpoint, data) {
         try {
-            const response = await fetch(`${API_BASE_URL}/${endpoint}`, {
+            const response = await fetch(`${window.API_BASE_URL}/${endpoint}`, {
                 method: 'PUT',
                 headers: getHeaders(),
                 body: JSON.stringify(data)
@@ -181,69 +181,47 @@ const ApiService = (function() {
                 return await get(`reading-assessments/student/${alunoId}/latest`);
             }
         },
-        
-        testes: {
-            /**
-             * Busca todos os testes de leitura
-             * Observação: Os testes também são retornados na resposta da rota /assessment-events
-             * na propriedade 'assessments'
-             * @returns {Promise<Array>} Promise com a lista de testes
-             */
-            getAll: async function() {
-                try {
-                    // Buscar todos os eventos de avaliação
-                    const eventos = await get('assessment-events');
-                    
-                    // Extrair testes (assessments) da resposta
-                    const testes = [];
-                    if (Array.isArray(eventos)) {
-                        eventos.forEach(evento => {
-                            if (evento.assessments && Array.isArray(evento.assessments)) {
-                                evento.assessments.forEach(teste => {
-                                    if (!testes.some(t => t.id === teste.id)) {
-                                        testes.push(teste);
-                                    }
-                                });
-                            }
-                        });
-                    }
-                    
-                    return testes;
-                } catch (error) {
-                    console.error('Erro ao carregar testes:', error);
-                    throw error;
-                }
-            }
-        },
-        
+
         avaliacoes: {
             /**
-             * Cria uma nova avaliação de leitura
-             * @param {Object} data - Dados da avaliação
+             * Busca todas as avaliações
+             * Rota: /assessments
+             * @returns {Promise<Array>} Promise com a lista de avaliações
+             */
+            getAll: async function() {
+                return await get('assessments');
+            },
+
+            /**
+             * Busca uma avaliação por ID
+             * @param {number} id - ID da avaliação
+             * @returns {Promise<Object>} Promise com os dados da avaliação
+             */
+            getById: async function(id) {
+                return await get(`assessments/${id}`);
+            },
+
+            /**
+             * Cria uma nova avaliação
+             * @param {Object} dados - Dados da avaliação
              * @returns {Promise<Object>} Promise com os dados da avaliação criada
              */
-            criar: async function(data) {
-                return await post('reading-assessments', data);
+            criar: async function(dados) {
+                return await post('assessments', dados);
             },
-            
+
             /**
-             * Atualiza o estágio de uma avaliação
-             * @param {number} avaliacaoId - ID da avaliação
-             * @param {Object} data - Dados do estágio
+             * Atualiza uma avaliação existente
+             * @param {number} id - ID da avaliação
+             * @param {Object} dados - Dados atualizados da avaliação
              * @returns {Promise<Object>} Promise com os dados da avaliação atualizada
              */
-            atualizarEstagio: async function(avaliacaoId, data) {
-                return await put(`reading-assessments/${avaliacaoId}/stage`, data);
-            },
-            
-            /**
-             * Finaliza uma avaliação
-             * @param {number} avaliacaoId - ID da avaliação
-             * @returns {Promise<Object>} Promise com os dados da avaliação finalizada
-             */
-            finalizar: async function(avaliacaoId) {
-                return await put(`reading-assessments/${avaliacaoId}/finalize`, {});
+            atualizar: async function(id, dados) {
+                return await put(`assessments/${id}`, dados);
             }
         }
     };
-})(); 
+})();
+
+// Tornar o serviço disponível globalmente
+window.ApiService = ApiService; 

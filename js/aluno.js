@@ -36,8 +36,8 @@ document.addEventListener('DOMContentLoaded', function() {
     let filtroEscolaId = '';
     let filtroTurmaId = '';
     
-    // API endpoints
-    const API_BASE_URL = 'https://salf-salf-api2.gkgtsp.easypanel.host/api';
+    // API endpoints - agora vem da configuração global
+    // const API_BASE_URL = 'https://salf-salf-api2.gkgtsp.easypanel.host/api'; // Removido - usando configuração global
     
     // Token de autenticação (mock)
     const token = localStorage.getItem('token');
@@ -93,7 +93,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     turmaFormSelect.addEventListener('change', async function() {
         filtroTurmaId = this.value;
-        const request = await fetch(`${API_BASE_URL}/class-groups/${filtroTurmaId}`, {
+        const request = await fetch(`${window.API_BASE_URL}/class-groups/${filtroTurmaId}`, {
             headers: {
                 'Accept': 'application/json',
                 'Authorization': `Bearer ${token}`
@@ -127,7 +127,7 @@ document.addEventListener('DOMContentLoaded', function() {
      * Carrega as regiões para o filtro
      */
     function carregarRegioes() {
-        fetch(`${API_BASE_URL}/regions`, {
+        fetch(`${window.API_BASE_URL}/regions`, {
             headers: {
                 'Accept': 'application/json',
                 'Authorization': `Bearer ${token}`
@@ -161,7 +161,7 @@ document.addEventListener('DOMContentLoaded', function() {
      */
     function carregarGruposParaFiltro(regiaoId = '') {
         // URL da requisição
-        let url = `${API_BASE_URL}/groups`;
+        let url = `${window.API_BASE_URL}/groups`;
         if (regiaoId) {
             url += `?regionId=${regiaoId}`;
         }
@@ -197,7 +197,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     function carregarEscolasParaFiltro(grupoId = '') {
         // URL da requisição
-        let url = `${API_BASE_URL}/schools`;
+        let url = `${window.API_BASE_URL}/schools`;
         
         // Adicionar parâmetros de filtro
         let params = [];
@@ -249,7 +249,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     function carregarTurmasParaFiltro(escolaId = '') {
         // URL da requisição
-        let url = `${API_BASE_URL}/class-groups`;
+        let url = `${window.API_BASE_URL}/class-groups`;
         
         // Adicionar parâmetros de filtro
         let params = [];
@@ -305,7 +305,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     function carregarAlunos() {
         // Construir URL com parâmetros de filtro
-        let url = `${API_BASE_URL}/students?page=${paginaAtual || 1}`;
+        let url = `${window.API_BASE_URL}/students?page=${paginaAtual || 1}`;
         
         // Adicionar filtros se existirem
         if (filtroRegiaoId) url += `regionId=${filtroRegiaoId}&`;
@@ -350,7 +350,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const modalTitle = modalAluno.querySelector('h3');
         modalTitle.textContent = 'Novo Aluno';
 
-        const escolas = await fetch(`${API_BASE_URL}/schools?limit=1000`, {
+        const escolas = await fetch(`${window.API_BASE_URL}/schools?limit=1000`, {
             headers: {
                 'Accept': 'application/json',
                 'Authorization': `Bearer ${token}`
@@ -366,21 +366,21 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         
 
-        const turmas = await fetch(`${API_BASE_URL}/class-groups`, {
+        const turmas = await fetch(`${window.API_BASE_URL}/class-groups`, {
             headers: {
                 'Accept': 'application/json',
                 'Authorization': `Bearer ${token}`
             }
         }).then(res => res.json());
 
-        const regioes = await fetch(`${API_BASE_URL}/regions`, {
+        const regioes = await fetch(`${window.API_BASE_URL}/regions`, {
             headers: {
                 'Accept': 'application/json',
                 'Authorization': `Bearer ${token}`
             }
         }).then(res => res.json());         
 
-        const grupos = await fetch(`${API_BASE_URL}/groups`, {
+        const grupos = await fetch(`${window.API_BASE_URL}/groups`, {
             headers: {
                 'Accept': 'application/json',
                 'Authorization': `Bearer ${token}`
@@ -433,7 +433,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         if (!formEscolaId) return;
         
-        fetch(`${API_BASE_URL}/class-groups?schoolId=${formEscolaId}`, {
+        fetch(`${window.API_BASE_URL}/class-groups?schoolId=${formEscolaId}`, {
             headers: {
                 'Accept': 'application/json',
                 'Authorization': `Bearer ${token}`
@@ -498,7 +498,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         if (idEditing) {
             // Editando um aluno existente
-            fetch(`${API_BASE_URL}/students/${idEditing}`, {
+            fetch(`${window.API_BASE_URL}/students/${idEditing}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -523,7 +523,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         } else {
             // Criando um novo aluno
-            fetch(`${API_BASE_URL}/students`, {
+            fetch(`${window.API_BASE_URL}/students`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -560,7 +560,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const formData = new FormData();
         formData.append('file', fileUpload.files[0]);
         
-        fetch(`${API_BASE_URL}/students/import`, {
+        fetch(`${window.API_BASE_URL}/students/import`, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -678,7 +678,7 @@ document.addEventListener('DOMContentLoaded', function() {
     async function editarAluno(id) {
         try {
             // Buscar dados completos do aluno
-            const aluno = await fetch(`${API_BASE_URL}/students/${id}`, {
+            const aluno = await fetch(`${window.API_BASE_URL}/students/${id}`, {
                 headers: {
                     'Accept': 'application/json',
                     'Authorization': `Bearer ${token}`
@@ -717,7 +717,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Selecionar grupo do aluno
             
             // Carregar escolas
-            const escolas = await fetch(`${API_BASE_URL}/schools`, {
+            const escolas = await fetch(`${window.API_BASE_URL}/schools`, {
                 headers: {
                     'Accept': 'application/json',
                     'Authorization': `Bearer ${token}`
@@ -736,7 +736,7 @@ document.addEventListener('DOMContentLoaded', function() {
             escolaFormSelect.value = aluno.schoolId || '';
             
             // Carregar turmas da escola selecionada
-            const turmas = await fetch(`${API_BASE_URL}/class-groups?schoolId=${aluno.schoolId}`, {
+            const turmas = await fetch(`${window.API_BASE_URL}/class-groups?schoolId=${aluno.schoolId}`, {
                 headers: {
                     'Accept': 'application/json',
                     'Authorization': `Bearer ${token}`
@@ -769,31 +769,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     function excluirAluno(id) {
         if (confirm('Tem certeza que deseja excluir este aluno?')) {
-            fetch(`${API_BASE_URL}/students/${id}`, {
+            fetch(`${window.API_BASE_URL}/students/${id}`, {
                 method: 'DELETE',
                 headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Erro ao excluir aluno');
-                }
-                return response.text();
-            })
-            .then(() => {
-                alert('Aluno excluído com sucesso!');
-                carregarAlunos();
-            })
-            .catch(error => {
-                console.error('Erro ao excluir aluno:', error);
-                alert('Erro ao excluir aluno. Por favor, tente novamente.');
-            });
-        }
-    }
-    
-    // Adicionar pesquisa para filtrar alunos localmente
-    document.getElementById('pesquisa')?.addEventListener('input', function() {
-        atualizarTabela();
-    });
-}); 
+                    'Authorization': `

@@ -1,5 +1,5 @@
-// Configuração base da API
-const API_BASE_URL = 'https://salf-salf-api2.gkgtsp.easypanel.host/api';
+// Configuração base da API - agora vem da configuração global
+// const API_BASE_URL = 'https://salf-salf-api2.gkgtsp.easypanel.host/api'; // Removido - usando configuração global
 const MOCK_MODE = true; // Ativar modo de simulação para usar dados mockados em caso de falha do servidor
 
 // Função para obter o token do localStorage
@@ -141,7 +141,7 @@ const authAPI = {
     }
     
     // Código para modo de produção
-    const response = await fetch(`${API_BASE_URL}/auth/login`, {
+    const response = await fetch(`${window.API_BASE_URL}/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, senha })
@@ -192,7 +192,7 @@ const authAPI = {
       };
     }
     
-    const response = await fetch(`${API_BASE_URL}/auth/me`, {
+    const response = await fetch(`${window.API_BASE_URL}/auth/me`, {
       method: 'GET',
       headers: getHeaders()
     });
@@ -245,7 +245,7 @@ const escolasAPI = {
     
     const queryString = queryParams.toString() ? `?${queryParams.toString()}` : '';
     
-    const response = await fetch(`${API_BASE_URL}/escolas${queryString}`, {
+    const response = await fetch(`${window.API_BASE_URL}/escolas${queryString}`, {
       method: 'GET',
       headers: getHeaders()
     });
@@ -265,7 +265,7 @@ const escolasAPI = {
       return { ...escola, turmas: [], usuarios: [] };
     }
     
-    const response = await fetch(`${API_BASE_URL}/escolas/${id}`, {
+    const response = await fetch(`${window.API_BASE_URL}/escolas/${id}`, {
       method: 'GET',
       headers: getHeaders()
     });
@@ -290,7 +290,7 @@ const escolasAPI = {
       return novaEscola;
     }
     
-    const response = await fetch(`${API_BASE_URL}/escolas`, {
+    const response = await fetch(`${window.API_BASE_URL}/escolas`, {
       method: 'POST',
       headers: getHeaders(),
       body: JSON.stringify(dadosEscola)
@@ -318,7 +318,7 @@ const escolasAPI = {
       return mockData.escolas[index];
     }
     
-    const response = await fetch(`${API_BASE_URL}/escolas/${id}`, {
+    const response = await fetch(`${window.API_BASE_URL}/escolas/${id}`, {
       method: 'PUT',
       headers: getHeaders(),
       body: JSON.stringify(dadosEscola)
@@ -340,7 +340,7 @@ const escolasAPI = {
       return { message: 'Escola excluída com sucesso' };
     }
     
-    const response = await fetch(`${API_BASE_URL}/escolas/${id}`, {
+    const response = await fetch(`${window.API_BASE_URL}/escolas/${id}`, {
       method: 'DELETE',
       headers: getHeaders()
     });
@@ -368,7 +368,7 @@ const regioesAPI = {
     
     const queryString = search ? `?search=${search}` : '';
     
-    const response = await fetch(`${API_BASE_URL}/regioes${queryString}`, {
+    const response = await fetch(`${window.API_BASE_URL}/regioes${queryString}`, {
       method: 'GET',
       headers: getHeaders()
     });
@@ -390,7 +390,7 @@ const regioesAPI = {
       return { ...regiao, escolas };
     }
     
-    const response = await fetch(`${API_BASE_URL}/regioes/${id}`, {
+    const response = await fetch(`${window.API_BASE_URL}/regioes/${id}`, {
       method: 'GET',
       headers: getHeaders()
     });
@@ -413,7 +413,7 @@ const regioesAPI = {
       return novaRegiao;
     }
     
-    const response = await fetch(`${API_BASE_URL}/regioes`, {
+    const response = await fetch(`${window.API_BASE_URL}/regioes`, {
       method: 'POST',
       headers: getHeaders(),
       body: JSON.stringify({ nome })
@@ -435,7 +435,7 @@ const regioesAPI = {
       return mockData.regioes[index];
     }
     
-    const response = await fetch(`${API_BASE_URL}/regioes/${id}`, {
+    const response = await fetch(`${window.API_BASE_URL}/regioes/${id}`, {
       method: 'PUT',
       headers: getHeaders(),
       body: JSON.stringify({ nome })
@@ -463,7 +463,7 @@ const regioesAPI = {
       return { message: 'Região excluída com sucesso' };
     }
     
-    const response = await fetch(`${API_BASE_URL}/regioes/${id}`, {
+    const response = await fetch(`${window.API_BASE_URL}/regioes/${id}`, {
       method: 'DELETE',
       headers: getHeaders()
     });
@@ -491,7 +491,7 @@ const gruposAPI = {
     
     const queryString = search ? `?search=${search}` : '';
     
-    const response = await fetch(`${API_BASE_URL}/grupos${queryString}`, {
+    const response = await fetch(`${window.API_BASE_URL}/grupos${queryString}`, {
       method: 'GET',
       headers: getHeaders()
     });
@@ -513,7 +513,7 @@ const gruposAPI = {
       return { ...grupo, escolas };
     }
     
-    const response = await fetch(`${API_BASE_URL}/grupos/${id}`, {
+    const response = await fetch(`${window.API_BASE_URL}/grupos/${id}`, {
       method: 'GET',
       headers: getHeaders()
     });
@@ -536,7 +536,7 @@ const gruposAPI = {
       return novoGrupo;
     }
     
-    const response = await fetch(`${API_BASE_URL}/grupos`, {
+    const response = await fetch(`${window.API_BASE_URL}/grupos`, {
       method: 'POST',
       headers: getHeaders(),
       body: JSON.stringify({ nome })
@@ -558,7 +558,7 @@ const gruposAPI = {
       return mockData.grupos[index];
     }
     
-    const response = await fetch(`${API_BASE_URL}/grupos/${id}`, {
+    const response = await fetch(`${window.API_BASE_URL}/grupos/${id}`, {
       method: 'PUT',
       headers: getHeaders(),
       body: JSON.stringify({ nome })
@@ -586,7 +586,7 @@ const gruposAPI = {
       return { message: 'Grupo excluído com sucesso' };
     }
     
-    const response = await fetch(`${API_BASE_URL}/grupos/${id}`, {
+    const response = await fetch(`${window.API_BASE_URL}/grupos/${id}`, {
       method: 'DELETE',
       headers: getHeaders()
     });

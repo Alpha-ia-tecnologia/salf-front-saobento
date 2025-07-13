@@ -1,5 +1,5 @@
-// URL base da API
-const API_BASE_URL_FILTROS = 'https://salf-salf-api2.gkgtsp.easypanel.host/api';
+// URL base da API - agora vem da configuração global
+// const API_BASE_URL_FILTROS = 'https://salf-salf-api2.gkgtsp.easypanel.host/api'; // Removido - usando configuração global
 
 // Elementos DOM
 const escolaSelect = document.getElementById('escola');
@@ -13,7 +13,7 @@ const btnIniciarAvaliacao = document.getElementById('iniciar-avaliacao');
 // Função para fazer requisições à API
 async function fetchAPI(endpoint) {
     try {
-        const response = await fetch(`${API_BASE_URL_FILTROS}${endpoint}`);
+        const response = await fetch(`${window.API_BASE_URL}${endpoint}`);
         if (!response.ok) {
             throw new Error(`Erro ao acessar a API: ${response.status}`);
         }
@@ -164,7 +164,7 @@ const filtroEvento = document.getElementById('evento-avaliacao');
 const filtroTestes = document.getElementById('teste-leitura');
 
 const carregarEventos = async () => {
-    const eventos = await fetch('https://salf-salf-api2.gkgtsp.easypanel.host/api/assessment-events');
+    const eventos = await fetch(`${window.API_BASE_URL}/assessment-events`);
     const eventosJson = await eventos.json();
     eventosJson.forEach(evento => {
         const option = document.createElement('option');
@@ -172,7 +172,7 @@ const carregarEventos = async () => {
         option.textContent = evento.name;
         filtroEvento.appendChild(option);
     });
-    const testes = await fetch('https://salf-salf-api2.gkgtsp.easypanel.host/api/assessments');
+    const testes = await fetch(`${window.API_BASE_URL}/assessments`);
     const { data } = await testes.json();
     data.forEach(teste => {
         const option = document.createElement('option');

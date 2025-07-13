@@ -2,8 +2,9 @@ const chartSeries = document.getElementById('chart-series');
 const btnFiltrar = document.getElementById('btn-filtrar');
 const tbody = document.getElementById('tbody');
 let filters = false
-onload = async() => {   
-    const response = await fetch(`https://salf-salf-api2.gkgtsp.easypanel.host/api/dashboard/student-ranking`, {
+document.addEventListener('DOMContentLoaded', async () => {
+    const btnFiltrar = document.getElementById('aplicar-filtros');
+    const response = await fetch(`${window.API_BASE_URL}/dashboard/student-ranking`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -11,29 +12,26 @@ onload = async() => {
         }
     });
     const data = await response.json();
-    randerRanking(data.data);
-}
-btnFiltrar.addEventListener('click', async (e) => {
-    e.preventDefault();
-    const regiao = document.getElementById('filtro-regiao').value;
-    const grupo = document.getElementById('filtro-grupo').value;
-    const escola = document.getElementById('filtro-escola').value;
-    const evento = document.getElementById('evento').value;
-    // if (regiao && grupo && escola && evento) {
-        console.log(regiao, grupo, escola, evento);
-        console.log(typeof regiao, typeof grupo, typeof escola, typeof evento);
-        const response = await fetch(`https://salf-salf-api2.gkgtsp.easypanel.host/api/dashboard/student-ranking?region=${regiao}&group=${grupo}&school_id=${escola}&assessmentEventId=${evento}`, {
+    randerRankingsAlunos(data);
+
+    btnFiltrar.addEventListener('click', async (e) => {
+        e.preventDefault();
+        const regiao = document.getElementById('regiao').value;
+        const grupo = document.getElementById('grupo').value;
+        const escola = document.getElementById('escola').value;
+        const evento = document.getElementById('evento').value;
+        console.log(regiao, grupo); 
+        const response = await fetch(`${window.API_BASE_URL}/dashboard/student-ranking?region=${regiao}&group=${grupo}&school_id=${escola}&assessmentEventId=${evento}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
             }
-        });
-
-        const data = await response.json() ;
-        randerRanking(data.data);
-    // }
-});
+        }); 
+        const data = await response.json();
+        randerRankingsAlunos(data);
+    });
+})
 const niveisLeitores = {
     NOT_EVALUATED: 'Não avaliado',
     NON_READER: 'Não leitor',
