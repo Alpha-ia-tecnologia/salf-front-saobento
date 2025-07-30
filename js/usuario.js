@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Funções
     function carregarUsuarios() {
-        fetch(`${window.API_BASE_URL}/users`, {
+        fetch(`${API_BASE_URL}/users?limit=1000`, {
             headers: {
                 'Accept': 'application/json',
                 'Authorization': `Bearer ${AUTH_TOKEN}`
@@ -119,7 +119,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         if (idEditing) {
             // Editando um usuário existente
-            fetch(`${window.API_BASE_URL}/users/${idEditing}`, {
+            fetch(`${API_BASE_URL}/users/${idEditing}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -176,9 +176,10 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Filtragem
         let usuariosFiltrados = [...usuarios];
+        console.log(usuariosFiltrados)
         
-        if (tipoFiltrado) {
-            usuariosFiltrados = usuariosFiltrados.filter(u => u.role.toUpperCase() === tipoFiltrado);
+        if (tipoFiltrado.trim()) {
+            usuariosFiltrados = usuariosFiltrados.filter(u => u.role.trim().toLowerCase() == tipoFiltrado.trim().toLowerCase());
         }
         
         if (textoPesquisa) {
