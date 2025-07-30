@@ -406,7 +406,7 @@ function adicionarEventListenersTabelaEventos() {
 // Função para excluir um assessment
 function excluirAssessment(id) {
     if (confirm('Tem certeza que deseja excluir esta avaliação?')) {
-        fetch(`${window.API_BASE_URL}/assessments/${id}`, {
+        fetch(`${API_BASE_URL}/assessments/${id}`, {
             method: 'DELETE',
             headers: {
                 'Authorization': `Bearer ${getAuthToken()}`
@@ -959,7 +959,7 @@ async function carregarAvaliacoes() {
 // Função para buscar uma avaliação específica
 async function buscarAvaliacao(id) {
     try {
-        const response = await fetch(`${window.API_BASE_URL}/assessments/${id}`, {
+        const response = await fetch(`${API_BASE_URL}/assessments/${id}`, {
             headers: {
                 'Authorization': `Bearer ${getAuthToken()}`
             }
