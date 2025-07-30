@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // URL base da API
-    const API_BASE_URL = "https://salf-salf-api2.gkgtsp.easypanel.host/api";
+    // const API_BASE_URL = "https://salf-salf-api2.gkgtsp.easypanel.host/api";
 
     // Headers padrão para requisições à API
     const headers = {
