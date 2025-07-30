@@ -1,5 +1,6 @@
 // Inicializar listas
 const avaliacoesList = document.getElementById('avaliacoes-list');
+let paginaAtual = 1;
 
 // Função para obter o token de autenticação do localStorage
 function getAuthToken() {
@@ -8,6 +9,7 @@ function getAuthToken() {
 let isCreate = localStorage.getItem('isCreate') === 'true';
 // Carregar avaliações e eventos na inicialização
 document.addEventListener('DOMContentLoaded', function () {
+
     // Carregar avaliações
     carregarAvaliacoes();
 
@@ -50,7 +52,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
-let paginaAtual = 1;
 // Elementos de Avaliação
 const btnNovaAvaliacao = document.getElementById('btn-nova-avaliacao');
 const btnExportarAvaliacoes = document.getElementById('btn-exportar-avaliacoes');
@@ -132,7 +133,7 @@ let contadorQuestoes = 0;
 
 const handleCreateAssessment = async (request) => {
     try {
-        const response = await fetch('https://salf-salf-api2.gkgtsp.easypanel.host/api/assessments', {
+        const response = await fetch(URL_BASE + '/api/assessments', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -266,21 +267,21 @@ const btnPaginaAnteriorAvaliacao = document.getElementById('btn-page-anterior-av
 const btnPaginaProximoAvaliacao = document.getElementById('btn-page-proximo-avaliacao');
 
 btnPaginaAvaliacao.addEventListener('click', function () {
-    btnPagina.textContent = paginaAtual - 1;
+    btnPagina.innerText = paginaAtual - 1;
     carregarEventos();
 });
 
 btnPaginaProximoAvaliacao.addEventListener('click', function () {
-    btnPaginaAvaliacao.textContent = paginaAtual + 1;
+    btnPaginaAvaliacao.innerText = paginaAtual + 1;
     carregarEventos();
 });
 
 btnPaginaAnterior.addEventListener('click', function () {
-    btnPagina.textContent = paginaAtual - 1;
+    btnPagina.innerText = paginaAtual - 1;
     carregarEventos();
 });
 btnPaginaProximo.addEventListener('click', function () {
-    btnPagina.textContent = paginaAtual + 1;
+    btnPagina.innerText = paginaAtual + 1;
     carregarEventos();
 });
 
@@ -304,7 +305,7 @@ function carregarEventos() {
             });
     } else {
         // Fallback para o método antigo
-        fetch(`${window.API_BASE_URL}/assessment-events`, {
+        fetch(`${API_BASE_URL}/assessment-events`, {
             headers: {
                 'Authorization': `Bearer ${getAuthToken()}`
             }
@@ -936,18 +937,18 @@ function preencherFormEvento(evento) {
 // Função para carregar as avaliações da API
 async function carregarAvaliacoes() {
     try {
-        const response = await fetch(`${window.API_BASE_URL}/assessments`, {
+        const response = await fetch(`${API_BASE_URL}/assessments`, {
             headers: {
                 'Authorization': `Bearer ${getAuthToken()}`
             }
         });
-        
+
         if (!response.ok) {
             throw new Error('Erro ao carregar avaliações');
         }
-        
+
         const data = await response.json();
-        avaliacoes = data;
+        avaliacoes = data.data;
         atualizarTabelaAvaliacoes();
     } catch (error) {
         console.error('Erro ao carregar avaliações:', error);
@@ -963,11 +964,11 @@ async function buscarAvaliacao(id) {
                 'Authorization': `Bearer ${getAuthToken()}`
             }
         });
-        
+
         if (!response.ok) {
             throw new Error('Erro ao buscar avaliação');
         }
-        
+
         return await response.json();
     } catch (error) {
         console.error('Erro ao buscar avaliação:', error);
@@ -2044,11 +2045,11 @@ async function carregarAvaliacao(id) {
                 'Authorization': `Bearer ${getAuthToken()}`
             }
         });
-        
+
         if (!response.ok) {
             throw new Error('Erro ao buscar avaliação');
         }
-        
+
         return await response.json();
     } catch (error) {
         console.error('Erro ao carregar avaliação:', error);
