@@ -281,7 +281,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 turmas.data.forEach(turma => {
                     const option = document.createElement('option');
                     option.value = turma.id;
-                    option.textContent = `${turma.name} (${turma.gradeLevel})`;
+                    option.textContent = `${turma.name}`;
                     turmaSelect.appendChild(option);
                 });
             })
