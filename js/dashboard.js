@@ -19,7 +19,7 @@ const aplicarFiltros = document.getElementById('aplicar-filtros');
 limparFiltros.addEventListener("click", () => {
     filtrosRegioes.value = "";
     grupos.value = "";
-    filtrosAnoEscolar.value = "";
+    // filtrosAnoEscolar.value = "";
     filtrosEvento.value = "";
     escola.value = "";
 });
@@ -63,16 +63,14 @@ aplicarFiltros.addEventListener("click", async () => {
 });
 filtrosRegioes.addEventListener("change", () => {
     regionId = filtrosRegioes.value;
-    if (regionId != "" && groupId != "") {
-        const schools = cache.schools.filter(item => item.regionId == regionId);
-        escola.innerHTML = '<option value="">Selecione a escola</option>';
-        schools.forEach(item => {
-            const option = document.createElement('option');
-            option.value = item.id;
-            option.textContent = item.name;
-            escola.appendChild(option);
-        });
-    }
+    const schools = cache.schools.filter(item => item.regionId == regionId);
+    escola.innerHTML = '<option value="">Selecione a escola</option>';
+    schools.forEach(item => {
+        const option = document.createElement('option');
+        option.value = item.id;
+        option.textContent = item.name;
+        escola.appendChild(option);
+    });
 })
 grupos.addEventListener("change", () => {
     regionId = filtrosRegioes.value;
@@ -92,14 +90,14 @@ escola.addEventListener("change", () => {
     groupId = grupos.value;
     regionId = filtrosRegioes.value;
     filtrosAnoEscolar.disabled = false;
-    filtrosAnoEscolar.innerHTML = '<option value="">Selecione o ano escolar</option>';
-    const schoolYears = cache.schoolYears.filter(item => item.schoolId == escola.value);
-    schoolYears.forEach(item => {
-        const option = document.createElement('option');
-        option.value = item.id;
-        option.textContent = item.name;
-        filtrosAnoEscolar.appendChild(option);
-    });
+    // filtrosAnoEscolar.innerHTML = '<option value="">Selecione o ano escolar</option>';
+    // const schoolYears = cache.schoolYears.filter(item => item.schoolId == escola.value);
+    // schoolYears.forEach(item => {
+    //     const option = document.createElement('option');
+    //     option.value = item.id;
+    //     option.textContent = item.name;
+    //     filtrosAnoEscolar.appendChild(option);
+    // });
 })
 filtrosAnoEscolar.addEventListener("change", () => {
     schoolId = escola.value;
@@ -288,12 +286,13 @@ function PopularGraphEvolution({ eventName, distribution }) {
 
 function PopularFilters() {
     filterRegion();
-
+    filterEvent()
+    filterGroup()
+    filterSchool()
 }
 
 const filterGroup = async (id) => {
     grupos.innerHTML = '<option value="">Selecione um grupo</option>';
-    grupos.disabled = false
     const data = await fetch(API_BASE_URL + `/groups?regionId=${id}`, {
         headers: headers
     });
@@ -310,7 +309,6 @@ const filterRegion = async () => {
     const data = await fetch(API_BASE_URL + `/regions`, {
         headers: headers
     });
-    filtrosRegioes.disabled = false;
     const response = await data.json();
     filtrosEvento.innerHTML = '<option value="">Selecione o evento</option>';
     response.data.forEach(item => {
@@ -326,7 +324,6 @@ const filterSchool = async () => {
     });
     const { data } = await request.json();
     escola.innerHTML = '<option value="">Selecione a escola</option>';
-    filtrosAnoEscolar.disabled = true
     data.forEach(item => {
         const option = document.createElement('option');
         option.value = item.id;
@@ -342,6 +339,9 @@ filtrosRegioes.addEventListener("change", () => {
 grupos.addEventListener("change", () => {
     filterSchool();
 })
+/* The code is using JavaScript to add an event listener to the "filtrosAnoEscolar" element. When the
+"change" event occurs on this element, the "filterEvent()" function will be called. However, the
+code is commented out using "//" and " */
 filtrosAnoEscolar.addEventListener("change", () => {
     filterEvent();
 })

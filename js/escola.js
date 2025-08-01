@@ -1,3 +1,4 @@
+
 document.addEventListener('DOMContentLoaded', function () {
     // Verificar se o usuário está autenticado
     const token = localStorage.getItem('token');
@@ -5,15 +6,16 @@ document.addEventListener('DOMContentLoaded', function () {
         window.location.href = '../../login.html';
         return;
     }
+    const headers = {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+    };
 
     // URL base da API
     // const API_BASE_URL = "https://salf-salf-api2.gkgtsp.easypanel.host/api";
 
     // Headers padrão para requisições à API
-    const headers = {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-    };
+
 
     // Elementos do DOM
     const tabelaEscolas = document.querySelector('tbody');
@@ -372,37 +374,16 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // Função para filtrar escolas com base nos filtros aplicados
-    function filtrarEscolas() {
+    async function filtrarEscolas() {
         const termoPesquisa = inputPesquisa.value.trim();
         const regiaoSelecionada = filtroRegiao.value;
         const grupoSelecionado = filtroGrupo.value;
 
-        // Verificar se o termo de pesquisa é um número (possível ID)
-        if (/^\d+$/.test(termoPesquisa)) {
-            // É um número, pode ser um ID - buscar diretamente na API
-            buscarEscolaPorId(parseInt(termoPesquisa));
-        } else {
-            // Filtro normal pela lista local
-            const termoLowerCase = termoPesquisa.toLowerCase();
 
-            const escolasFiltradas = todasEscolas.filter(escola => {
-                // Filtrar por termo de pesquisa
-                const matchPesquisa = !termoLowerCase ||
-                    escola.name?.toLowerCase().includes(termoLowerCase) ||
-                    escola.id?.toString().includes(termoLowerCase);
-
-                // Filtrar por região
-                const matchRegiao = !regiaoSelecionada || escola.region === regiaoSelecionada;
-
-                // Filtrar por grupo
-                const matchGrupo = !grupoSelecionado || escola.group === grupoSelecionado;
-
-                return matchPesquisa && matchRegiao && matchGrupo;
-            });
-
-            renderizarTabela(escolasFiltradas);
-        }
+        const filtrados = await fetch(API_BASE_URL + `/schools?searchTerm=${termoPesquisa}&regionId=${regiaoSelecionada}&groupId=${grupoSelecionado}`, { headers }).then(e => e.json())
+        renderizarTabela(filtrados.data);
     }
+
 
     // Função para buscar escola por ID diretamente na API
     async function buscarEscolaPorId(id) {

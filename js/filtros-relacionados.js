@@ -13,7 +13,7 @@ const btnIniciarAvaliacao = document.getElementById('iniciar-avaliacao');
 // Função para fazer requisições à API
 async function fetchAPI(endpoint) {
     try {
-        const response = await fetch(`${window.API_BASE_URL}${endpoint}`);
+        const response = await fetch(`${API_BASE_URL}${endpoint}`);
         if (!response.ok) {
             throw new Error(`Erro ao acessar a API: ${response.status}`);
         }
