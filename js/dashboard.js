@@ -36,7 +36,7 @@ let schoolId = null;
 let eventId = null;
 let schoolYearId = null;
 aplicarFiltros.addEventListener("click", async () => {
-    const data = await fetch(API_BASE_URL + `/dashboard/analytics?schoolId=${escola.value || ''}&gradeLevel=${filtrosAnoEscolar.value || ''}&classGroupId=${turma.value || ''}&assessmentEventId=${eventos.value || ''}&groupId=${grupos.value || ''}`, {
+    const data = await fetch(API_BASE_URL + `/dashboard/analytics?schoolId=${escola.value || ''}&gradeLevel=${filtrosAnoEscolar.value || ''}&classGroupId=${turma.value || ''}&assessmentEventId=${eventos.value || ''}&groupId=${grupos.value || ''}&regionId=${filtrosRegioes.value || ''}`, {
         headers: headers
     });
     const response = await data.json();
