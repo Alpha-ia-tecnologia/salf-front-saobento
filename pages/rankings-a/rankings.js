@@ -1,12 +1,12 @@
 let filters = false
+const chartSeries = document.getElementById('chart-series');
+const tbody = document.getElementById('tbody');
+const btnFiltrar = document.getElementById('btn-filtrar');
+const regiao = document.getElementById('filtro-regiao');
+const grupo = document.getElementById('filtro-grupo');
+const escola = document.getElementById('filtro-escola');
+const evento = document.getElementById('filtro-evento');
 document.addEventListener('DOMContentLoaded', async () => {
-    const chartSeries = document.getElementById('chart-series');
-    const tbody = document.getElementById('tbody');
-    const btnFiltrar = document.getElementById('btn-filtrar');
-    const regiao = document.getElementById('regiao');
-    const grupo = document.getElementById('grupo');
-    const escola = document.getElementById('escola');
-    const evento = document.getElementById('evento');
     const response = await fetch(`${window.API_BASE_URL}/dashboard/student-ranking`, {
         method: 'GET',
         headers: {
@@ -15,7 +15,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
     const { data } = await response.json();
-    console.log()
     renderRankingAlunos(data);
 
     btnFiltrar.addEventListener('click', async (e) => {
@@ -29,7 +28,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
             }
         });
-        const data = await response.json();
+        const { data } = await response.json();
         renderRankingAlunos(data);
     });
 })
