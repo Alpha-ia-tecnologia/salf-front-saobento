@@ -9,6 +9,7 @@ const ctxGraphYear = canvaGraphYear.getContext('2d');
 
 const filtrosRegioes = document.getElementById('regiao');
 const escola = document.getElementById('escola');
+const turma = document.getElementById('turma');
 const grupos = document.getElementById('grupo');
 const eventos = document.getElementById('evento');
 const filtrosAnoEscolar = document.getElementById('ano-escolar');
@@ -35,13 +36,13 @@ let schoolId = null;
 let eventId = null;
 let schoolYearId = null;
 aplicarFiltros.addEventListener("click", async () => {
-    const data = await fetch(API_BASE_URL + `/dashboard/analytics?schoolId=${schoolId || ''}&gradeLevel=${schoolYearId || ''}&classGroupId=${groupId || ''}&assessmentEventId=${eventId || ''}`, {
+    const data = await fetch(API_BASE_URL + `/dashboard/analytics?schoolId=${escola.value || ''}&gradeLevel=${filtrosAnoEscolar.value || ''}&classGroupId=${turma.value || ''}&assessmentEventId=${eventos.value || ''}&groupId=${grupos.value || ''}`, {
         headers: headers
     });
     const response = await data.json();
     PopularCards(response);
     PopularGraphPizza(response);
-    const data2 = await fetch(API_BASE_URL + `/dashboard/performance-by-grade?schoolId=${schoolId || ''}&assessmentEventId=${eventId || ''}`, {
+    const data2 = await fetch(API_BASE_URL + `/dashboard/performance-by-grade?schoolId=${escola.value || ''}&assessmentEventId=${eventos.value || ''}`, {
         headers: headers
     });
     const response2 = await data2.json();
@@ -49,12 +50,12 @@ aplicarFiltros.addEventListener("click", async () => {
     if (response2.gradePerformance.length > 0) {
         PopularGraphSeries(response2.gradePerformance);
     }
-    const data3 = await fetch(API_BASE_URL + `/dashboard/yearly-progression?schoolId=${schoolId || ''}&classGroupId=${groupId || ''}&gradeLevel=${schoolYearId || ''}`, {
+    const data3 = await fetch(API_BASE_URL + `/dashboard/yearly-progression?schoolId=${escola.value || ''}&classGroupId=${turma.value || ''}&gradeLevel=${filtrosAnoEscolar.value || ''}`, {
         headers: headers
     });
     const response3 = await data3.json();
     PopularGraphYear(response3.yearly);
-    const data4 = await fetch(API_BASE_URL + `/dashboard/reading-level-evolution?schoolId=${schoolId || ''}&gradeLevel=${schoolYearId || ''}&classGroupId=${groupId || ''}`, {
+    const data4 = await fetch(API_BASE_URL + `/dashboard/reading-level-evolution?schoolId=${escola.value || ''}&gradeLevel=${filtrosAnoEscolar.value || ''}&classGroupId=${turma.value || ''}&assessmentEventId=${eventos.value || ''}`, {
         headers: headers
     });
     const response4 = await data4.json();
@@ -90,14 +91,7 @@ escola.addEventListener("change", () => {
     groupId = grupos.value;
     regionId = filtrosRegioes.value;
     filtrosAnoEscolar.disabled = false;
-    // filtrosAnoEscolar.innerHTML = '<option value="">Selecione o ano escolar</option>';
-    // const schoolYears = cache.schoolYears.filter(item => item.schoolId == escola.value);
-    // schoolYears.forEach(item => {
-    //     const option = document.createElement('option');
-    //     option.value = item.id;
-    //     option.textContent = item.name;
-    //     filtrosAnoEscolar.appendChild(option);
-    // });
+    filterClass()
 })
 filtrosAnoEscolar.addEventListener("change", () => {
     schoolId = escola.value;
@@ -289,6 +283,7 @@ function PopularFilters() {
     filterEvent()
     filterGroup()
     filterSchool()
+    filterClass()
 }
 
 const filterGroup = async (id) => {
@@ -329,6 +324,20 @@ const filterSchool = async () => {
         option.value = item.id;
         option.textContent = item.name;
         escola.appendChild(option);
+    }
+    );
+}
+const filterClass = async () => {
+    const request = await fetch(API_BASE_URL + `/class-groups?schoolId=${escola.value}&limit=1000`, {
+        headers: headers
+    });
+    const { data } = await request.json();
+    turma.innerHTML = '<option value="">Selecione a turma</option>';
+    data.forEach(item => {
+        const option = document.createElement('option');
+        option.value = item.id;
+        option.textContent = item.name;
+        turma.appendChild(option);
     }
     );
 }
