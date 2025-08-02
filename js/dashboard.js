@@ -328,18 +328,21 @@ const filterSchool = async () => {
     );
 }
 const filterClass = async () => {
-    const request = await fetch(API_BASE_URL + `/class-groups?schoolId=${escola.value}&limit=1000`, {
-        headers: headers
-    });
-    const { data } = await request.json();
-    turma.innerHTML = '<option value="">Selecione a turma</option>';
-    data.forEach(item => {
-        const option = document.createElement('option');
-        option.value = item.id;
-        option.textContent = item.name;
-        turma.appendChild(option);
+    if(escola.value){
+        turma.disabled = false
+        const request = await fetch(API_BASE_URL + `/class-groups?schoolId=${escola.value}&limit=1000`, {
+            headers: headers
+        });
+        const { data } = await request.json();
+        turma.innerHTML = '<option value="">Selecione a turma</option>';
+        data.forEach(item => {
+            const option = document.createElement('option');
+            option.value = item.id;
+            option.textContent = item.name;
+            turma.appendChild(option);
+        }
+        );
     }
-    );
 }
 
 filtrosRegioes.addEventListener("change", () => {

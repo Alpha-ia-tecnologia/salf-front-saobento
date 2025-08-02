@@ -52,7 +52,7 @@ const randerChartProgressao = (object) => {
         }
     });
 }
-const randerRankingsEscola = (data) => {
+const renderRankingEscolas = (data) => {
     const body = document.getElementById('tbody');
     body.innerHTML = '';
     data.forEach(item => {
@@ -86,13 +86,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     const data = await response.json();
     const data2 = await response2.json();
     randerChartProgressao(data2);
-    randerRankingsEscola(data.data);
+    renderRankingEscolas(data.data);
 
     btnFiltrar.addEventListener('click', async (e) => {
         e.preventDefault();
         const regiao = document.getElementById('regiao').value;
         const grupo = document.getElementById('grupo').value;
-        console.log(regiao, grupo); 
         const response = await fetch(`${window.API_BASE_URL}/dashboard/school-ranking?region=${regiao}&group=${grupo}`, {
             method: 'GET',
             headers: {
@@ -101,7 +100,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         }); 
         const data = await response.json();
-        randerRankingsEscola(data.data);
+        renderRankingEscolas(data.data);
         const response2 = await fetch(`${window.API_BASE_URL}/dashboard/ranking-by-region?region=${regiao}`, {
             method: 'GET',
             headers: {

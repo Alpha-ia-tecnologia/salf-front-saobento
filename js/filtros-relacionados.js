@@ -164,7 +164,7 @@ const filtroEvento = document.getElementById('evento-avaliacao');
 const filtroTestes = document.getElementById('teste-leitura');
 
 const carregarEventos = async () => {
-    const eventos = await fetch(`${window.API_BASE_URL}/assessment-events`);
+    const eventos = await fetch(`${API_BASE_URL}/assessment-events`);
     const eventosJson = await eventos.json();
     eventosJson.forEach(evento => {
         const option = document.createElement('option');
@@ -172,7 +172,7 @@ const carregarEventos = async () => {
         option.textContent = evento.name;
         filtroEvento.appendChild(option);
     });
-    const testes = await fetch(`${window.API_BASE_URL}/assessments`);
+    const testes = await fetch(`${API_BASE_URL}/assessments`);
     const { data } = await testes.json();
     data.forEach(teste => {
         const option = document.createElement('option');

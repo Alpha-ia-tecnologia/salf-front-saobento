@@ -1,9 +1,12 @@
-const chartSeries = document.getElementById('chart-series');
-const btnFiltrar = document.getElementById('btn-filtrar');
-const tbody = document.getElementById('tbody');
 let filters = false
 document.addEventListener('DOMContentLoaded', async () => {
-    const btnFiltrar = document.getElementById('aplicar-filtros');
+    const chartSeries = document.getElementById('chart-series');
+    const tbody = document.getElementById('tbody');
+    const btnFiltrar = document.getElementById('btn-filtrar');
+    const regiao = document.getElementById('regiao');
+    const grupo = document.getElementById('grupo');
+    const escola = document.getElementById('escola');
+    const evento = document.getElementById('evento');
     const response = await fetch(`${window.API_BASE_URL}/dashboard/student-ranking`, {
         method: 'GET',
         headers: {
@@ -11,25 +14,23 @@ document.addEventListener('DOMContentLoaded', async () => {
             'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
     });
-    const data = await response.json();
-    randerRankingsAlunos(data);
+    const { data } = await response.json();
+    console.log()
+    renderRankingAlunos(data);
 
     btnFiltrar.addEventListener('click', async (e) => {
         e.preventDefault();
-        const regiao = document.getElementById('regiao').value;
-        const grupo = document.getElementById('grupo').value;
-        const escola = document.getElementById('escola').value;
-        const evento = document.getElementById('evento').value;
-        console.log(regiao, grupo); 
-        const response = await fetch(`${window.API_BASE_URL}/dashboard/student-ranking?region=${regiao}&group=${grupo}&school_id=${escola}&assessmentEventId=${evento}`, {
+
+        console.log(regiao, grupo);
+        const response = await fetch(`${window.API_BASE_URL}/dashboard/student-ranking?region=${regiao.value}&group=${grupo.value}&school_id=${escola.value}&assessmentEventId=${evento.value}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
             }
-        }); 
+        });
         const data = await response.json();
-        randerRankingsAlunos(data);
+        renderRankingAlunos(data);
     });
 })
 const niveisLeitores = {
@@ -41,7 +42,7 @@ const niveisLeitores = {
     TEXT_READER_WITHOUT_FLUENCY: 'Leitor de texto sem fluência',
     TEXT_READER_WITH_FLUENCY: 'Leitor de texto com fluência'
 }
-const randerRanking = (data) => {
+const renderRankingAlunos = (data) => {
     const body = document.getElementById('tbody');
     body.innerHTML = '';
     data.forEach(item => {

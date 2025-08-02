@@ -57,31 +57,30 @@
                                 </select>
                             </div>
                         </div>
+
+                        <div>
+                            <label for="ano-escolar" class="block text-sm font-medium text-gray-700 mb-1">Ano
+                                Escolar</label>
+                            <select id="ano-escolar"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="">Todos os anos</option>
+                                <option value="1">1º Ano</option>
+                                <option value="2">2º Ano</option>
+                                <option value="3">3º Ano</option>
+                                <option value="4">4º Ano</option>
+                                <option value="5">5º Ano</option>
+                                <option value="6">6º Ano</option>
+                                <option value="7">7º Ano</option>
+                                <option value="8">8º Ano</option>
+                                <option value="9">9º Ano</option>
+                            </select>
+                        </div>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label for="turma" class="block text-sm font-medium text-gray-700 mb-1">turma</label>
-                                <select id="turma"
+                                <select id="turma" disabled
                                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                    <option value="">Todas as escolas</option>
-                                    <option value="1">Escola Municipal João da Silva</option>
-                                    <option value="2">Escola Estadual Maria José</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label for="ano-escolar" class="block text-sm font-medium text-gray-700 mb-1">Ano
-                                    Escolar</label>
-                                <select id="ano-escolar"
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                    <option value="">Todos os anos</option>
-                                    <option value="1">1º Ano</option>
-                                    <option value="2">2º Ano</option>
-                                    <option value="3">3º Ano</option>
-                                    <option value="4">4º Ano</option>
-                                    <option value="5">5º Ano</option>
-                                    <option value="6">6º Ano</option>
-                                    <option value="7">7º Ano</option>
-                                    <option value="8">8º Ano</option>
-                                    <option value="9">9º Ano</option>
+                                    <option value="">Selecione a escola para carregar turmas</option>
                                 </select>
                             </div>
                             <div>
@@ -96,7 +95,9 @@
                             </div>
                         </div>
                         <div class="flex justify-end">
-                            <button data-url="https://salf-salf-api2.gkgtsp.easypanel.host/api/dashboard" data-typeExternDash="dashboard" id="btn-exportar-1" class="mt-4 bg-green-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition">
+                            <button data-url="https://salf-salf-api2.gkgtsp.easypanel.host/api/dashboard"
+                                data-typeExternDash="dashboard" id="btn-exportar-1"
+                                class="mt-4 bg-green-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition">
                                 Exportar
                             </button>
                         </div>
