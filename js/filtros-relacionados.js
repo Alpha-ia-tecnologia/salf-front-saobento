@@ -9,11 +9,18 @@ const alunoSelect = document.getElementById('aluno');
 localStorage.removeItem("aluno")
 localStorage.removeItem("turma")
 localStorage.removeItem("queryId")
+
+const options = {
+    headers: {
+        'Accept': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+    }
+}
 const btnIniciarAvaliacao = document.getElementById('iniciar-avaliacao');
 // Função para fazer requisições à API
 async function fetchAPI(endpoint) {
     try {
-        const response = await fetch(`${API_BASE_URL}${endpoint}`);
+        const response = await fetch(`${API_BASE_URL}${endpoint}`,options);
         if (!response.ok) {
             throw new Error(`Erro ao acessar a API: ${response.status}`);
         }
@@ -36,13 +43,13 @@ async function carregarEscolas() {
     alunoSelect.disabled = true;
 
     // Busca as escolas na API
-    const { data } = await fetchAPI('/schools?limit=1000');
+    const { data } = await fetchAPI('/schools?limit=1000',options);
     console.log(data.length);
 
 
     // Adiciona as opções de escolas ao select
 
-    if (data  && data.length > 0) {
+    if (data && data.length > 0) {
         data.forEach(escola => {
             const option = document.createElement('option');
             option.value = escola.name;
@@ -50,7 +57,7 @@ async function carregarEscolas() {
             option.dataset.id = escola.id;
             escolasDatalist.appendChild(option);
         });
-        
+
 
         // Habilita o select de escolas
         escolaSelect.disabled = false;
@@ -78,7 +85,7 @@ async function carregarTurmas(escolaId) {
     }
 
     // Busca as turmas na API com base na escola selecionada
-    const { data } = await fetchAPI(`/class-groups?schoolId=${escolaId}`);
+    const { data } = await fetchAPI(`/class-groups?schoolId=${escolaId}`,options);
     // Limpa o select de turmas para adicionar as novas opções
     limparSelect(turmaSelect, 'Selecione uma turma');
 
@@ -112,7 +119,7 @@ async function carregarAlunos(turmaId) {
     }
 
     // Busca os alunos na API com base na turma selecionada
-    const { data } = await fetchAPI(`/students?classGroupId=${turmaId}`);
+    const { data } = await fetchAPI(`/students?classGroupId=${turmaId}`,options);
 
     // Limpa o select de alunos para adicionar as novas opções
     limparSelect(alunoSelect, 'Selecione um aluno');
@@ -164,7 +171,7 @@ const filtroEvento = document.getElementById('evento-avaliacao');
 const filtroTestes = document.getElementById('teste-leitura');
 
 const carregarEventos = async () => {
-    const eventos = await fetch(`${API_BASE_URL}/assessment-events`);
+    const eventos = await fetch(`${API_BASE_URL}/assessment-events`,options);
     const eventosJson = await eventos.json();
     eventosJson.forEach(evento => {
         const option = document.createElement('option');
@@ -172,7 +179,7 @@ const carregarEventos = async () => {
         option.textContent = evento.name;
         filtroEvento.appendChild(option);
     });
-    const testes = await fetch(`${API_BASE_URL}/assessments`);
+    const testes = await fetch(`${API_BASE_URL}/assessments`,options);
     const { data } = await testes.json();
     data.forEach(teste => {
         const option = document.createElement('option');
