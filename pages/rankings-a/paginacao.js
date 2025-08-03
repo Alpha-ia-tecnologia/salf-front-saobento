@@ -1,4 +1,12 @@
-
+const niveisLeitores = {
+    NOT_EVALUATED: 'Não avaliado',
+    NON_READER: 'Não leitor',
+    SYLLABLE_READER: 'Leitor de sílabas',
+    WORD_READER: 'Leitor de palavras',
+    SENTENCE_READER: 'Leitor de frases',
+    TEXT_READER_WITHOUT_FLUENCY: 'Leitor de texto sem fluência',
+    TEXT_READER_WITH_FLUENCY: 'Leitor de texto com fluência'
+}
 document.addEventListener('DOMContentLoaded', () => {
     const btnPageAnterior = document.getElementById('btn-page-anterior');
     const btnPageProxima = document.getElementById('btn-page-proximo');
@@ -51,8 +59,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
             }
         });
-        const data = await response.json();
-        randerRanking(data.data);
+        const { data } = await response.json();
+        randerRanking(data);
     }
 
 

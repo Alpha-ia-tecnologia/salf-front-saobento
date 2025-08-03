@@ -47,8 +47,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
             }
         });
-        const data = await response.json();
-        randerRankingsEscola(data.data);
+        const { data } = await response.json();
+        randerRankingsEscola(data);
     }
 
 
