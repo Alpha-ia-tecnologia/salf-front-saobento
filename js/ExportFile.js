@@ -223,11 +223,11 @@ const exportar = async (planilhas) => {
     for (const dados of planilhas) {
         // Converte para planilha
         const ws = XLSX.utils.json_to_sheet(dados.data);
-        ws.A1.s = {
-            font: {
-                bold: true
-            }
-        }
+        // ws.A1.s = {
+        //     font: {
+        //         bold: true
+        //     }
+        // }
 
 
         ws['!cols'] = Object.keys(dados.data[0]).map(key => {

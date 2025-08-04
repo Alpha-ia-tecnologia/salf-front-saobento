@@ -20,9 +20,10 @@ const aplicarFiltros = document.getElementById('aplicar-filtros');
 limparFiltros.addEventListener("click", () => {
     filtrosRegioes.value = "";
     grupos.value = "";
-    // filtrosAnoEscolar.value = "";
+    filtrosAnoEscolar.value = "";
     filtrosEvento.value = "";
     escola.value = "";
+    turma.value = ""
 });
 // grupos.disabled = true;
 // filtrosAnoEscolar.disabled = true;
@@ -35,6 +36,20 @@ let regionId = null;
 let schoolId = null;
 let eventId = null;
 let schoolYearId = null;
+const pluginNoData = {
+    id: 'noDataMessage',
+    beforeDraw: (chart) => {
+        if (chart.data.datasets.length === 0 || chart.data.datasets[0].data.length === 0) {
+            const ctx = chart.ctx;
+            ctx.save();
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.font = '16px sans-serif';
+            ctx.fillText('Sem dados disponíveis', chart.width / 2, chart.height / 2);
+            ctx.restore();
+        }
+    }
+};
 aplicarFiltros.addEventListener("click", async () => {
     const data = await fetch(API_BASE_URL + `/dashboard/analytics?schoolId=${escola.value || ''}&gradeLevel=${filtrosAnoEscolar.value || ''}&classGroupId=${turma.value || ''}&assessmentEventId=${eventos.value || ''}&groupId=${grupos.value || ''}&regionId=${filtrosRegioes.value || ''}`, {
         headers: headers
@@ -111,7 +126,8 @@ const cache = {
     groups: [],
     assessmentEvents: [],
     schoolYears: [],
-    regions: []
+    regions: [],
+    turma : []
 }
 
 const headers = {
@@ -178,17 +194,20 @@ function PopularGraphPizza({ readingLevelDistribution }) {
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    position: 'right',
-                    labels: {
-                        boxWidth: 15,
-                        font: {
-                            size: 10
+            plugins: [
+                {...pluginNoData},
+                {
+                    legend: {
+                        position: 'right',
+                        labels: {
+                            boxWidth: 15,
+                            font: {
+                                size: 10
+                            }
                         }
                     }
                 }
-            }
+            ]
         }
     });
 }
@@ -328,7 +347,7 @@ const filterSchool = async () => {
     );
 }
 const filterClass = async () => {
-    if(escola.value){
+    if (escola.value) {
         turma.disabled = false
         const request = await fetch(API_BASE_URL + `/class-groups?schoolId=${escola.value}&limit=1000`, {
             headers: headers
