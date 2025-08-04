@@ -51,7 +51,7 @@ const pluginNoData = {
     }
 };
 aplicarFiltros.addEventListener("click", async () => {
-    const data = await fetch(API_BASE_URL + `/dashboard/analytics?schoolId=${escola.value || ''}&gradeLevel=${filtrosAnoEscolar.value || ''}&classGroupId=${turma.value || ''}&assessmentEventId=${eventos.value || ''}&groupId=${grupos.value || ''}&regionId=${filtrosRegioes.value || ''}`, {
+    const data = await fetch(API_BASE_URL + `/dashboard/analytics?schoolId=${escola.value || ''}&grade=${filtrosAnoEscolar.value || ''}&classGroupId=${turma.value || ''}&assessmentEventId=${eventos.value || ''}&groupId=${grupos.value || ''}&regionId=${filtrosRegioes.value || ''}`, {
         headers: headers
     });
     const response = await data.json();
@@ -65,12 +65,12 @@ aplicarFiltros.addEventListener("click", async () => {
     if (response2.gradePerformance.length > 0) {
         PopularGraphSeries(response2.gradePerformance);
     }
-    const data3 = await fetch(API_BASE_URL + `/dashboard/yearly-progression?schoolId=${escola.value || ''}&classGroupId=${turma.value || ''}&gradeLevel=${filtrosAnoEscolar.value || ''}`, {
+    const data3 = await fetch(API_BASE_URL + `/dashboard/yearly-progression?schoolId=${escola.value || ''}&classGroupId=${turma.value || ''}&grade=${filtrosAnoEscolar.value || ''}`, {
         headers: headers
     });
     const response3 = await data3.json();
     PopularGraphYear(response3.yearly);
-    const data4 = await fetch(API_BASE_URL + `/dashboard/reading-level-evolution?schoolId=${escola.value || ''}&gradeLevel=${filtrosAnoEscolar.value || ''}&classGroupId=${turma.value || ''}&assessmentEventId=${eventos.value || ''}`, {
+    const data4 = await fetch(API_BASE_URL + `/dashboard/reading-level-evolution?schoolId=${escola.value || ''}&grade=${filtrosAnoEscolar.value || ''}&classGroupId=${turma.value || ''}&assessmentEventId=${eventos.value || ''}`, {
         headers: headers
     });
     const response4 = await data4.json();
