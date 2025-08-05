@@ -317,6 +317,7 @@ const examGet = async () => {
     }
 }
 buttonEncerrar.addEventListener("click",() => {
+    calcAbstractPerfil.perfil = "NON_READER"
     forcedEnd(stages["etapa-palavras"],body(calcAbstractPerfil))
 })
 const stageBody = {
