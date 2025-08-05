@@ -5,6 +5,7 @@ const btnTimerWords = document.getElementById("iniciar-timer-palavras")
 const btnTimerPseudowords = document.getElementById("iniciar-timer-pseudopalavras")
 const btnTimerPhrases = document.getElementById("iniciar-timer-frases")
 const btnTimerText = document.getElementById("iniciar-timer-texto")
+const buttonEncerrar = document.getElementById("encerrar-avaliação")
 const btnTimerQuestoes = document.getElementById("iniciar-timer-questoes")
 // nivel de leitor
 const niveisLeitor = {
@@ -315,7 +316,9 @@ const examGet = async () => {
         renderStageQuestoes()
     }
 }
-
+buttonEncerrar.addEventListener("click",() => {
+    forcedEnd(stages["etapa-palavras"],body(calcAbstractPerfil))
+})
 const stageBody = {
     "stage": null,
     "itemsRead": 0,
