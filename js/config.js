@@ -4,10 +4,10 @@
  */
 
 // URL base da API
-const API_BASE_URL = 'https://salf-salf-api2.gkgtsp.easypanel.host/api';
+const API_BASE_URL = 'https://sao-bento-salf-api.gkgtsp.easypanel.host/api';
 
 // URL base da API sem o /api para alguns endpoints específicos
-const API_BASE_URL_NO_API = 'https://salf-salf-api2.gkgtsp.easypanel.host';
+const API_BASE_URL_NO_API = 'https://sao-bento-salf-api.gkgtsp.easypanel.host/';
 
 // Configuração para modo de desenvolvimento/produção
 const CONFIG = {

@@ -1,7 +1,6 @@
 // Inicializar listas
 const avaliacoesList = document.getElementById('avaliacoes-list');
 let paginaAtual = 1;
-
 // Função para obter o token de autenticação do localStorage
 function getAuthToken() {
     return localStorage.getItem('token') || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IlVzdWFyaW8gU0FMRiIsImlhdCI6MTUxNjIzOTAyMn0.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c';
@@ -130,58 +129,6 @@ let frasesAdicionadas = [];
 // Variáveis para as questões
 let questoesAdicionadas = [];
 let contadorQuestoes = 0;
-
-const handleCreateAssessment = async (request) => {
-    try {
-        const response = await fetch(URL_BASE + '/api/assessments', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${getAuthToken()}`
-            },
-            body: JSON.stringify(request)
-        });
-
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.message || 'Erro ao criar avaliação');
-        }
-
-        alert('Avaliação criada com sucesso!');
-        resetFormAvaliacao();
-        modalAvaliacao.classList.add('hidden');
-        location.reload();
-    } catch (error) {
-        console.error('Erro:', error);
-        alert('Erro ao criar avaliação.');
-    }
-};
-
-const handleUpdateAssessment = async (id, request) => {
-    try {
-        const response = await fetch(`https://salf-salf-api2.gkgtsp.easypanel.host/api/assessments/${id}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${getAuthToken()}`
-            },
-            body: JSON.stringify(request)
-        });
-
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.message || 'Erro ao atualizar avaliação');
-        }
-
-        alert('Avaliação atualizada com sucesso!');
-        resetFormAvaliacao();
-        modalEditarAvaliacao.classList.add('hidden');
-        location.reload();
-    } catch (error) {
-        console.error('Erro:', error);
-        throw error; // Propagar o erro para ser tratado pelo chamador
-    }
-};
 
 btnSalvarAvaliacao.addEventListener('click', async () => {
     const nomeAvaliacao = document.getElementById('nome-avaliacao').value;
@@ -928,6 +875,59 @@ function preencherFormAvaliacao(avaliacao) {
     }
 }
 
+
+const handleCreateAssessment = async (request) => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/assessments`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getAuthToken()}`
+            },
+            body: JSON.stringify(request)
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Erro ao criar avaliação');
+        }
+
+        alert('Avaliação criada com sucesso!');
+        resetFormAvaliacao();
+        modalAvaliacao.classList.add('hidden');
+        location.reload();
+    } catch (error) {
+        console.error('Erro:', error);
+        alert('Erro ao criar avaliação.');
+    }
+};
+
+const handleUpdateAssessment = async (id, request) => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/assessments/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getAuthToken()}`
+            },
+            body: JSON.stringify(request)
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Erro ao atualizar avaliação');
+        }
+
+        alert('Avaliação atualizada com sucesso!');
+        resetFormAvaliacao();
+        modalEditarAvaliacao.classList.add('hidden');
+        location.reload();
+    } catch (error) {
+        console.error('Erro:', error);
+        throw error; // Propagar o erro para ser tratado pelo chamador
+    }
+};
+
 function preencherFormEvento(evento) {
     document.getElementById('nome-evento').value = evento.nome;
     document.getElementById('avaliacao-evento').value = evento.avaliacaoId;
@@ -1087,7 +1087,7 @@ const atualizarContadoresEdit = () => {
 
 // Função para editar uma avaliação
 function editarAvaliacao(id) {
-    fetch(`https://salf-salf-api2.gkgtsp.easypanel.host/api/assessments/${id}`, {
+    fetch(`${API_BASE_URL}/assessments/${id}`, {
         headers: {
             'Authorization': `Bearer ${getAuthToken()}`
         }
@@ -1398,14 +1398,14 @@ const adicionarFraseEdit = () => {
 // Função para excluir uma avaliação
 function excluirAvaliacao(id) {
     if (confirm('Tem certeza que deseja excluir esta avaliação?')) {
-        fetch(`https://salf-salf-api2.gkgtsp.easypanel.host/api/assessments/${id}`, {
+        fetch(`${API_BASE_URL}/assessments/${id}`, {
             method: 'DELETE',
             headers: {
                 'Authorization': `Bearer ${getAuthToken()}`
             }
         })
             .then(async (response) => {
-                if (!response.ok) {
+                if (response.status != 500 || response.status != 400) {
                     const error = await response.json();
                     alert(error.message);
                     throw new Error('Erro ao excluir avaliação');
@@ -1450,7 +1450,7 @@ if (cancelarEnvioSimples) {
 
 var associarEvento = async () => {
     try {
-        const response = await fetch(`https://salf-salf-api2.gkgtsp.easypanel.host/api/assessments/${1})}/associate-event`, {
+        const response = await fetch(`${API_BASE_URL}/assessments/${1})}/associate-event`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -1504,7 +1504,7 @@ formEvento.addEventListener('submit', function (e) {
 
     if (eventoIdEmEdicao === null) {
         // Adicionar novo evento
-        fetch('https://salf-salf-api2.gkgtsp.easypanel.host/api/assessment-events', {
+        fetch(URL_BASE + '/api/assessment-events', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -1543,7 +1543,7 @@ formEvento.addEventListener('submit', function (e) {
 
     } else {
         // Atualizar evento existente
-        fetch(`https://salf-salf-api2.gkgtsp.easypanel.host/api/assessment-events/${eventoIdEmEdicao}`, {
+        fetch(`${API_BASE_URL}/api/assessment-events/${eventoIdEmEdicao}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -1591,7 +1591,7 @@ async function carregarAvaliacoesParaSelect() {
     // Mostrar indicador de carregamento
     avaliacaoSelect.innerHTML = '<option value="">Carregando avaliações...</option>';
 
-    return fetch('https://salf-salf-api2.gkgtsp.easypanel.host/api/assessments', {
+    return fetch(URL_BASE + '/api/assessments', {
         headers: {
             'Authorization': `Bearer ${getAuthToken()}`
         }
@@ -1656,7 +1656,7 @@ function editarEvento(id) {
             });
     } else {
         // Fallback para o método antigo
-        fetch(`https://salf-salf-api2.gkgtsp.easypanel.host/api/assessment-events/${id}`, {
+        fetch(`${API_BASE_URL}/api/assessment-events/${id}`, {
             headers: {
                 'Authorization': `Bearer ${getAuthToken()}`
             }
@@ -1712,7 +1712,7 @@ function excluirEvento(id) {
                 });
         } else {
             // Fallback para o método antigo
-            fetch(`https://salf-salf-api2.gkgtsp.easypanel.host/api/assessment-events/${id}`, {
+            fetch(`${API_BASE_URL}/api/assessment-events/${id}`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${getAuthToken()}`
