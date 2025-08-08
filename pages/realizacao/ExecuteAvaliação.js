@@ -6,6 +6,8 @@ const btnTimerPseudowords = document.getElementById("iniciar-timer-pseudopalavra
 const btnTimerPhrases = document.getElementById("iniciar-timer-frases")
 const btnTimerText = document.getElementById("iniciar-timer-texto")
 const btnTimerQuestoes = document.getElementById("iniciar-timer-questoes")
+const btnEncerrar = document.getElementById("encerrar-avaliacao")
+
 // nivel de leitor
 const niveisLeitor = {
     nivel0: "NOT_EVALUATED",
@@ -343,6 +345,8 @@ const endExam = async () => {
 
 }
 
+
+
 const renderStage = (currentStage, currentCache, currentContainer, currentTotal, currentRead) => {
     const divStage = stages[currentStage].stage.querySelector(currentContainer)
     divStage.innerHTML = ""
@@ -665,6 +669,15 @@ const filterIsEmpty = () => {
         throw new Error("Todos os filtros são obrigatórios")
     }
 }
+
+const encerrarAvaliacao = () => {
+    calcAbstractPerfil.perfil = "NON_READER"
+    // stages["etapa-palavras"].stage.classList.toggle("hidden")
+    forcedEnd(stages["etapa-palavras"],body(calcAbstractPerfil))
+}
+
+btnEncerrar.addEventListener("click",encerrarAvaliacao)
+
 document.addEventListener("DOMContentLoaded", function () {
     const btnTimerWords = document.getElementById("iniciar-timer-palavras")
     const btnTimerPseudowords = document.getElementById("iniciar-timer-pseudopalavras")
@@ -683,7 +696,7 @@ document.addEventListener("DOMContentLoaded", function () {
         stages["selecao-avaliacao"].nextEvent();
     })
 
-    stages["etapa-palavras"].stage.querySelectorAll("button")[1].addEventListener("click", (e) => {
+    stages["etapa-palavras"].stage.querySelectorAll("button")[2].addEventListener("click", (e) => {
         nextStage()
         if (stageBody.itemsRead === 0 && stageBody.stage === "WORDS") {
             alert("Você não leu nenhuma palavra")
