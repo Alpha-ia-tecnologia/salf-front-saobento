@@ -1,3 +1,4 @@
+
 // Inicializar listas
 const avaliacoesList = document.getElementById('avaliacoes-list');
 let paginaAtual = 1;
@@ -1742,7 +1743,7 @@ function atualizarTabelaEventos() {
 }
 
 // Função para exportar uma prova
-function exportarProva(id) {
+async function exportarProva(id) {
     // Mostrar indicador de processamento
     const loadingOverlay = document.createElement('div');
     loadingOverlay.className = 'fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50';
@@ -1757,8 +1758,19 @@ function exportarProva(id) {
     document.body.appendChild(loadingOverlay);
 
     // Buscar link de download da API
-    localStorage.setItem('id', id)
-    location.href = location.origin + '/js/file/Exame.html'
+    const response = await fetch(`${API_BASE_URL}/assessments/${id}/document`, {
+        headers: {
+            'Authorization': `Bearer ${getAuthToken()}`
+        }
+    }).then(e => e.json())
+
+    if(response.message === "Document generated successfully") document.body.removeChild(loadingOverlay)
+
+    const a = document.createElement("a")
+    a.href = `${API_BASE_URL_NO_API}${response.url}`
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
 }
 
 // Event listeners para o modal de edição
