@@ -8,6 +8,7 @@ novoAvaliacao.addEventListener("click",() => {
 
     location.reload()
 })
+console.log(location.origin)
 voltar.addEventListener('click',() => {
     window.location.href = location.origin + '/pages/dashboard/dashboard.html'
 })
