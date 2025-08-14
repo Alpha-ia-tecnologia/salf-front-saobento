@@ -1,56 +1,59 @@
 /**
- * Configuração global do sistema SALF
- * Centraliza todas as configurações importantes em um único local
+ * SALF - Sistema de Avaliação de Leitura e Fluência
+ *
+ * ARQUIVO: config.js
+ * FUNÇÃO: Configuração global centralizada do sistema
+ *
+ * Este arquivo centraliza todas as configurações importantes:
+ * - URLs da API
+ * - Configurações de timeout e retry
+ * - Funções para headers padrão e construção de URLs
+ * - Configurações de paginação e debug
+ *
+ * RELACIONAMENTOS:
+ * - Importado por todos os módulos que fazem requisições à API
+ * - Fornece configurações globais para autenticação e endpoints
+ * - Centraliza a manutenção de URLs e configurações do sistema
  */
 
-// URL base da API
-const API_BASE_URL = 'https://salf-salf-api2.gkgtsp.easypanel.host/api';
+const API_BASE_URL = "https://salf-salf-api2.gkgtsp.easypanel.host/api";
 
-// URL base da API sem o /api para alguns endpoints específicos
-const API_BASE_URL_NO_API = 'https://salf-salf-api2.gkgtsp.easypanel.host';
+const API_BASE_URL_NO_API = "https://salf-salf-api2.gkgtsp.easypanel.host";
 
-// Configuração para modo de desenvolvimento/produção
 const CONFIG = {
-    // URLs da API
-    API_BASE_URL: API_BASE_URL,
-    API_BASE_URL_NO_API: API_BASE_URL_NO_API,
-    
-    // Configurações de timeout para requisições
-    REQUEST_TIMEOUT: 30000,
-    
-    // Configurações de retry
-    MAX_RETRIES: 3,
-    
-    // Configurações de debug
-    DEBUG_MODE: false,
-    
-    // Configurações de paginação
-    DEFAULT_PAGE_SIZE: 20,
-    MAX_PAGE_SIZE: 100
+  API_BASE_URL: API_BASE_URL,
+  API_BASE_URL_NO_API: API_BASE_URL_NO_API,
+
+  REQUEST_TIMEOUT: 30000,
+
+  MAX_RETRIES: 3,
+
+  DEBUG_MODE: false,
+
+  DEFAULT_PAGE_SIZE: 20,
+  MAX_PAGE_SIZE: 100,
 };
 
-// Função para obter headers padrão para as requisições
 function getDefaultHeaders() {
-    const token = localStorage.getItem('token');
-    return {
-        'Content-Type': 'application/json',
-        'Authorization': token ? `Bearer ${token}` : ''
-    };
+  const token = localStorage.getItem("token");
+  return {
+    "Content-Type": "application/json",
+    Authorization: token ? `Bearer ${token}` : "",
+  };
 }
 
-// Função para construir URL completa da API
 function buildApiUrl(endpoint, useApiSuffix = true) {
-    const baseUrl = useApiSuffix ? CONFIG.API_BASE_URL : CONFIG.API_BASE_URL_NO_API;
-    const cleanEndpoint = endpoint.startsWith('/') ? endpoint.slice(1) : endpoint;
-    return `${baseUrl}/${cleanEndpoint}`;
+  const baseUrl = useApiSuffix
+    ? CONFIG.API_BASE_URL
+    : CONFIG.API_BASE_URL_NO_API;
+  const cleanEndpoint = endpoint.startsWith("/") ? endpoint.slice(1) : endpoint;
+  return `${baseUrl}/${cleanEndpoint}`;
 }
 
-// Tornar as configurações globalmente disponíveis
 window.CONFIG = CONFIG;
 window.API_BASE_URL = API_BASE_URL;
 window.API_BASE_URL_NO_API = API_BASE_URL_NO_API;
 window.getDefaultHeaders = getDefaultHeaders;
 window.buildApiUrl = buildApiUrl;
 
-// Log para confirmar que a configuração foi carregada
-console.log('🔧 Configuração global carregada:', CONFIG); 
+console.log("🔧 Configuração global carregada:", CONFIG);
