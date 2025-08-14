@@ -369,7 +369,6 @@ function excluirAssessment(id) {
             })
             .then(({ data }) => {
                 alert('Avaliação excluída com sucesso!');
-                // Recarregar as avaliações e eventos após a exclusão
                 carregarAvaliacoes();
                 carregarEventos();
             })
