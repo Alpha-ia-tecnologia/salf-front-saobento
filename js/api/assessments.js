@@ -1,6 +1,23 @@
-// Cliente API para avaliações
+/**
+ * SALF - Sistema de Avaliação de Leitura e Fluência
+ *
+ * ARQUIVO: api/assessments.js
+ * FUNÇÃO: Cliente API para gestão de avaliações
+ *
+ * Este arquivo fornece interface para operações CRUD de avaliações:
+ * - Busca todas as avaliações disponíveis
+ * - Obtém avaliação específica por ID
+ * - Cria novas avaliações
+ * - Atualiza avaliações existentes
+ * - Remove avaliações do sistema
+ *
+ * RELACIONAMENTOS:
+ * - Consome endpoint /assessments da API principal
+ * - Integra com sistema de autenticação JWT
+ * - Fornece dados para módulo de avaliações
+ * - Conecta com sistema de criação de testes
+ */
 
-// Função para obter todas as avaliações
 async function getAllAssessments() {
   const response = await fetch(
     "https://salf-salf-api2.gkgtsp.easypanel.host/api/assessments"
@@ -9,7 +26,6 @@ async function getAllAssessments() {
   return response.json();
 }
 
-// Função para obter uma avaliação específica por ID
 async function getAssessmentById(id) {
   const response =
     await fetch(`https://salf-salf-api2.gkgtsp.easypanel.host/api/assessments
@@ -18,7 +34,6 @@ async function getAssessmentById(id) {
   return response.json();
 }
 
-// Função para atualizar uma avaliação
 async function updateAssessment(id, data) {
   const token = localStorage.getItem("token") || "";
 
@@ -38,7 +53,6 @@ async function updateAssessment(id, data) {
   return response.json();
 }
 
-// Função para excluir uma avaliação
 async function deleteAssessment(id) {
   const token = localStorage.getItem("token") || "";
 
@@ -56,7 +70,6 @@ async function deleteAssessment(id) {
   return response.json();
 }
 
-// Função para criar uma nova avaliação
 async function createAssessment(data) {
   const token = localStorage.getItem("token") || "";
 
@@ -80,7 +93,6 @@ async function createAssessment(data) {
   return response.json();
 }
 
-// Exportar funções
 window.AssessmentAPI = {
   getAllAssessments,
   getAssessmentById,

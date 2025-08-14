@@ -1,3 +1,23 @@
+/**
+ * SALF - Sistema de Avaliação de Leitura e Fluência
+ *
+ * ARQUIVO: aluno.js
+ * FUNÇÃO: Sistema de gestão de alunos e turmas
+ *
+ * Este arquivo gerencia todo o ciclo de vida dos alunos:
+ * - CRUD completo de alunos (criar, ler, atualizar, deletar)
+ * - Sistema de filtros hierárquicos (Região → Grupo → Escola → Turma)
+ * - Importação em lote de alunos via arquivo Excel
+ * - Associação automática de alunos a turmas e escolas
+ * - Paginação e busca de alunos
+ *
+ * RELACIONAMENTOS:
+ * - Integra com API de students, schools e class-groups
+ * - Conecta com sistema de regiões e grupos
+ * - Fornece dados para realização de avaliações
+ * - Gerencia hierarquia escolar completa
+ */
+
 document.addEventListener("DOMContentLoaded", function () {
   let cacheData = {
     regiao: null,
@@ -7,7 +27,6 @@ document.addEventListener("DOMContentLoaded", function () {
   };
   let paginaAtual = 1;
 
-  // Referências aos elementos
   const btnNovoAluno = document.getElementById("btn-novo-aluno");
   const btnImportarAlunos = document.getElementById("btn-importar-alunos");
   const modalAluno = document.getElementById("modal-aluno");
@@ -28,20 +47,14 @@ document.addEventListener("DOMContentLoaded", function () {
   const arquivoSelecionado = document.getElementById("arquivo-selecionado");
   const nomeArquivo = document.getElementById("nome-arquivo");
 
-  // Dados de controle
   let alunos = [];
   let filtroRegiaoId = "";
   let filtroGrupoId = "";
   let filtroEscolaId = "";
   let filtroTurmaId = "";
 
-  // API endpoints - agora vem da configuração global
-  // const API_BASE_URL = 'https://salf-salf-api2.gkgtsp.easypanel.host/api'; // Removido - usando configuração global
-
-  // Token de autenticação (mock)
   const token = localStorage.getItem("token");
 
-  // Event Listeners
   btnNovoAluno.addEventListener("click", abrirModalAluno);
   btnImportarAlunos.addEventListener("click", abrirModalImportar);
   fecharModal.addEventListener("click", fecharModalAluno);
@@ -51,11 +64,9 @@ document.addEventListener("DOMContentLoaded", function () {
   formAluno.addEventListener("submit", salvarAluno);
   formImportar.addEventListener("submit", importarAlunos);
 
-  // Event listeners para filtros
   regiaoSelect.addEventListener("change", function () {
     filtroRegiaoId = this.value;
     carregarGruposParaFiltro(filtroRegiaoId);
-    // Limpar os filtros subsequentes
     grupoSelect.value = "";
     escolaSelect.value = "";
     turmaSelect.value = "";
@@ -68,7 +79,6 @@ document.addEventListener("DOMContentLoaded", function () {
   grupoSelect.addEventListener("change", function () {
     filtroGrupoId = this.value;
     carregarEscolasParaFiltro(filtroGrupoId);
-    // Limpar os filtros subsequentes
     escolaSelect.value = "";
     turmaSelect.value = "";
     filtroEscolaId = "";
@@ -79,7 +89,6 @@ document.addEventListener("DOMContentLoaded", function () {
   escolaSelect.addEventListener("change", function () {
     filtroEscolaId = this.value;
     carregarTurmasParaFiltro(filtroEscolaId);
-    // Limpar o filtro de turma
     turmaSelect.value = "";
     filtroTurmaId = "";
     carregarAlunos();
@@ -113,20 +122,13 @@ document.addEventListener("DOMContentLoaded", function () {
     carregarAlunos();
   });
 
-  // Event listeners no formulário
   escolaFormSelect.addEventListener("change", carregarTurmasParaFormulario);
 
   fileUpload.addEventListener("change", exibirNomeArquivo);
 
-  // Inicializar dados
   carregarRegioes();
   carregarAlunos();
 
-  // Funções
-
-  /**
-   * Carrega as regiões para o filtro
-   */
   function carregarRegioes() {
     fetch(`${window.API_BASE_URL}/regions`, {
       headers: {
@@ -141,7 +143,6 @@ document.addEventListener("DOMContentLoaded", function () {
         return response.json();
       })
       .then((regioes) => {
-        // Preencher select de regiões do filtro
         regiaoSelect.innerHTML = '<option value="">Todas as regiões</option>';
         regioes.data.forEach((regiao) => {
           const option = document.createElement("option");
@@ -156,18 +157,12 @@ document.addEventListener("DOMContentLoaded", function () {
       });
   }
 
-  /**
-   * Carrega os grupos para o filtro com base na região selecionada
-   * @param {string} regiaoId - ID da região selecionada
-   */
   function carregarGruposParaFiltro(regiaoId = "") {
-    // URL da requisição
-    let url = `${API_BASE_URL}/groups`;
+    let url = `${window.API_BASE_URL}/groups`;
     if (regiaoId) {
       url += `?regionId=${regiaoId}`;
     }
 
-    // Carregar grupos para o filtro
     fetch(url, {
       headers: {
         Accept: "application/json",
@@ -196,20 +191,16 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function carregarEscolasParaFiltro(grupoId = "") {
-    // URL da requisição
-    let url = `${API_BASE_URL}/schools`;
+    let url = `${window.API_BASE_URL}/schools`;
 
-    // Adicionar parâmetros de filtro
     let params = [];
     if (filtroRegiaoId) params.push(`regionId=${filtroRegiaoId}`);
     if (grupoId) params.push(`groupId=${grupoId}`);
 
-    // Adicionar parâmetros à URL
     if (params.length > 0) {
       url += `?${params.join("&")}`;
     }
 
-    // Carregar escolas para o filtro
     fetch(url, {
       headers: {
         Accept: "application/json",
@@ -223,7 +214,6 @@ document.addEventListener("DOMContentLoaded", function () {
         return response.json();
       })
       .then((escolas) => {
-        // Preencher select de escolas do filtro
         escolaSelect.innerHTML = '<option value="">Todas as escolas</option>';
         escolas.data.forEach((escola) => {
           const option = document.createElement("option");
@@ -232,7 +222,6 @@ document.addEventListener("DOMContentLoaded", function () {
           escolaSelect.appendChild(option);
         });
 
-        // Preencher select de escolas do formulário
         escolaFormSelect.innerHTML =
           '<option value="">Selecione uma escola</option>';
         escolas.data.forEach((escola) => {
@@ -249,21 +238,17 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function carregarTurmasParaFiltro(escolaId = "") {
-    // URL da requisição
-    let url = `${API_BASE_URL}/class-groups`;
+    let url = `${window.API_BASE_URL}/class-groups`;
 
-    // Adicionar parâmetros de filtro
     let params = [];
     if (filtroRegiaoId) params.push(`regionId=${filtroRegiaoId}`);
     if (filtroGrupoId) params.push(`groupId=${filtroGrupoId}`);
     if (escolaId) params.push(`schoolId=${escolaId}`);
 
-    // Adicionar parâmetros à URL
     if (params.length > 0) {
       url += `?${params.join("&")}`;
     }
 
-    // Carregar turmas para o filtro
     fetch(url, {
       headers: {
         Accept: "application/json",
@@ -277,7 +262,6 @@ document.addEventListener("DOMContentLoaded", function () {
         return response.json();
       })
       .then((turmas) => {
-        // Preencher select de turmas do filtro
         turmaSelect.innerHTML = '<option value="">Todas as turmas</option>';
         turmas.data.forEach((turma) => {
           const option = document.createElement("option");
@@ -305,16 +289,13 @@ document.addEventListener("DOMContentLoaded", function () {
     carregarAlunos();
   });
   function carregarAlunos() {
-    // Construir URL com parâmetros de filtro
-    let url = `${API_BASE_URL}/students?page=${paginaAtual || 1}`;
+    let url = `${window.API_BASE_URL}/students?page=${paginaAtual || 1}`;
 
-    // Adicionar filtros se existirem
     if (filtroRegiaoId) url += `regionId=${filtroRegiaoId}&`;
     if (filtroGrupoId) url += `groupId=${filtroGrupoId}&`;
     if (filtroEscolaId) url += `schoolId=${filtroEscolaId}&`;
     if (filtroTurmaId) url += `classGroupId=${filtroTurmaId}&`;
 
-    // Remover o último '&' se existir
     url = url.endsWith("&") ? url.slice(0, -1) : url;
     url = url.endsWith("?") ? url.slice(0, -1) : url;
 
@@ -343,15 +324,13 @@ document.addEventListener("DOMContentLoaded", function () {
   async function abrirModalAluno() {
     modalAluno.classList.remove("hidden");
 
-    // Resetar o formulário
     formAluno.reset();
     formAluno.removeAttribute("data-editing-id");
 
-    // Resetar o título do modal
     const modalTitle = modalAluno.querySelector("h3");
     modalTitle.textContent = "Novo Aluno";
 
-    const escolas = await fetch(`${API_BASE_URL}/schools?limit=1000`, {
+    const escolas = await fetch(`${window.API_BASE_URL}/schools?limit=1000`, {
       headers: {
         Accept: "application/json",
         Authorization: `Bearer ${token}`,
@@ -367,21 +346,21 @@ document.addEventListener("DOMContentLoaded", function () {
       escolaFormSelect.appendChild(option);
     });
 
-    const turmas = await fetch(`${API_BASE_URL}/class-groups`, {
+    const turmas = await fetch(`${window.API_BASE_URL}/class-groups`, {
       headers: {
         Accept: "application/json",
         Authorization: `Bearer ${token}`,
       },
     }).then((res) => res.json());
 
-    const regioes = await fetch(`${API_BASE_URL}/regions`, {
+    const regioes = await fetch(`${window.API_BASE_URL}/regions`, {
       headers: {
         Accept: "application/json",
         Authorization: `Bearer ${token}`,
       },
     }).then((res) => res.json());
 
-    const grupos = await fetch(`${API_BASE_URL}/groups`, {
+    const grupos = await fetch(`${window.API_BASE_URL}/groups`, {
       headers: {
         Accept: "application/json",
         Authorization: `Bearer ${token}`,
@@ -395,15 +374,11 @@ document.addEventListener("DOMContentLoaded", function () {
       turmaFormSelect.appendChild(option);
     });
 
-    // Resetar o botão de submit
     const btnSubmit = formAluno.querySelector('button[type="submit"]');
     btnSubmit.textContent = "Salvar";
   }
 
-  function carregarGruposParaFormulario(regiaoId = "") {
-    // Limpar select de grupos
-    // URL da requisição
-  }
+  function carregarGruposParaFormulario(regiaoId = "") {}
 
   function abrirModalImportar() {
     modalImportar.classList.remove("hidden");
@@ -427,7 +402,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (!formEscolaId) return;
 
-    fetch(`${API_BASE_URL}/class-groups?schoolId=${formEscolaId}`, {
+    fetch(`${window.API_BASE_URL}/class-groups?schoolId=${formEscolaId}`, {
       headers: {
         Accept: "application/json",
         Authorization: `Bearer ${token}`,
@@ -476,7 +451,6 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
-    // Criar objeto de dados do aluno
     const dadosAluno = {
       name: nomeAluno,
       registrationNumber: matriculaAluno,
@@ -487,12 +461,10 @@ document.addEventListener("DOMContentLoaded", function () {
       grade: cacheData.serie,
     };
 
-    // Verificar se estamos editando ou criando um novo aluno
     const idEditing = formAluno.getAttribute("data-editing-id");
 
     if (idEditing) {
-      // Editando um aluno existente
-      fetch(`${API_BASE_URL}/students/${idEditing}`, {
+      fetch(`${window.API_BASE_URL}/students/${idEditing}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -516,8 +488,7 @@ document.addEventListener("DOMContentLoaded", function () {
           alert("Erro ao atualizar aluno. Por favor, tente novamente.");
         });
     } else {
-      // Criando um novo aluno
-      fetch(`${API_BASE_URL}/students`, {
+      fetch(`${window.API_BASE_URL}/students`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -586,7 +557,6 @@ document.addEventListener("DOMContentLoaded", function () {
     const tbody = document.querySelector("table tbody");
     tbody.innerHTML = "";
 
-    // Filtrar alunos baseado na
     let alunosFiltrados = [...alunos];
     const pesquisa =
       document.getElementById("pesquisa")?.value?.toLowerCase() || "";
@@ -599,7 +569,6 @@ document.addEventListener("DOMContentLoaded", function () {
       );
     }
 
-    // Verificar se há alunos para exibir
     if (alunosFiltrados.length === 0) {
       tbody.innerHTML = `
                 <tr>
@@ -611,7 +580,6 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
-    // Exibir alunos filtrados
     alunosFiltrados.forEach((aluno) => {
       const tr = document.createElement("tr");
       tr.setAttribute("data-id", aluno.id);
@@ -651,7 +619,6 @@ document.addEventListener("DOMContentLoaded", function () {
       tbody.appendChild(tr);
     });
 
-    // Atualizar contador de resultados
     const resultadosMsg = document.querySelector(
       ".bg-white.px-4.py-3 .text-sm.text-gray-700"
     );
@@ -661,12 +628,10 @@ document.addEventListener("DOMContentLoaded", function () {
             `;
     }
 
-    // Configurar eventos dos botões
     configurarBotoes();
   }
 
   function configurarBotoes() {
-    // Botões de editar
     document.querySelectorAll(".btn-editar").forEach((btn) => {
       btn.addEventListener("click", function () {
         const id = parseInt(this.getAttribute("data-id"));
@@ -674,7 +639,6 @@ document.addEventListener("DOMContentLoaded", function () {
       });
     });
 
-    // Botões de excluir
     document.querySelectorAll(".btn-excluir").forEach((btn) => {
       btn.addEventListener("click", function () {
         const id = parseInt(this.getAttribute("data-id"));
@@ -685,8 +649,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   async function editarAluno(id) {
     try {
-      // Buscar dados completos do aluno
-      const aluno = await fetch(`${API_BASE_URL}/students/${id}`, {
+      const aluno = await fetch(`${window.API_BASE_URL}/students/${id}`, {
         headers: {
           Accept: "application/json",
           Authorization: `Bearer ${token}`,
@@ -698,42 +661,27 @@ document.addEventListener("DOMContentLoaded", function () {
         return response.json();
       });
 
-      // Abrir o modal
       modalAluno.classList.remove("hidden");
 
-      // Resetar o formulário
       formAluno.reset();
 
-      // Modificar o formulário para modo de edição
       formAluno.setAttribute("data-editing-id", id);
 
-      // Modificar o título do modal
       const modalTitle = modalAluno.querySelector("h3");
       modalTitle.textContent = "Editar Aluno";
 
-      // Limpar selects
       escolaFormSelect.innerHTML =
         '<option value="">Selecione uma escola</option>';
       turmaFormSelect.innerHTML =
         '<option value="">Selecione uma turma</option>';
 
-      // Preencher select de regiões
-
-      // Selecionar região do aluno
-
-      // Carregar grupos da região selecionada
-
-      // Selecionar grupo do aluno
-
-      // Carregar escolas
-      const escolas = await fetch(`${API_BASE_URL}/schools`, {
+      const escolas = await fetch(`${window.API_BASE_URL}/schools`, {
         headers: {
           Accept: "application/json",
           Authorization: `Bearer ${token}`,
         },
       }).then((res) => res.json());
 
-      // Preencher select de escolas
       escolas.data.forEach((escola) => {
         const option = document.createElement("option");
         option.value = escola.id;
@@ -741,12 +689,10 @@ document.addEventListener("DOMContentLoaded", function () {
         escolaFormSelect.appendChild(option);
       });
 
-      // Selecionar escola do aluno
       escolaFormSelect.value = aluno.schoolId || "";
 
-      // Carregar turmas da escola selecionada
       const turmas = await fetch(
-        `${API_BASE_URL}/class-groups?schoolId=${aluno.schoolId}`,
+        `${window.API_BASE_URL}/class-groups?schoolId=${aluno.schoolId}`,
         {
           headers: {
             Accept: "application/json",
@@ -755,7 +701,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       ).then((res) => res.json());
 
-      // Preencher select de turmas
       turmas.data.forEach((turma) => {
         const option = document.createElement("option");
         option.value = turma.id;
@@ -763,15 +708,12 @@ document.addEventListener("DOMContentLoaded", function () {
         turmaFormSelect.appendChild(option);
       });
 
-      // Selecionar turma do aluno
       turmaFormSelect.value = aluno.classGroupId || "";
 
-      // Preencher outros campos
       document.getElementById("nome-aluno").value = aluno.name || "";
       document.getElementById("matricula-aluno").value =
         aluno.registrationNumber || "";
 
-      // Modificar o botão de submit
       const btnSubmit = formAluno.querySelector('button[type="submit"]');
       btnSubmit.textContent = "Atualizar";
     } catch (error) {
