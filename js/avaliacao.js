@@ -1448,26 +1448,26 @@ if (cancelarEnvioSimples) {
 
 
 
-var associarEvento = async () => {
-    try {
-        const response = await fetch(`${API_BASE_URL}/assessments/${1})}/associate-event`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${getAuthToken()}`
-            },
-            body: JSON.stringify({ assessmentEventId: 1 })
-        });
+// var associarEvento = async () => {
+//     try {
+//         const response = await fetch(`${API_BASE_URL}/assessments/${1})}/associate-event`, {
+//             method: 'POST',
+//             headers: {
+//                 'Content-Type': 'application/json',
+//                 'Authorization': `Bearer ${getAuthToken()}`
+//             },
+//             body: JSON.stringify({ assessmentEventId: 1 })
+//         });
 
-        if (!response.ok) {
-            throw new Error('Erro ao associar evento');
-        }
+//         if (!response.ok) {
+//             throw new Error('Erro ao associar evento');
+//         }
 
-        return response.json();
-    } catch (error) {
-        console.error('Erro ao associar evento:', error);
-    }
-}
+//         return response.json();
+//     } catch (error) {
+//         console.error('Erro ao associar evento:', error);
+//     }
+// }
 // Submissão do formulário de evento
 formEvento.addEventListener('submit', function (e) {
     e.preventDefault();
@@ -1504,7 +1504,7 @@ formEvento.addEventListener('submit', function (e) {
 
     if (eventoIdEmEdicao === null) {
         // Adicionar novo evento
-        fetch(URL_BASE + '/api/assessment-events', {
+        fetch(API_BASE_URL + '/assessment-events', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -1521,19 +1521,14 @@ formEvento.addEventListener('submit', function (e) {
             .then(data => {
                 // Mostrar notificação de sucesso
                 alert('Evento adicionado com sucesso!');
-                associarEvento()
+                // associarEvento
 
                 // Fechar o modal
                 modalEvento.classList.add('hidden');
 
                 // Recarregar eventos
                 carregarEventos();
-            })
-            .catch(error => {
-                console.error('Erro ao adicionar evento:', error);
-                alert('Erro ao adicionar evento. Por favor, tente novamente.');
-            })
-            .finally(() => {
+            }).finally(() => {
                 // Reativar o botão de submit
                 btnSubmit.disabled = false;
                 btnSubmit.innerHTML = 'Salvar';
@@ -1543,7 +1538,7 @@ formEvento.addEventListener('submit', function (e) {
 
     } else {
         // Atualizar evento existente
-        fetch(`${API_BASE_URL}/api/assessment-events/${eventoIdEmEdicao}`, {
+        fetch(`${API_BASE_URL_NO_API}/api/assessment-events/${eventoIdEmEdicao}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -1591,7 +1586,7 @@ async function carregarAvaliacoesParaSelect() {
     // Mostrar indicador de carregamento
     avaliacaoSelect.innerHTML = '<option value="">Carregando avaliações...</option>';
 
-    return fetch(URL_BASE + '/api/assessments', {
+    return fetch(API_BASE_URL + '/assessments', {
         headers: {
             'Authorization': `Bearer ${getAuthToken()}`
         }
@@ -1712,26 +1707,19 @@ function excluirEvento(id) {
                 });
         } else {
             // Fallback para o método antigo
-            fetch(`${API_BASE_URL}/api/assessment-events/${id}`, {
+            fetch(`${API_BASE_URL}/assessment-events/${id}`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${getAuthToken()}`
                 }
             })
                 .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Erro ao excluir evento');
-                    }
+                    if([200,201,204].includes(response.status)) alert('Evento excluído com sucesso!')
                     return response.json();
                 })
                 .then(data => {
-                    alert('Evento excluído com sucesso!');
                     carregarEventos();
                 })
-                .catch(error => {
-                    console.error('Erro ao excluir evento:', error);
-                    alert('Erro ao excluir evento. Por favor, tente novamente.');
-                });
         }
     }
 }
