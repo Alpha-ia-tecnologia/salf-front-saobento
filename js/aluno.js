@@ -63,38 +63,47 @@ document.addEventListener("DOMContentLoaded", function () {
   cancelarImportar.addEventListener("click", fecharModalImportacao);
   formAluno.addEventListener("submit", salvarAluno);
   formImportar.addEventListener("submit", importarAlunos);
-
+  
   regiaoSelect.addEventListener("change", function () {
-    filtroRegiaoId = this.value;
-    carregarGruposParaFiltro(filtroRegiaoId);
-    grupoSelect.value = "";
-    escolaSelect.value = "";
-    turmaSelect.value = "";
-    filtroGrupoId = "";
-    filtroEscolaId = "";
-    filtroTurmaId = "";
+      filtroRegiaoId = this.value;
+      carregarGruposParaFiltro(filtroRegiaoId);
+      grupoSelect.value = "";
+      escolaSelect.value = "";
+      turmaSelect.value = "";
+      filtroGrupoId = "";
+      carregarTurmasParaFiltro(filtroEscolaId);
+      filtroEscolaId = "";
+      filtroTurmaId = "";
+      carregarEscolasParaFiltro(filtroGrupoId);
     carregarAlunos();
-  });
+});
 
-  grupoSelect.addEventListener("change", function () {
+grupoSelect.addEventListener("change", function () {
     filtroGrupoId = this.value;
+    carregarGruposParaFiltro(filtroRegiaoId);
     carregarEscolasParaFiltro(filtroGrupoId);
     escolaSelect.value = "";
     turmaSelect.value = "";
     filtroEscolaId = "";
     filtroTurmaId = "";
     carregarAlunos();
-  });
+    carregarTurmasParaFiltro(filtroEscolaId);
+    carregarGruposParaFiltro(filtroRegiaoId);
+});
 
-  escolaSelect.addEventListener("change", function () {
+escolaSelect.addEventListener("change", function () {
     filtroEscolaId = this.value;
     carregarTurmasParaFiltro(filtroEscolaId);
+    carregarGruposParaFiltro(filtroRegiaoId);
+    carregarEscolasParaFiltro(filtroGrupoId);
     turmaSelect.value = "";
     filtroTurmaId = "";
     carregarAlunos();
-  });
+});
 
-  turmaSelect.addEventListener("change", function () {
+turmaSelect.addEventListener("change", function () {
+    carregarTurmasParaFiltro(filtroEscolaId);
+    carregarEscolasParaFiltro(filtroGrupoId);
     filtroTurmaId = this.value;
     carregarAlunos();
   });
