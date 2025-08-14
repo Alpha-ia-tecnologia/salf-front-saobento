@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', function () {
     cancelarImportar.addEventListener('click', fecharModalImportacao);
     formAluno.addEventListener('submit', salvarAluno);
     formImportar.addEventListener('submit', importarAlunos);
-
+    
     // Event listeners para filtros
     regiaoSelect.addEventListener('change', function () {
         filtroRegiaoId = this.value;
@@ -64,11 +64,15 @@ document.addEventListener('DOMContentLoaded', function () {
         filtroEscolaId = '';
         filtroTurmaId = '';
         carregarAlunos();
+        carregarTurmasParaFiltro(filtroEscolaId);
+        carregarEscolasParaFiltro(filtroGrupoId);
     });
-
+    
     grupoSelect.addEventListener('change', function () {
         filtroGrupoId = this.value;
+        carregarTurmasParaFiltro(filtroEscolaId);
         carregarEscolasParaFiltro(filtroGrupoId);
+        carregarGruposParaFiltro(filtroRegiaoId);
         // Limpar os filtros subsequentes
         escolaSelect.value = '';
         turmaSelect.value = '';
@@ -76,22 +80,26 @@ document.addEventListener('DOMContentLoaded', function () {
         filtroTurmaId = '';
         carregarAlunos();
     });
-
+    
     escolaSelect.addEventListener('change', function () {
         filtroEscolaId = this.value;
+        carregarGruposParaFiltro(filtroRegiaoId);
         carregarTurmasParaFiltro(filtroEscolaId);
         // Limpar o filtro de turma
         turmaSelect.value = '';
         filtroTurmaId = '';
         carregarAlunos();
     });
-
+    
     turmaSelect.addEventListener('change', function () {
+        carregarTurmasParaFiltro(filtroEscolaId);
+        carregarEscolasParaFiltro(filtroGrupoId);
         filtroTurmaId = this.value;
         carregarAlunos();
     });
-
+    
     turmaFormSelect.addEventListener('change', async function () {
+        carregarEscolasParaFiltro(filtroGrupoId);
         filtroTurmaId = this.value;
         const request = await fetch(`${window.API_BASE_URL}/class-groups/${filtroTurmaId}`, {
             headers: {
@@ -127,7 +135,7 @@ document.addEventListener('DOMContentLoaded', function () {
      * Carrega as regiões para o filtro
      */
     function carregarRegioes() {
-        fetch(`${window.API_BASE_URL}/regions`, {
+        fetch(`${API_BASE_URL}/regions`, {
             headers: {
                 'Accept': 'application/json',
                 'Authorization': `Bearer ${token}`
@@ -201,8 +209,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Adicionar parâmetros de filtro
         let params = [];
-        if (filtroRegiaoId) params.push(`regionId=${filtroRegiaoId}`);
-        if (grupoId) params.push(`groupId=${grupoId}`);
+        params.push(`regionId=${filtroRegiaoId}`);
+        params.push(`groupId=${grupoId}`);
 
         // Adicionar parâmetros à URL
         if (params.length > 0) {
@@ -584,18 +592,24 @@ document.addEventListener('DOMContentLoaded', function () {
             });
     }
 
+
+    const pesquisa = document.getElementById('pesquisa')
+    pesquisa.addEventListener("change",() => {
+        // const valor = pesquisa.value?.toLowerCase() || '';
+        atualizarTabela()
+    })
     function atualizarTabela() {
         const tbody = document.querySelector('table tbody');
         tbody.innerHTML = '';
-
+        const valor = pesquisa.value?.toLowerCase() || '';
+        
         // Filtrar alunos baseado na 
         let alunosFiltrados = [...alunos];
-        const pesquisa = document.getElementById('pesquisa')?.value?.toLowerCase() || '';
 
-        if (pesquisa) {
+        if (valor) {
             alunosFiltrados = alunosFiltrados.filter(aluno =>
-                aluno.name.toLowerCase().includes(pesquisa) ||
-                aluno.registrationNumber.toLowerCase().includes(pesquisa)
+                aluno.name.toLowerCase().includes(valor) ||
+                aluno.registrationNumber.toLowerCase().includes(valor)
             );
         }
 
