@@ -1,6 +1,6 @@
 const filterGrupo = document.getElementById('filtro-grupo');
 const filterEscola = document.getElementById('filtro-escola');
-const filterEvento = document.getElementById('evento');
+const filterEvento = document.getElementById('filtro-evento');
 const filterRegiao = document.getElementById('filtro-regiao');
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -50,8 +50,7 @@ const renderGroup = async (id) => {
 
 const renderEvent = async () => {
     const response = await fetch(`${API_BASE_URL}/assessment-events?limit=1000`,options);
-    const { data } = await response.json();
-    console.log(data)
+    const data  = await response.json();
     filterEvento.innerHTML = '<option value="">Selecione um evento</option>';
     data.forEach(evento => {
         const option = document.createElement('option');
