@@ -1,5 +1,5 @@
-// const pathBase = "https://salf-salf-api2.gkgtsp.easypanel.host/api"
-const pathBase = "https://salf-salf-api2.gkgtsp.easypanel.host/api";
+// const API_BASE_URL = "https://salf-salf-api2.gkgtsp.easypanel.host/api"
+// const API_BASE_URL = "https://salf-salf-api2.gkgtsp.easypanel.host/api";
 const btnTimerWords = document.getElementById("iniciar-timer-palavras");
 const btnTimerPseudowords = document.getElementById(
   "iniciar-timer-pseudopalavras"
@@ -326,7 +326,7 @@ const cacheStage = {
 };
 
 const examGet = async () => {
-  const RequestSave = await fetch(pathBase + "/reading-assessments", {
+  const RequestSave = await fetch(API_BASE_URL + "/reading-assessments", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -366,7 +366,7 @@ const examGet = async () => {
   cacheStage.eventId = responseJson.assessmentEventId;
   localStorage.setItem("id", responseJson.id);
   const requestGrep = await fetch(
-    pathBase + "/assessments/" + Number.parseInt(cacheStage.avaId),
+    API_BASE_URL + "/assessments/" + Number.parseInt(cacheStage.avaId),
     {
       method: "GET",
       headers: {
@@ -427,7 +427,7 @@ const stageBody = {
 
 const endExam = async () => {
   const endpoint = `/reading-assessments/${cacheStage.id}/finalize`;
-  const RequestSave = await fetch(pathBase + endpoint, {
+  const RequestSave = await fetch(API_BASE_URL + endpoint, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -578,7 +578,7 @@ const nextStageQuestoes = async () => {
   const endpoint = `/reading-assessments/answers`;
   baforeId = Object.values(baforeId);
   const requestUnion = baforeId.map(async (answer) => {
-    await fetch(pathBase + endpoint, {
+    await fetch(API_BASE_URL + endpoint, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -595,7 +595,7 @@ const forcedEnd = async (actualStage, bodyCase) => {
   actualStage.stage.classList.toggle("hidden");
   stages["etapa-result"].stage.classList.toggle("hidden");
   const endpoint = `/reading-assessments/${cacheStage.id || 1}`;
-  await fetch(pathBase + endpoint, {
+  await fetch(API_BASE_URL + endpoint, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -606,7 +606,7 @@ const forcedEnd = async (actualStage, bodyCase) => {
 };
 const nextStage = async () => {
   // const endpoint = `/reading-assessments/${cacheStage.id}/stage`
-  // await fetch(pathBase + endpoint, {
+  // await fetch(API_BASE_URL + endpoint, {
   //     method: "PUT",
   //     headers: {
   //         "Content-Type": "application/json",
