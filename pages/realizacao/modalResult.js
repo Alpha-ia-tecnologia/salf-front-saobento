@@ -5,7 +5,6 @@ const modal = document.getElementById('modalResult')
 const voltar = document.getElementById('btn-voltar-dashboard')
 const novoAvaliacao  = document.getElementById("btn-nova-avaliacao")
 novoAvaliacao.addEventListener("click",() => {
-
     location.reload()
 })
 console.log(location.origin)

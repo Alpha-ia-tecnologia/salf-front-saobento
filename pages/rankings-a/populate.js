@@ -14,17 +14,12 @@ const options = {
     }
 }
 filterRegiao.addEventListener('change', (e) => {
-    if (e.target.value) {
-        filterGrupo.disabled = false;
-        renderRegion(e.target.value);
-    }
+    renderRegion(e.target.value);
 });
 
 filterGrupo.addEventListener('change', (e) => {
-    if (e.target.value) {
         filterEscola.disabled = false;
-        renderGroup(e.target.value);
-    }
+    renderGroup(e.target.value);
 });
 
 const renderRegion = async (id) => {
@@ -41,7 +36,7 @@ const renderRegion = async (id) => {
 }
 
 const renderGroup = async (id) => {
-    const response = await fetch(`${window.API_BASE_URL}/schools?group_id=${id}&limit=1000`,options);
+    const response = await fetch(`${API_BASE_URL}/schools?group_id=${id}&limit=1000`,options);
     const data = await response.json();
 
     filterEscola.innerHTML = '<option value="">Selecione uma escola</option>';

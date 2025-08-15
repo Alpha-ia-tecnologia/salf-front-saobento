@@ -7,7 +7,7 @@ const grupo = document.getElementById('filtro-grupo');
 const escola = document.getElementById('filtro-escola');
 const evento = document.getElementById('filtro-evento');
 document.addEventListener('DOMContentLoaded', async () => {
-    const response = await fetch(`${window.API_BASE_URL}/dashboard/student-ranking`, {
+    const response = await fetch(`${API_BASE_URL}/dashboard/student-ranking`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         e.preventDefault();
 
         console.log(regiao, grupo);
-        const response = await fetch(`${window.API_BASE_URL}/dashboard/student-ranking?regionId=${regiao.value}&groupId=${grupo.value}&school_id=${escola.value}&assessmentEventId=${evento.value}`, {
+        const response = await fetch(`${API_BASE_URL}/dashboard/student-ranking?regionId=${regiao.value}&groupId=${grupo.value}&school_id=${escola.value}&assessmentEventId=${evento.value}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',

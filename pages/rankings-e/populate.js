@@ -11,10 +11,8 @@ const options = {
     }
 }
 filterRegiao.addEventListener('change', (e) => {
-    if (e.target.value) {
         filterGrupo.disabled = false;
         renderRegion(e.target.value);
-    }
 });
 
 

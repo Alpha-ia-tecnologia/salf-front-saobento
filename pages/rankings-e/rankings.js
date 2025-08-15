@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
     });
-    const response2 = await fetch(`${window.API_BASE_URL}/dashboard/ranking-by-region`, {
+    const response2 = await fetch(`${API_BASE_URL}/dashboard/ranking-by-region`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -92,7 +92,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         e.preventDefault();
         const regiao = document.getElementById('regiao').value;
         const grupo = document.getElementById('grupo').value;
-        const response = await fetch(`${window.API_BASE_URL}/dashboard/school-ranking?regionId=${regiao}&groupId=${grupo}`, {
+        const response = await fetch(`${API_BASE_URL}/dashboard/school-ranking?regionId=${regiao}&groupId=${grupo}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -101,7 +101,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }); 
         const data = await response.json();
         renderRankingEscolas(data.data);
-        const response2 = await fetch(`${window.API_BASE_URL}/dashboard/ranking-by-region?regionId=${regiao}`, {
+        const response2 = await fetch(`${API_BASE_URL}/dashboard/ranking-by-region?regionId=${regiao}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',

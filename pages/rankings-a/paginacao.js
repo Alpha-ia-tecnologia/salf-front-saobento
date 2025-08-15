@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const requestPageRanking = async () => {
-        const response = await fetch(`${window.API_BASE_URL}/dashboard/student-ranking?page=${page}`, {
+        const response = await fetch(`${API_BASE_URL}/dashboard/student-ranking?page=${page}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
