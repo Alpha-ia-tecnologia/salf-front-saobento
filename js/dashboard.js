@@ -226,14 +226,14 @@ function PopularCards({
 }) {
   const values = [
     totalStudents,
-    studentsAssessed,
-    participationRate,
-    averagePpm,
     assessmentCompletion,
+    studentsAssessed,
+    participationRate, 
+    averagePpm,
     comprehensionScore,
   ];
   cardValue.forEach((card, index) => {
-    if (index === 2 || index === 3 || index === 4) {
+    if (index === 3 || index === 4 || index === 5) {
       card.innerHTML = values[index] + "%";
     } else {
       card.innerHTML = values[index];

@@ -16,9 +16,9 @@
  * - Centraliza a manutenção de URLs e configurações do sistema
  */
 
-const API_BASE_URL = "https://salf-salf-api2.gkgtsp.easypanel.host/api";
+const API_BASE_URL = "https://salf-ribamar-salf-api-ribamar.gkgtsp.easypanel.host/api";
 
-const API_BASE_URL_NO_API = "https://salf-salf-api2.gkgtsp.easypanel.host";
+const API_BASE_URL_NO_API = "https://salf-ribamar-salf-api-ribamar.gkgtsp.easypanel.host";
 
 const CONFIG = {
   API_BASE_URL: API_BASE_URL,
