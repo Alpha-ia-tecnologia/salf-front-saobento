@@ -828,7 +828,8 @@ document.addEventListener("DOMContentLoaded", function () {
       stageBody.totalItems = 0;
       stageBody.stage = "WORDS";
       btn_stage().disabled = true;
-      btnEncerrar.style.display = "none";
+      btnEncerrar.disabled = true;
+      btnEncerrar.classList.add("bg-gray-400", "hover:bg-gray-400");
       stages["selecao-avaliacao"].nextEvent();
     });
 
