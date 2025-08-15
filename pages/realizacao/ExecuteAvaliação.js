@@ -7,7 +7,10 @@ const btnTimerPseudowords = document.getElementById(
 const btnTimerPhrases = document.getElementById("iniciar-timer-frases");
 const btnTimerText = document.getElementById("iniciar-timer-texto");
 const btnTimerQuestoes = document.getElementById("iniciar-timer-questoes");
+
 const btnEncerrar = document.getElementById("encerrar-avaliacao");
+// Flag para saber se a avaliação foi iniciada na segunda tela
+let avaliacaoIniciada = false;
 
 // nivel de leitor
 const niveisLeitor = {
@@ -653,6 +656,9 @@ const disableStage = (stage) => {
   });
 };
 btnTimerWords.addEventListener("click", () => {
+  // Desabilita o botão encerrar ao iniciar cronômetro
+  btnEncerrar.disabled = true;
+  btnEncerrar.classList.add("bg-gray-400", "hover:bg-gray-400");
   stageBody.totalItems = cacheStage.words.length;
   const itemsClick = document.querySelectorAll(".item-click-words");
   itemsClick.forEach((item) => {
@@ -682,6 +688,8 @@ btnTimerWords.addEventListener("click", () => {
 });
 
 btnTimerText.addEventListener("click", () => {
+  btnEncerrar.disabled = true;
+  btnEncerrar.classList.add("bg-gray-400", "hover:bg-gray-400");
   stageBody.totalItems = cacheStage.text.length;
   timerText.innerHTML = timedafault;
   btnTimerText.disabled = true;
@@ -714,6 +722,8 @@ btnTimerText.addEventListener("click", () => {
   }, 1000);
 });
 btnTimerPhrases.addEventListener("click", () => {
+  btnEncerrar.disabled = true;
+  btnEncerrar.classList.add("bg-gray-400", "hover:bg-gray-400");
   stageBody.totalItems = cacheStage.phrases.length;
   timerPhrases.innerHTML = timedafault;
   btnTimerPhrases.disabled = true;
@@ -749,6 +759,8 @@ btnTimerPhrases.addEventListener("click", () => {
   }, 1000);
 });
 btnTimerPseudowords.addEventListener("click", () => {
+  btnEncerrar.disabled = true;
+  btnEncerrar.classList.add("bg-gray-400", "hover:bg-gray-400");
   stageBody.totalItems = cacheStage.pseudowords.length;
   timerPseudowords.innerHTML = timedafault;
   btnTimerPseudowords.disabled = true;
@@ -802,14 +814,28 @@ const filterIsEmpty = () => {
 };
 
 const encerrarAvaliacao = () => {
+  // Se a avaliação não foi iniciada na segunda tela, encerra normalmente
+  if (!avaliacaoIniciada) {
+    calcAbstractPerfil.perfil = "NON_READER";
+    forcedEnd(stages["etapa-palavras"], body(calcAbstractPerfil));
+    return;
+  }
+  // Se já iniciou, segue o fluxo normal de encerrar
+  // Aqui você pode customizar para encerrar conforme o estágio atual, se necessário
   calcAbstractPerfil.perfil = "NON_READER";
-  // stages["etapa-palavras"].stage.classList.toggle("hidden")
   forcedEnd(stages["etapa-palavras"], body(calcAbstractPerfil));
 };
 
 btnEncerrar.addEventListener("click", encerrarAvaliacao);
 
 document.addEventListener("DOMContentLoaded", function () {
+  // Adiciona evento ao botão 'Voltar para o Dashboard' na tela de resultado, se existir
+  const btnVoltarDashboard = document.getElementById("voltar-dashboard");
+  if (btnVoltarDashboard) {
+    btnVoltarDashboard.addEventListener("click", function () {
+      window.location.href = "/pages/dashboard/index.html";
+    });
+  }
   const btnTimerWords = document.getElementById("iniciar-timer-palavras");
   const btnTimerPseudowords = document.getElementById(
     "iniciar-timer-pseudopalavras"
@@ -818,6 +844,17 @@ document.addEventListener("DOMContentLoaded", function () {
   const btnTimerText = document.getElementById("iniciar-timer-texto");
 
   let palavras = 0;
+
+  // Controle dos botões na interface intermediária
+  const btnIniciarAvaliacao = document.getElementById("iniciar-avaliacao");
+  if (btnIniciarAvaliacao) {
+    btnIniciarAvaliacao.addEventListener("click", function () {
+      // Desabilita o botão encerrar ao iniciar avaliação
+      btnEncerrar.disabled = false;
+      btnEncerrar.classList.add("bg-gray-400", "hover:bg-gray-400");
+    });
+  }
+
   stages["selecao-avaliacao"].stage
     .querySelector("button")
     .addEventListener("click", (e) => {
@@ -828,7 +865,10 @@ document.addEventListener("DOMContentLoaded", function () {
       stageBody.totalItems = 0;
       stageBody.stage = "WORDS";
       btn_stage().disabled = true;
-      btnEncerrar.style.display = "none";
+      // Ao entrar na etapa, o botão encerrar deve estar habilitado
+      btnEncerrar.disabled = false;
+      btnEncerrar.classList.remove("bg-gray-400", "hover:bg-gray-400");
+      avaliacaoIniciada = false; // Reset flag ao iniciar nova avaliação
       stages["selecao-avaliacao"].nextEvent();
     });
 
@@ -848,6 +888,9 @@ document.addEventListener("DOMContentLoaded", function () {
       btn_stage().classList.remove("bg-green-600", "hover:bg-green-700");
       btn_stage().classList.add("bg-gray-400", "hover:bg-gray-400");
       btnTimerText.disabled = false;
+      avaliacaoIniciada = true; // Marca que a avaliação foi iniciada na segunda tela
+      btnEncerrar.disabled = false;
+      btnEncerrar.classList.remove("bg-gray-400", "hover:bg-gray-400");
       stages["etapa-palavras"].nextEvent();
     });
   stages["etapa-pseudopalavras"].stage
