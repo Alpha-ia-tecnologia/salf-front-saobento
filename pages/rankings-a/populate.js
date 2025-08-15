@@ -15,10 +15,10 @@ const options = {
 }
 filterRegiao.addEventListener('change', (e) => {
     renderRegion(e.target.value);
+    renderGroup(e.target.value);
 });
 
 filterGrupo.addEventListener('change', (e) => {
-        filterEscola.disabled = false;
     renderGroup(e.target.value);
 });
 
