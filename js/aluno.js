@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const fileUpload = document.getElementById('file-upload');
     const arquivoSelecionado = document.getElementById('arquivo-selecionado');
     const nomeArquivo = document.getElementById('nome-arquivo');
-    const pesquisa = document.getElementById('pesquisa')
+    // const pesquisa = document.getElementById('pesquisa')
     // Dados de controle
     let alunos = [];
     let filtroRegiaoId = '';
@@ -93,9 +93,9 @@ document.addEventListener('DOMContentLoaded', function () {
         carregarAlunos();
     });
 
-    pesquisa.addEventListener("change",() => {
-        atualizarTabela()
-    })
+    // pesquisa.addEventListener("change",() => {
+    //     atualizarTabela()
+    // })
 
     turmaFormSelect.addEventListener('change', async function () {
         filtroTurmaId = this.value;
@@ -596,7 +596,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Filtrar alunos baseado na 
         let alunosFiltrados = [...alunos];
-        const valor = pesquisa?.value?.toLowerCase() || '';
+        const valor = '';
 
         if (valor) {
             alunosFiltrados = alunosFiltrados.filter(aluno =>
