@@ -28,8 +28,7 @@ document.addEventListener("DOMContentLoaded", function () {
   localStorage.clear();
 
   const token =
-    localStorage.getItem("token") ||
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IlVzdWFyaW8gU0FMRiIsImlhdCI6MTUxNjIzOTAyMn0.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
+    localStorage.getItem("token")  
   if (token) {
     validarToken(token)
       .then((valido) => {
@@ -127,19 +126,18 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function redirecionarParaDashboard() {
-    const currentPath = window.location.pathname;
+    const currentPath = window.location.origin;
     const basePath = currentPath.substring(0, currentPath.lastIndexOf("/") + 1);
-    const dashboardUrl = `${window.location.protocol}//${window.location.host}${basePath}pages/dashboard/index.html`;
+    const dashboardUrl = `${currentPath}/pages/dashboard/listar.html`;
 
     console.log("Redirecionando para:", dashboardUrl);
 
     window.location.href = dashboardUrl;
 
     setTimeout(() => {
-      if (window.location.pathname.includes("login.html")) {
-        console.log("Redirecionamento alternativo...");
+
         redirectRole(user.role);
-      }
+      
     }, 1000);
   }
 });

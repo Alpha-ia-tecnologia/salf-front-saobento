@@ -98,14 +98,13 @@ function loadTemplate() {
 
   let menuItems = "";
 
-  menuItems += `
-        <a href="${basePath}pages/dashboard/index.html" class="flex items-center px-4 py-3 hover:bg-blue-700 transition ${
-    currentPage.includes("/dashboard/") ? "bg-blue-700" : ""
-  }">
-            <i class="fas fa-chart-bar w-6"></i>
-            <span>Dashboard</span>
-        </a>
-    `;
+  // menuItems += `
+  //       <a href="${basePath}pages/dashboard/index.html" class="flex items-center px-4 py-3 hover:bg-blue-700 transition ${
+  //   currentPage.includes("/dashboard/") ? "bg-blue-700" : ""
+  // }">
+  //           <span>Dashboard</span>
+  //       </a>
+  //   `;
 
   const rolesPanel = {
     ADMIN: [
@@ -117,6 +116,7 @@ function loadTemplate() {
       "Usuários",
       "Ranking de Alunos",
       "Ranking de Escolas",
+      "Dashboard",
     ],
     COORDINATOR: [
       "Escolas",
@@ -139,6 +139,7 @@ function loadTemplate() {
       Usuários: "usuario",
       "Ranking de Alunos": "rankings-a",
       "Ranking de Escolas": "rankings-e",
+      "Dashboard" : "dashboard"
     },
     COORDINATOR: {
       Escolas: "escola",
@@ -161,6 +162,7 @@ function loadTemplate() {
     Realizar: "fas fa-clipboard-check",
     "Ranking de Alunos": "fas fa-user-graduate",
     "Ranking de Escolas": "fas fa-school",
+    "Dashboard" : "<i class= fas fa-chart-bar w-6'></i>"
   };
   rolesPanel[userRole].forEach((item) => {
     const redirectUrl = redirectUrls[userRole][item];
@@ -168,7 +170,7 @@ function loadTemplate() {
             <a href="${location.origin}/pages/${redirectUrl.toLowerCase()}/${
       redirectUrl === "realizacao" ? "realizar" : "listar"
     }.html" class="flex items-center px-4 py-3 hover:bg-blue-700 transition ${
-      currentPage.includes("/${redirectUrl.toLowerCase()}/")
+      currentPage.includes("/${redirectUrl.toLowerCase()}")
         ? "bg-blue-700"
         : ""
     }">
