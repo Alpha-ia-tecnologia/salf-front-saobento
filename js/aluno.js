@@ -52,11 +52,12 @@ document.addEventListener('DOMContentLoaded', function () {
     cancelarImportar.addEventListener('click', fecharModalImportacao);
     formAluno.addEventListener('submit', salvarAluno);
     formImportar.addEventListener('submit', importarAlunos);
-
+    
     // Event listeners para filtros
     regiaoSelect.addEventListener('change', function () {
         filtroRegiaoId = this.value;
         carregarGruposParaFiltro(filtroRegiaoId);
+        carregarEscolasParaFiltro(filtroGrupoId);
         // Limpar os filtros subsequentes
         grupoSelect.value = '';
         escolaSelect.value = '';
@@ -202,8 +203,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Adicionar parâmetros de filtro
         let params = [];
-        if (filtroRegiaoId) params.push(`regionId=${filtroRegiaoId}`);
-        if (grupoId) params.push(`groupId=${grupoId}`);
+        params.push(`regionId=${filtroRegiaoId}`);
+        params.push(`groupId=${grupoId}`);
 
         // Adicionar parâmetros à URL
         if (params.length > 0) {
@@ -306,13 +307,13 @@ document.addEventListener('DOMContentLoaded', function () {
     });
     function carregarAlunos() {
         // Construir URL com parâmetros de filtro
-        let url = `${API_BASE_URL}/students?page=${paginaAtual || 1}`;
+        let url = `${API_BASE_URL}/students?page=${paginaAtual || 1}&`;
 
         // Adicionar filtros se existirem
-        if (filtroRegiaoId) url += `regionId=${filtroRegiaoId}&`;
-        if (filtroGrupoId) url += `groupId=${filtroGrupoId}&`;
-        if (filtroEscolaId) url += `schoolId=${filtroEscolaId}&`;
-        if (filtroTurmaId) url += `classGroupId=${filtroTurmaId}&`;
+         url += `regionId=${filtroRegiaoId}&`;
+        url += `groupId=${filtroGrupoId}&`;
+        url += `schoolId=${filtroEscolaId}&`;
+        url += `classGroupId=${filtroTurmaId}&`;
 
         // Remover o último '&' se existir
         url = url.endsWith('&') ? url.slice(0, -1) : url;
