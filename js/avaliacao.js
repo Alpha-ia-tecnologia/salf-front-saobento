@@ -1712,7 +1712,7 @@ formEvento.addEventListener("submit", function (e) {
       });
   } else {
     // Atualizar evento existente
-    fetch(`${API_BASE_URL_NO_API}/api/assessment-events/${eventoIdEmEdicao}`, {
+    fetch(`${API_BASE_URL_NO_API}/assessment-events/${eventoIdEmEdicao}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -1834,7 +1834,7 @@ function editarEvento(id) {
       });
   } else {
     // Fallback para o método antigo
-    fetch(`${API_BASE_URL}/api/assessment-events/${id}`, {
+    fetch(`${API_BASE_URL}/assessment-events/${id}`, {
       headers: {
         Authorization: `Bearer ${getAuthToken()}`,
       },

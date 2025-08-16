@@ -15,11 +15,11 @@ const options = {
 }
 filterRegiao.addEventListener('change', (e) => {
     renderRegion(e.target.value);
-    renderGroup(e.target.value);
+    renderGroup(e.target.value,undefined);
 });
 
 filterGrupo.addEventListener('change', (e) => {
-    renderGroup(e.target.value);
+    renderGroup(undefined,e.target.value);
 });
 
 const renderRegion = async (id) => {
@@ -35,8 +35,8 @@ const renderRegion = async (id) => {
     });
 }
 
-const renderGroup = async (id) => {
-    const response = await fetch(`${API_BASE_URL}/schools?group_id=${id}&limit=1000`,options);
+const renderGroup = async (idRegion,idGroup) => {
+    const response = await fetch(`${API_BASE_URL}/schools?group_id=${idGroup ?? ''}&regionId=${idRegion}&limit=1000`,options);
     const data = await response.json();
 
     filterEscola.innerHTML = '<option value="">Selecione uma escola</option>';
