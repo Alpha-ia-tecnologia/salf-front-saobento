@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const fileUpload = document.getElementById('file-upload');
     const arquivoSelecionado = document.getElementById('arquivo-selecionado');
     const nomeArquivo = document.getElementById('nome-arquivo');
-
+    const pesquisa = document.getElementById('pesquisa')
     // Dados de controle
     let alunos = [];
     let filtroRegiaoId = '';
@@ -92,6 +92,10 @@ document.addEventListener('DOMContentLoaded', function () {
         filtroTurmaId = this.value;
         carregarAlunos();
     });
+
+    pesquisa.addEventListener("change",() => {
+        atualizarTabela()
+    })
 
     turmaFormSelect.addEventListener('change', async function () {
         filtroTurmaId = this.value;
@@ -592,12 +596,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Filtrar alunos baseado na 
         let alunosFiltrados = [...alunos];
-        const pesquisa = document.getElementById('pesquisa')?.value?.toLowerCase() || '';
+        const valor = pesquisa?.value?.toLowerCase() || '';
 
-        if (pesquisa) {
+        if (valor) {
             alunosFiltrados = alunosFiltrados.filter(aluno =>
-                aluno.name.toLowerCase().includes(pesquisa) ||
-                aluno.registrationNumber.toLowerCase().includes(pesquisa)
+                aluno.name.toLowerCase().includes(valor) ||
+                aluno.registrationNumber.toLowerCase().includes(valor)
             );
         }
 
