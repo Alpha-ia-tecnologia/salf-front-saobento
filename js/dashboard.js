@@ -74,11 +74,9 @@ const pluginNoData = {
 aplicarFiltros.addEventListener("click", async () => {
   const data = await fetch(
     API_BASE_URL +
-      `/dashboard/analytics?schoolId=${escola.value || ""}&grade=${
-        filtrosAnoEscolar.value || ""
-      }&classGroupId=${turma.value || ""}&assessmentEventId=${
-        eventos.value || ""
-      }&groupId=${grupos.value || ""}&regionId=${filtrosRegioes.value || ""}`,
+    `/dashboard/analytics?schoolId=${escola.value || ""}&grade=${filtrosAnoEscolar.value || ""
+    }&classGroupId=${turma.value || ""}&assessmentEventId=${eventos.value || ""
+    }&groupId=${grupos.value || ""}&regionId=${filtrosRegioes.value || ""}`,
     {
       headers: headers,
     }
@@ -88,9 +86,8 @@ aplicarFiltros.addEventListener("click", async () => {
   PopularGraphPizza(response);
   const data2 = await fetch(
     API_BASE_URL +
-      `/dashboard/performance-by-grade?schoolId=${
-        escola.value || ""
-      }&assessmentEventId=${eventos.value || ""}`,
+    `/dashboard/performance-by-grade?schoolId=${escola.value || ""
+    }&assessmentEventId=${eventos.value || ""}`,
     {
       headers: headers,
     }
@@ -102,11 +99,9 @@ aplicarFiltros.addEventListener("click", async () => {
   }
   const data3 = await fetch(
     API_BASE_URL +
-      `/dashboard/yearly-progression?schoolId=${
-        escola.value || ""
-      }&classGroupId=${turma.value || ""}&grade=${
-        filtrosAnoEscolar.value || ""
-      }`,
+    `/dashboard/yearly-progression?schoolId=${escola.value || ""
+    }&classGroupId=${turma.value || ""}&grade=${filtrosAnoEscolar.value || ""
+    }`,
     {
       headers: headers,
     }
@@ -115,11 +110,9 @@ aplicarFiltros.addEventListener("click", async () => {
   PopularGraphYear(response3.yearly);
   const data4 = await fetch(
     API_BASE_URL +
-      `/dashboard/reading-level-evolution?schoolId=${
-        escola.value || ""
-      }&grade=${filtrosAnoEscolar.value || ""}&classGroupId=${
-        turma.value || ""
-      }&assessmentEventId=${eventos.value || ""}`,
+    `/dashboard/reading-level-evolution?schoolId=${escola.value || ""
+    }&grade=${filtrosAnoEscolar.value || ""}&classGroupId=${turma.value || ""
+    }&assessmentEventId=${eventos.value || ""}`,
     {
       headers: headers,
     }
@@ -230,7 +223,7 @@ function PopularCards({
     totalStudents,
     assessmentCompletion,
     studentsAssessed,
-    participationRate, 
+    participationRate,
     averagePpm,
     comprehensionScore,
   ];
@@ -296,19 +289,26 @@ function PopularGraphPizza({ readingLevelDistribution }) {
 }
 
 let series = null;
+
 function PopularGraphSeries(obj) {
   console.log(obj);
 
-  const labelPerformDefault = obj.map((item) => item.grade);
-  const data = obj.map((item) => {
+  // Labels do eixo X (anos/séries)
+  const labels = obj.map((item) => item.grade);
+
+  // Pegar todos os "nomes" dos níveis de leitura
+  const levels = obj[0].distribution.map((d) => d.name);
+
+  // Montar datasets: uma linha para cada nível
+  const datasets = levels.map((level, idx) => {
     return {
-      label: item.grade,
-      data: item.distribution.map(({ percentage }) => percentage),
-      color: Math.floor(Math.random() * 16777215).toString(16),
-      yAxisID: "y",
+      label: level,
+      data: obj.map((item) => item.distribution[idx].percentage),
+      borderColor: "#" + Math.floor(Math.random() * 16777215).toString(16),
+      fill: false,
+      tension: 0.3
     };
-  }) || [0];
-  console.log(data);
+  });
 
   if (series) {
     series.destroy();
@@ -316,8 +316,8 @@ function PopularGraphSeries(obj) {
   series = new Chart(canvarGraphSeries, {
     type: "line",
     data: {
-      labels: labelPerformDefault,
-      datasets: data,
+      labels,
+      datasets,
     },
     options: {
       responsive: true,
@@ -326,11 +326,48 @@ function PopularGraphSeries(obj) {
         y: {
           id: "y",
           type: "linear",
+          beginAtZero: true,
+          max: 100
         },
       },
     },
   });
 }
+// function PopularGraphSeries(obj) {
+//   console.log(obj);
+
+//   const labelPerformDefault = obj.map((item) => item.grade);
+//   const data = obj.map((item) => {
+//     return {
+//       label: item.grade,
+//       data: item.distribution.map(({ percentage }) => percentage),
+//       color: Math.floor(Math.random() * 16777215).toString(16),
+//       yAxisID: "y",
+//     };
+//   }) || [0];
+//   console.log(data);
+
+//   if (series) {
+//     series.destroy();
+//   }
+//   series = new Chart(canvarGraphSeries, {
+//     type: "line",
+//     data: {
+//       labels: labelPerformDefault,
+//       datasets: data,
+//     },
+//     options: {
+//       responsive: true,
+//       maintainAspectRatio: false,
+//       scales: {
+//         y: {
+//           id: "y",
+//           type: "linear",
+//         },
+//       },
+//     },
+//   });
+// }
 
 let year = null;
 function PopularGraphYear({ previousYear, currentYear }) {
@@ -421,7 +458,7 @@ const filterRegion = async () => {
 const filterSchool = async () => {
   const request = await fetch(
     API_BASE_URL +
-      `/schools?groupId=${grupos.value}&&regionId=${filtrosRegioes.value}&limit=1000`,
+    `/schools?groupId=${grupos.value}&&regionId=${filtrosRegioes.value}&limit=1000`,
     {
       headers: headers,
     }
