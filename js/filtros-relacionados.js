@@ -85,7 +85,7 @@ async function carregarTurmas(escolaId) {
     }
 
     // Busca as turmas na API com base na escola selecionada
-    const { data } = await fetchAPI(`/class-groups?schoolId=${escolaId}`,options);
+        const { data } = await fetchAPI(`/class-groups?schoolId=${escolaId}`,options);
     // Limpa o select de turmas para adicionar as novas opções
     limparSelect(turmaSelect, 'Selecione uma turma');
 

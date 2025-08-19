@@ -132,6 +132,7 @@ filtrosRegioes.addEventListener("change", () => {
   regionId = filtrosRegioes.value;
   const schools = cache.schools.filter((item) => item.regionId == regionId);
   escola.innerHTML = '<option value="">Selecione a escola</option>';
+  filterSchool()
   schools.forEach((item) => {
     const option = document.createElement("option");
     option.value = item.id;
@@ -146,12 +147,13 @@ grupos.addEventListener("change", () => {
   escola.disabled = false;
   escola.innerHTML = '<option value="">Selecione a escola</option>';
   const schools = cache.schools.filter((item) => item.groupId == groupId);
-  schools.forEach((item) => {
-    const option = document.createElement("option");
-    option.value = item.id;
-    option.textContent = item.name;
-    escola.appendChild(option);
-  });
+  filterSchool()
+  // schools.forEach((item) => {
+  //   const option = document.createElement("option");
+  //   option.value = item.id;
+  //   option.textContent = item.name;
+  //   escola.appendChild(option);
+  // });
 });
 
 escola.addEventListener("change", () => {
