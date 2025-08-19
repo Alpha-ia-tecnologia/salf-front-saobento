@@ -1712,7 +1712,7 @@ formEvento.addEventListener("submit", function (e) {
       });
   } else {
     // Atualizar evento existente
-    fetch(`${API_BASE_URL_NO_API}/assessment-events/${eventoIdEmEdicao}`, {
+    fetch(`${API_BASE_URL}/assessment-events/${eventoIdEmEdicao}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
