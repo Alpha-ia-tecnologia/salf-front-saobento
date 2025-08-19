@@ -237,17 +237,77 @@ function PopularCards({
 }
 
 let pizza = null;
+// function PopularGraphPizza({ readingLevelDistribution }) {
+//   if (readingLevelDistribution.length === 0) {
+//     return;
+//   }
+//   const labels = readingLevelDistribution.map((item) => item.name);
+//   const data = readingLevelDistribution.map((item) => item.percentage);
+//   console.log(data);
+//   console.log(labels);
+//   if (pizza) {
+//     pizza.destroy();
+//   }
+//   pizza = new Chart(canvarGraphPizza, {
+//     type: "pie",
+//     data: {
+//       labels: labels || [],
+//       datasets: [
+//         {
+//           backgroundColor: [
+//             "#06c5c8",
+//             "#6a06c8",
+//             "#06c85e",
+//             "#ffe803",
+//             "rgb(255, 16, 16)",
+//             "rgb(255, 16, 124)",
+//             "rgb(16, 255, 147)",
+//           ],
+//           data: data || [],
+//         },
+//       ],
+//     },
+//     options: {
+//       responsive: true,
+//       maintainAspectRatio: false,
+//       plugins: [
+//         { ...pluginNoData },
+//         {
+//           legend: {
+//             position: "right",
+//             labels: {
+//               boxWidth: 15,
+//               font: {
+//                 size: 10,
+//               },
+//             },
+//           },
+//         },
+//       ],
+//       tooltip: {
+//         callbacks: {
+//           label: function (context) {
+//             const label = context.label || "";
+//             const value = context.raw; // valor já em %
+//             return `${label}: ${value}%`;
+//           },
+//         },
+//       },
+//     },
+//   });
+// }
 function PopularGraphPizza({ readingLevelDistribution }) {
   if (readingLevelDistribution.length === 0) {
     return;
   }
+
   const labels = readingLevelDistribution.map((item) => item.name);
   const data = readingLevelDistribution.map((item) => item.percentage);
-  console.log(data);
-  console.log(labels);
+
   if (pizza) {
     pizza.destroy();
   }
+
   pizza = new Chart(canvarGraphPizza, {
     type: "pie",
     data: {
@@ -270,20 +330,27 @@ function PopularGraphPizza({ readingLevelDistribution }) {
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      plugins: [
-        { ...pluginNoData },
-        {
-          legend: {
-            position: "right",
-            labels: {
-              boxWidth: 15,
-              font: {
-                size: 10,
-              },
+      plugins: {
+        ...pluginNoData, // mantém seu plugin customizado
+        legend: {
+          position: "right",
+          labels: {
+            boxWidth: 15,
+            font: {
+              size: 10,
             },
           },
         },
-      ],
+        tooltip: { // <-- tooltip com símbolo de %
+          callbacks: {
+            label: function (context) {
+              const label = context.label || "";
+              const value = context.raw;
+              return `${label}: ${value}%`;
+            },
+          },
+        },
+      },
     },
   });
 }
