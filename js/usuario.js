@@ -345,26 +345,19 @@ document.addEventListener('DOMContentLoaded', function() {
     
     function excluirUsuario(id) {
         if (confirm('Tem certeza que deseja excluir este usuário?')) {
-            fetch(`${window.API_BASE_URL}/users/${id}`, {
+            fetch(`${API_BASE_URL}/users/${id}`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${AUTH_TOKEN}`
                 }
             })
             .then(response => {
-                if (!response.ok) {
-                    throw new Error('Erro ao excluir usuário');
-                }
                 return response.text();
             })
             .then(() => {
                 alert('Usuário excluído com sucesso!');
                 carregarUsuarios();
             })
-            .catch(error => {
-                console.error('Erro ao excluir usuário:', error);
-                alert('Erro ao excluir usuário. Por favor, tente novamente.');
-            });
         }
     }
 }); 
