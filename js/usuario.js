@@ -13,7 +13,10 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Endpoint base da API
     // const API_BASE_URL = 'https://salf-salf-api2.gkgtsp.easypanel.host/api'; // Removido - usando configuração global
-    
+    /* The above code is a multi-line comment in JavaScript. It is not performing any specific action
+    in the code, but it is used to provide information or explanations within the code for
+    developers. */
+    // kkk
     // Token de autenticação (mock)
     const AUTH_TOKEN = localStorage.getItem('token');
     // Redirecionar para a página de cadastro quando clicar em novo usuário
