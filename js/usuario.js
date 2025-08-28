@@ -147,7 +147,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         } else {
             // Criando um novo usuário
-            fetch(`${window.API_BASE_URL}/users`, {
+            fetch(`${API_BASE_URL}/users`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -303,7 +303,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     function editarUsuario(id) {
         // Buscar detalhes do usuário da API
-        fetch(`${window.API_BASE_URL}/users/${id}`, {
+        fetch(`${API_BASE_URL}/users/${id}`, {
             headers: {
                 'Accept': 'application/json',
                 'Authorization': `Bearer ${AUTH_TOKEN}`
